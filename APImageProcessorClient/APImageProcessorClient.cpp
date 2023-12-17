@@ -9,27 +9,15 @@
 #include <string>
 
 #include "UDPClient.h"
+#include "Constants.h"
 
 using namespace cv;
 using namespace std;
 
-void displayImageValues(Mat image) {
-	cout << endl;
-	int rows = image.rows;
-	int cols = image.cols;
-	cout << "\nRows: " << rows << " | cols: " << cols;
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < cols; j++) {
-			cout << image.at<ushort>(i,j) << " ";
-		}
-	}
-	cout << endl;
-}
-
 int main(int argc, char** argv)
 {
 	// Read the image file
-	Mat image = imread("F:/Amy Santiago/wp4758617.jpg", IMREAD_COLOR);
+	Mat image = imread("G:/Wallpapers/wp2003072-firewatch-wallpapers.jpg", IMREAD_COLOR);
 	//Mat image(Size(1024, 768), CV_8UC3, Scalar(10, 80, 45));
 
 	if (image.empty()) // Check for failure
@@ -48,7 +36,7 @@ int main(int argc, char** argv)
 	String imageWriteAddress = "./Resources/savedImage.jpg";
 	Mat resizedImage;
 	resize(image, resizedImage, Size(1024, 768), INTER_LINEAR);
-	bool wasImageWritten = imwrite(imageWriteAddress, resizedImage);
+	bool wasImageWritten = imwrite(imageWriteAddress, image);
 	if (!wasImageWritten) {
 		cout << "\nError while writing the image.";
 	}
@@ -59,8 +47,34 @@ int main(int argc, char** argv)
 	}
 
 	//#######Sending to server
+
 	UDPClient udpClient;
-	udpClient.sendImage(imageWriteAddress, "127.0.0.1", 8080);
+	if (!udpClient.isValid()) {
+		cout << "\nSocket could not be created. Application will now exit.";
+		return RESPONSE_FAILURE;
+	}
+	
+	int responseCode = udpClient.sendImageSize(imageWriteAddress, SERVER_IP_ADDRESS, SERVER_PORT);
+	if (responseCode == RESPONSE_FAILURE) {
+		cout << "\nSending image size to server failed. Application will now exit.";
+		return RESPONSE_FAILURE;
+	}
+	
+	responseCode = udpClient.receiveMsgFromServer(SERVER_IP_ADDRESS, SERVER_PORT);
+	if (responseCode == RESPONSE_FAILURE) {
+		cout << "\nReceving acknowldegement from server failed. Application will now exit.";
+		return RESPONSE_FAILURE;
+	}
+	else if (responseCode == SERVER_NEGATIVE_ACK) {
+		cout << "\nServer sent negative acknowldgement. Application will now exit.";
+		return RESPONSE_FAILURE;
+	}
+	
+	responseCode = udpClient.sendImage(imageWriteAddress, SERVER_IP_ADDRESS, SERVER_PORT);
+	if (responseCode == RESPONSE_FAILURE) {
+		cout << "\nSending image to server failed. Application will now exit.";
+		return RESPONSE_FAILURE;
+	}
 
 	//cout << "\nResized Image data before reshaping: Rows: "<<resizedImage.rows<<" | Cols: "<<resizedImage.cols <<endl<< resizedImage;
 	resizedImage = resizedImage.reshape(0, 1);

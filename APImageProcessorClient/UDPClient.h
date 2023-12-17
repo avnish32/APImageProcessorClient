@@ -7,11 +7,19 @@
 #pragma once
 class UDPClient
 {
-	private:
-		SOCKET _thisSocket;
+private:
+	SOCKET _socket = INVALID_SOCKET;
+
+	void initializeSocket();
+	long fragmentAndSendImageData(cv::Mat& imageToSend, const long& imageSize, const sockaddr_in& serverAddress);
+
 public:
 	UDPClient();
 	~UDPClient();
-	int sendImage(cv::String imageAddress, std::string serverIp, long serverPort); //TODO use abstract class here : Client -> UDPClient -> ImageSendingClient
+	
+	bool isValid();
+	short sendImageSize(cv::String imageAddress, std::string serverIp, long serverPort);
+	short sendImage(cv::String imageAddress, std::string serverIp, long serverPort); //TODO use abstract class here : Client -> UDPClient -> ImageSendingClient
+	short receiveMsgFromServer(std::string serverIp, long serverPort);
 };
 

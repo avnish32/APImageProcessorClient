@@ -1,3 +1,4 @@
+#include "Constants.h"
 #include "UDPClient.h"
 
 #include<iostream>
@@ -9,59 +10,130 @@ using namespace cv;
 
 UDPClient::UDPClient()
 {
-	WSAData wsaData;
-	if (WSAStartup(MAKEWORD(2, 2), &wsaData) == -1) {
-		cout << "\nWSAStartup failed.";
-		_thisSocket = INVALID_SOCKET;
-		return;
-	}
-	_thisSocket = socket(AF_INET, SOCK_DGRAM, 0);
-	if (_thisSocket == INVALID_SOCKET) {
-		cout << "\nError while creating client socket. Error code: "<<WSAGetLastError();
-	}
-	else {
-		cout << "\nClient socket created successfully.";
-	}
+	initializeSocket();
 }
 
 UDPClient::~UDPClient()
 {
 	WSACleanup();
-	closesocket(_thisSocket);
+	closesocket(_socket);
 }
 
-int UDPClient::sendImage(cv::String imageAddress, std::string serverIp, long serverPort)
+//---------------------- Utility functions
+
+const sockaddr_in makeServerAddress(const std::string& serverIp, const long& serverPort) {
+	sockaddr_in serverAddress;
+	inet_pton(AF_INET, serverIp.c_str(), &(serverAddress.sin_addr));
+	serverAddress.sin_family = AF_INET;
+	serverAddress.sin_port = serverPort;
+
+	return serverAddress;
+}
+
+//----------------Member functions
+
+bool UDPClient::isValid()
 {
-	if (_thisSocket == INVALID_SOCKET) {
+	return _socket != INVALID_SOCKET;
+}
+
+short UDPClient::sendImageSize(cv::String imageAddress, std::string serverIp, long serverPort)
+{
+	if (_socket == INVALID_SOCKET) {
 		cout << "\nERROR: Invalid client socket.";
-		return 0;
+		return RESPONSE_FAILURE;
+	}
+
+	Mat imageToSend = imread(imageAddress, IMREAD_COLOR);
+	if (imageToSend.empty()) {
+		cout << "\nERROR: Cannot send size of empty image.";
+		return RESPONSE_FAILURE;
+	}
+
+	std::string payload = SIZE_PAYLOAD_PREFIX;
+	payload.append(to_string(imageToSend.cols)).append(" ").append(to_string(imageToSend.rows)).append("\0");
+	short payloadSize = strlen(payload.c_str());
+	cout << "\nImage size payload before sending: " << payload<<" | Size: "<<payloadSize;
+
+	const sockaddr_in serverAddress = makeServerAddress(serverIp, serverPort);
+
+	int bytesSent = 0, retryCount = 0;
+	char payloadPtr[15];
+	cout << "\nBefore strcpy.";
+	strcpy_s(payloadPtr, payload.c_str());
+	cout << "\nAfter strcpy.";
+
+	while (bytesSent < payloadSize) {
+		int bytesSentThisIteration = sendto(_socket, payloadPtr+bytesSent, sizeof(payloadPtr), 0, (sockaddr*)&serverAddress, sizeof(serverAddress));
+		if (bytesSentThisIteration <= 0) {
+			cout << "\nError while sending image size. Error code: " << WSAGetLastError();
+			return RESPONSE_FAILURE;
+		}
+		bytesSent += bytesSentThisIteration;
+	}
+	
+	
+	cout << "\nImage size successfully sent to server.";
+	return RESPONSE_SUCCESS;
+}
+
+short UDPClient::sendImage(cv::String imageAddress, std::string serverIp, long serverPort)
+{
+	if (_socket == INVALID_SOCKET) {
+		cout << "\nERROR: Invalid client socket.";
+		return RESPONSE_FAILURE;
 	}
 
 	Mat imageToSend = imread(imageAddress, IMREAD_COLOR);
 	if (imageToSend.empty()) {
 		cout << "\nERROR: Cannot send empty image.";
+		return RESPONSE_FAILURE;
 	}
 	
-	sockaddr_in serverAddress;
-	inet_pton(AF_INET, serverIp.c_str(), &(serverAddress.sin_addr));
-	//serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
-	serverAddress.sin_port = serverPort;
-	serverAddress.sin_family = AF_INET;
+	const sockaddr_in serverAddress = makeServerAddress(serverIp, serverPort);
 	
-	cv::String windowName = "clientImageBeforeSending";
+	cv::String windowName = "Client Image Before Sending";
 	namedWindow(windowName, WINDOW_NORMAL);
 	imshow(windowName, imageToSend);
 
 	waitKey(0);
 	destroyWindow(windowName);
 
+	long imageSize = imageToSend.total() * imageToSend.elemSize();
+	long bytesSent = fragmentAndSendImageData(imageToSend, imageSize, serverAddress);
+
+	return RESPONSE_SUCCESS;
+}
+
+short UDPClient::receiveMsgFromServer(std::string serverIp, long serverPort)
+{
+	const sockaddr_in serverAddress = makeServerAddress(serverIp, serverPort);
+	int serverAddressSize = sizeof(serverAddress);
+	short serverResponseCode = SERVER_NEGATIVE_ACK;
+	int bytesRecd = 0;
+	while (bytesRecd < sizeof(serverResponseCode)) {
+		int bytesRecdThisIteration = recvfrom(_socket, (char*)&serverResponseCode, sizeof(serverResponseCode), 0, (sockaddr*)&serverAddress, &serverAddressSize);
+		if (bytesRecdThisIteration <= 0) {
+			cout << "\nError while receving data from server. Error code: " << WSAGetLastError();
+			return RESPONSE_FAILURE;
+		}
+		bytesRecd += bytesRecdThisIteration;
+	}
+	
+	cout << "\nResponse from server: " << serverResponseCode;
+	
+	return serverResponseCode;
+}
+
+long UDPClient::fragmentAndSendImageData(cv::Mat& imageToSend, const long& imageSize, const sockaddr_in& serverAddress)
+{
 	//cout << "\n\nImage data before resizing: " << imageToSend;
 	//Below snippet taken from https://stackoverflow.com/a/20321262
 	//Challenge: To send image to server in array form
-	imageToSend = imageToSend.reshape(0, 1);
+	//imageToSend = imageToSend.reshape(0, 1);
 	//cout << "\n\nImage data after resizing: " << imageToSend;
 
-	long imageSize = imageToSend.total() * imageToSend.elemSize();
+	
 	cout << "\nImage size before sending: " << imageSize;
 	auto imagePtr = imageToSend.data;
 	long bytesSent = 0, bytesLeftToSend = imageSize;
@@ -71,25 +143,38 @@ int UDPClient::sendImage(cv::String imageAddress, std::string serverIp, long ser
 		cout << "\nBytes left to send: " << bytesLeftToSend;
 
 		if (bytesLeftToSend >= 60000l) {
-			bytesSentThisIteration = sendto(_thisSocket, (char*)imagePtr + bytesSent, 60000l, 0, (const sockaddr*)&serverAddress, sizeof(serverAddress));
+			bytesSentThisIteration = sendto(_socket, (char*)imagePtr + bytesSent, 60000l, 0, (const sockaddr*)&serverAddress, sizeof(serverAddress));
 		}
 		else {
-			bytesSentThisIteration = sendto(_thisSocket, (char*)imagePtr + bytesSent, bytesLeftToSend, 0, (const sockaddr*)&serverAddress, sizeof(serverAddress));
+			bytesSentThisIteration = sendto(_socket, (char*)imagePtr + bytesSent, bytesLeftToSend, 0, (const sockaddr*)&serverAddress, sizeof(serverAddress));
 		}
-		
+
 		if (bytesSentThisIteration <= 0) {
 			cout << "\nError while sending image. Error code: " << WSAGetLastError();
-			return 0;
+			return bytesSent;
 		}
 		bytesSent += bytesSentThisIteration;
 		bytesLeftToSend -= bytesSentThisIteration;
 		//imagePtr += bytesSentThisIteration;
 		cout << "\nBytes sent this iteration: " << bytesSentThisIteration;
 	}
-	
+
 	cout << "\nImage sent to server.";
-
-	
-
 	return bytesSent;
+}
+
+void UDPClient::initializeSocket() {
+	WSAData wsaData;
+	if (WSAStartup(MAKEWORD(2, 2), &wsaData) == -1) {
+		cout << "\nWSAStartup failed.";
+		_socket = INVALID_SOCKET;
+		return;
+	}
+	_socket = socket(AF_INET, SOCK_DGRAM, 0);
+	if (_socket == INVALID_SOCKET) {
+		cout << "\nError while creating client socket. Error code: " << WSAGetLastError();
+	}
+	else {
+		cout << "\nClient socket created successfully.";
+	}
 }
