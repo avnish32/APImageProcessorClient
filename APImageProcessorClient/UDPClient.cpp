@@ -94,10 +94,10 @@ short UDPClient::sendImage(cv::String imageAddress, std::string serverIp, long s
 	
 	cv::String windowName = "Client Image Before Sending";
 	namedWindow(windowName, WINDOW_NORMAL);
-	imshow(windowName, imageToSend);
-
+	
+	/*imshow(windowName, imageToSend);
 	waitKey(0);
-	destroyWindow(windowName);
+	destroyWindow(windowName);*/
 
 	long imageSize = imageToSend.total() * imageToSend.elemSize();
 	long bytesSent = fragmentAndSendImageData(imageToSend, imageSize, serverAddress);
@@ -113,11 +113,18 @@ short UDPClient::receiveMsgFromServer(std::string serverIp, long serverPort)
 	int bytesRecd = 0;
 	while (bytesRecd < sizeof(serverResponseCode)) {
 		int bytesRecdThisIteration = recvfrom(_socket, (char*)&serverResponseCode, sizeof(serverResponseCode), 0, (sockaddr*)&serverAddress, &serverAddressSize);
-		if (bytesRecdThisIteration <= 0) {
-			cout << "\nError while receving data from server. Error code: " << WSAGetLastError();
-			return RESPONSE_FAILURE;
+		if (bytesRecdThisIteration == SOCKET_ERROR) {
+			int lastError = WSAGetLastError();
+
+			if (lastError != WSAEWOULDBLOCK) {
+				cout << "\nError while receving data from server. Error code: " << WSAGetLastError();
+				return RESPONSE_FAILURE;
+			}
+			this_thread::sleep_for(chrono::milliseconds(50));
 		}
-		bytesRecd += bytesRecdThisIteration;
+		else {
+			bytesRecd += bytesRecdThisIteration;
+		}
 	}
 	
 	cout << "\nResponse from server: " << serverResponseCode;
@@ -130,7 +137,7 @@ long UDPClient::fragmentAndSendImageData(cv::Mat& imageToSend, const long& image
 	//cout << "\n\nImage data before resizing: " << imageToSend;
 	//Below snippet taken from https://stackoverflow.com/a/20321262
 	//Challenge: To send image to server in array form
-	//imageToSend = imageToSend.reshape(0, 1);
+	imageToSend = imageToSend.reshape(0, 1);
 	//cout << "\n\nImage data after resizing: " << imageToSend;
 
 	
@@ -157,6 +164,8 @@ long UDPClient::fragmentAndSendImageData(cv::Mat& imageToSend, const long& image
 		bytesLeftToSend -= bytesSentThisIteration;
 		//imagePtr += bytesSentThisIteration;
 		cout << "\nBytes sent this iteration: " << bytesSentThisIteration;
+
+		this_thread::sleep_for(chrono::milliseconds(50));
 	}
 
 	cout << "\nImage sent to server.";
@@ -173,8 +182,14 @@ void UDPClient::initializeSocket() {
 	_socket = socket(AF_INET, SOCK_DGRAM, 0);
 	if (_socket == INVALID_SOCKET) {
 		cout << "\nError while creating client socket. Error code: " << WSAGetLastError();
+		return;
 	}
 	else {
 		cout << "\nClient socket created successfully.";
+		u_long nonBlockingModeTrue = 1;
+		if (ioctlsocket(_socket, FIONBIO, &nonBlockingModeTrue) == SOCKET_ERROR) {
+			cout << "\nError while setting socket to non-blocking mode.";
+			_socket = INVALID_SOCKET;
+		}
 	}
 }
