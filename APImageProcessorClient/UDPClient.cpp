@@ -3,6 +3,8 @@
 
 #include<iostream>
 
+using namespace std;
+
 #pragma comment (lib, "ws2_32.lib")
 
 using namespace std;
@@ -144,26 +146,43 @@ long UDPClient::fragmentAndSendImageData(cv::Mat& imageToSend, const long& image
 	cout << "\nImage size before sending: " << imageSize;
 	auto imagePtr = imageToSend.data;
 	long bytesSent = 0, bytesLeftToSend = imageSize;
+	string payload;
+	u_short payloadLength;
+	u_int payloadSequenceNum = 1;
+
 	while (bytesSent < imageSize) {
 		long bytesSentThisIteration;
 
 		cout << "\nBytes left to send: " << bytesLeftToSend;
 
 		if (bytesLeftToSend >= 60000l) {
-			bytesSentThisIteration = sendto(_socket, (char*)imagePtr + bytesSent, 60000l, 0, (const sockaddr*)&serverAddress, sizeof(serverAddress));
+			payload = "Seq " + to_string(payloadSequenceNum) + " Size " + to_string(60000) + " ";
+			payloadLength = payload.length();
+			string imageData = string((char*)imagePtr + bytesSent, 60000);
+			
+			//cout << "\nPayload strlen: " << strlen(payload.c_str()) << " | imageData strlen: " << strlen(imageData.c_str()) << " strlen imageptr: "<<strlen((const char*)imagePtr);
+			payload += imageData;
+			
+			bytesSentThisIteration = sendto(_socket, &payload[0], 60000 + payloadLength, 0, (const sockaddr*)&serverAddress, sizeof(serverAddress));
 		}
 		else {
-			bytesSentThisIteration = sendto(_socket, (char*)imagePtr + bytesSent, bytesLeftToSend, 0, (const sockaddr*)&serverAddress, sizeof(serverAddress));
+			payload = "Seq " + to_string(payloadSequenceNum) + " Size " + to_string(bytesLeftToSend) + " ";
+			payloadLength = payload.length();
+			string imageData = string((char*)imagePtr + bytesSent, bytesLeftToSend);
+			payload += imageData;
+
+			bytesSentThisIteration = sendto(_socket, &payload[0], bytesLeftToSend + payloadLength, 0, (const sockaddr*)&serverAddress, sizeof(serverAddress));
 		}
 
 		if (bytesSentThisIteration <= 0) {
 			cout << "\nError while sending image. Error code: " << WSAGetLastError();
 			return bytesSent;
 		}
-		bytesSent += bytesSentThisIteration;
-		bytesLeftToSend -= bytesSentThisIteration;
+		bytesSent = bytesSent + (bytesSentThisIteration - payloadLength);
+		bytesLeftToSend = bytesLeftToSend - (bytesSentThisIteration - payloadLength);
 		//imagePtr += bytesSentThisIteration;
 		cout << "\nBytes sent this iteration: " << bytesSentThisIteration;
+		payloadSequenceNum++;
 
 		this_thread::sleep_for(chrono::milliseconds(50));
 	}
