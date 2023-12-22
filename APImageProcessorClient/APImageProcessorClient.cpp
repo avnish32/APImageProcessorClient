@@ -9,8 +9,18 @@
 #include "UDPClient.h"
 #include "Constants.h"
 
-using namespace cv;
-using namespace std;
+using cv::Size;
+using cv::Mat;
+using cv::imread;
+using cv::IMREAD_COLOR;
+using cv::INTER_LINEAR;
+using cv::String;
+
+using std::string;
+using std::cout;
+using std::endl;
+using std::thread;
+using std::vector;
 
 void sendImageToServer(cv::String& imageWriteAddress);
 
@@ -33,10 +43,11 @@ int main(int argc, char** argv)
 	//namedWindow(windowName, WINDOW_NORMAL); // Create a window
 	//imshow(windowName, image); // Show our image inside the created window.
 
-	String imageWriteAddress[] = { "./Resources/savedImage.jpg", "./Resources/584037.jpg"};
+	String imageWriteAddress[] = { "./Resources/1.jpg", "./Resources/2.jpg", "./Resources/3.jpg", "./Resources/4.jpg",
+	"./Resources/5.jpg" , "./Resources/6.jpg" , "./Resources/7.jpg" , "./Resources/8.jpg" };
 	Mat resizedImage;
 	resize(image, resizedImage, Size(1024, 768), INTER_LINEAR);
-	bool wasImageWritten = imwrite(imageWriteAddress[0], image);
+	bool wasImageWritten = imwrite(imageWriteAddress[0], resizedImage);
 	if (!wasImageWritten) {
 		cout << "\nError while writing the image.";
 	}
@@ -51,7 +62,7 @@ int main(int argc, char** argv)
 	bool retFlag;
 
 	vector<thread> threadVector;
-	for (int i = 0; i < 2; i++) {
+	for (int i = 0; i < 8; i++) {
 		//thread t(&sendImageToServer, ref(imageWriteAddress[i]));
 		threadVector.push_back(thread(&sendImageToServer, ref(imageWriteAddress[i])));
 	}
@@ -96,13 +107,17 @@ void sendImageToServer(cv::String& imageWriteAddress)
 		//return RESPONSE_FAILURE;
 	}
 
-	responseCode = udpClient.receiveMsgFromServer(SERVER_IP_ADDRESS, SERVER_PORT);
+	short serverResponseCode;
+	responseCode = udpClient.receiveAndValidateServerResponse(SERVER_IP_ADDRESS, SERVER_PORT, serverResponseCode);
 	if (responseCode == RESPONSE_FAILURE) {
-		cout << "\nReceving acknowldegement from server failed. Application will now exit.";
+		cout << "\nReceving/validating response from server failed. Application will now exit.";
+		return;
 		//return RESPONSE_FAILURE;
 	}
-	else if (responseCode == SERVER_NEGATIVE_ACK) {
+
+	if (serverResponseCode == SERVER_NEGATIVE_ACK) {
 		cout << "\nServer sent negative acknowldgement. Application will now exit.";
+		return;
 		//return RESPONSE_FAILURE;
 	}
 
