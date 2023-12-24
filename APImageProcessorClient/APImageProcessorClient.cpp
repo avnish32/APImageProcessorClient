@@ -9,12 +9,15 @@
 #include "UDPClient.h"
 #include "Constants.h"
 
+typedef unsigned short u_short;
+
 using cv::Size;
 using cv::Mat;
 using cv::imread;
 using cv::IMREAD_COLOR;
 using cv::INTER_LINEAR;
 using cv::String;
+using cv::Vec3b;
 
 using std::string;
 using std::cout;
@@ -23,6 +26,124 @@ using std::thread;
 using std::vector;
 
 void sendImageToServer(cv::String& imageWriteAddress);
+
+//TODO remove filter methods after testing
+enum RotationMode { CLOCKWISE, ANTI_CLOCKWISE };
+
+Mat ResizeFilter(Mat _sourceImage, int _targetWidth, int _targetHeight)
+{
+	u_short sourceWidth = _sourceImage.cols;
+	u_short sourceHeight = _sourceImage.rows;
+
+	if (sourceWidth == _targetWidth && sourceHeight == _targetHeight) {
+		//TODO return the original image
+		return _sourceImage;
+	}
+
+	Mat targetImage = Mat(cv::Size(_targetWidth, _targetHeight), _sourceImage.type());
+	for (int i = 0; i < _targetHeight; i++) {
+		for (int j = 0; j < _targetWidth; j++) {
+			int sourceImageRow = round(((float)i / _targetHeight) * sourceHeight);
+			int sourceImageCol = round(((float)j / _targetWidth) * sourceWidth);
+			targetImage.at<cv::Vec3b>(i, j) = _sourceImage.at<cv::Vec3b>(sourceImageRow, sourceImageCol);
+
+			//cout << "\n(" << i << ", " << j << ") <- (" << sourceImageRow << ", " << sourceImageCol << ")";
+		}
+	}
+
+	return targetImage;
+}
+
+Mat RotateClockwiseOnce(Mat _sourceImage)
+{
+	u_short sourceWidth = _sourceImage.cols;
+	u_short sourceHeight = _sourceImage.rows;
+
+	u_short targetWidth = sourceHeight;
+	u_short targetHeight = sourceWidth;
+
+	Mat targetImage = Mat(cv::Size(targetWidth, targetHeight), _sourceImage.type());
+
+	for (int i = 0; i < targetHeight; i++) {
+		for (int j = 0; j < targetWidth; j++) {
+			int sourceImageRow = sourceHeight - j - 1;
+			int sourceImageCol = i;
+			targetImage.at<Vec3b>(i, j) = _sourceImage.at<Vec3b>(sourceImageRow, sourceImageCol);
+		}
+	}
+
+	return targetImage;
+}
+
+Mat RotateAntiClockwiseOnce(Mat _sourceImage)
+{
+	u_short sourceWidth = _sourceImage.cols;
+	u_short sourceHeight = _sourceImage.rows;
+
+	u_short targetWidth = sourceHeight;
+	u_short targetHeight = sourceWidth;
+
+	Mat targetImage = Mat(cv::Size(targetWidth, targetHeight), _sourceImage.type());
+
+	for (int i = 0; i < targetHeight; i++) {
+		for (int j = 0; j < targetWidth; j++) {
+			int sourceImageRow = j;
+			int sourceImageCol = sourceWidth - i - 1;
+			targetImage.at<Vec3b>(i, j) = _sourceImage.at<Vec3b>(sourceImageRow, sourceImageCol);
+		}
+	}
+
+	return targetImage;
+}
+
+Mat RotateTwice(Mat _sourceImage)
+{
+	u_short sourceWidth = _sourceImage.cols;
+	u_short sourceHeight = _sourceImage.rows;
+
+	Mat targetImage = Mat(cv::Size(sourceWidth, sourceHeight), _sourceImage.type());
+
+	for (int i = 0; i < sourceHeight; i++) {
+		for (int j = 0; j < sourceWidth; j++) {
+			int sourceImageRow = sourceHeight - i - 1;
+			int sourceImageCol = sourceWidth - j - 1;
+			targetImage.at<Vec3b>(i, j) = _sourceImage.at<Vec3b>(sourceImageRow, sourceImageCol);
+		}
+	}
+
+	return targetImage;
+}
+
+Mat RotateFilter(Mat sourceImage, u_short _numOfTurns, RotationMode _direction)
+{
+	_numOfTurns %= 4;
+
+	switch (_numOfTurns) {
+	case 1:
+		switch (_direction)
+		{
+		case CLOCKWISE:
+			return RotateClockwiseOnce(sourceImage);
+		default:
+			return RotateAntiClockwiseOnce(sourceImage);
+		}
+	case 2:
+		//For 2 turns, direction doesn't matter.
+		return RotateTwice(sourceImage);
+	case 3:
+		switch (_direction)
+		{
+		case CLOCKWISE:
+			return RotateAntiClockwiseOnce(sourceImage);
+		default:
+			return RotateClockwiseOnce(sourceImage);
+		}
+	default:
+		return sourceImage;
+	}
+
+	return Mat();
+}
 
 int main(int argc, char** argv)
 {
@@ -46,7 +167,12 @@ int main(int argc, char** argv)
 	String imageWriteAddress[] = { "./Resources/1.jpg", "./Resources/2.jpg", "./Resources/3.jpg", "./Resources/4.jpg",
 	"./Resources/5.jpg" , "./Resources/6.jpg" , "./Resources/7.jpg" , "./Resources/8.jpg" };
 	Mat resizedImage;
-	resize(image, resizedImage, Size(1024, 768), INTER_LINEAR);
+
+	//resize(image, resizedImage, Size(1024, 768), INTER_LINEAR);
+	resizedImage = ResizeFilter(image, 800, 1080);
+
+	Mat rotatedImage = RotateFilter(image, 7, ANTI_CLOCKWISE);
+
 	bool wasImageWritten = imwrite(imageWriteAddress[0], resizedImage);
 	if (!wasImageWritten) {
 		cout << "\nError while writing the image.";
@@ -62,7 +188,7 @@ int main(int argc, char** argv)
 	bool retFlag;
 
 	vector<thread> threadVector;
-	for (int i = 0; i < 8; i++) {
+	for (int i = 0; i < 0; i++) {
 		//thread t(&sendImageToServer, ref(imageWriteAddress[i]));
 		threadVector.push_back(thread(&sendImageToServer, ref(imageWriteAddress[i])));
 	}
