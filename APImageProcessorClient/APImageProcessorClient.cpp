@@ -145,6 +145,83 @@ Mat RotateFilter(Mat sourceImage, u_short _numOfTurns, RotationMode _direction)
 	return Mat();
 }
 
+bool CanCropImage(int _cropTopLeftCornerX, int _cropTopLeftCornerY, Mat _sourceImage)
+{
+	return _cropTopLeftCornerX <= _sourceImage.cols
+		&& _cropTopLeftCornerY <= _sourceImage.rows;
+}
+
+Mat Crop(int _cropTopLeftCornerX, int _cropTopLeftCornerY, int _targetWidth, int _targetHeight, Mat _sourceImage)
+{
+	//Initialize target dimensions
+	int sourceImageColLimit = MIN(_cropTopLeftCornerX + _targetWidth, _sourceImage.cols);
+	int sourceImageRowLimit = MIN(_cropTopLeftCornerY + _targetHeight, _sourceImage.rows);
+	_targetWidth = sourceImageColLimit - _cropTopLeftCornerX;
+	_targetHeight = sourceImageRowLimit - _cropTopLeftCornerY;
+
+	Mat targetImage = Mat(cv::Size(_targetWidth, _targetHeight), _sourceImage.type());
+
+	int currentTargetX = -1, currentTargetY = -1;
+
+	for (int i = _cropTopLeftCornerY; i < sourceImageRowLimit; i++) {
+		currentTargetY++;
+		currentTargetX = 0;
+		for (int j = _cropTopLeftCornerX; j < sourceImageColLimit; j++) {
+			targetImage.at<Vec3b>(currentTargetY, currentTargetX) = _sourceImage.at<Vec3b>(i, j);
+			currentTargetX++;
+		}
+	}
+
+	return targetImage;
+}
+
+Mat FlipHorizontally(Mat _sourceImage)
+{
+	//Initialize target image
+	Mat targetImage = Mat(cv::Size(_sourceImage.cols, _sourceImage.rows), _sourceImage.type());
+
+	for (int i = 0; i < _sourceImage.rows; i++) {
+		for (int j = 0; j < _sourceImage.cols; j++) {
+			targetImage.at<Vec3b>(i, j) = _sourceImage.at<Vec3b>(i, _sourceImage.cols - j - 1);
+		}
+	}
+
+	return targetImage;
+}
+
+Mat FlipVertically(Mat _sourceImage)
+{
+	//Initialize target image
+	Mat targetImage = Mat(cv::Size(_sourceImage.cols, _sourceImage.rows), _sourceImage.type());
+
+	for (int i = 0; i < _sourceImage.rows; i++) {
+		for (int j = 0; j < _sourceImage.cols; j++) {
+			targetImage.at<Vec3b>(i, j) = _sourceImage.at<Vec3b>(_sourceImage.rows - i - 1, j);
+		}
+	}
+
+	return targetImage;
+}
+
+Mat ConvertRGBToGrayscale(Mat _sourceImage)
+{
+	//Initialize target image. Since this is a grayscale image, target need have only one channel
+	Mat targetImage = Mat(cv::Size(_sourceImage.cols, _sourceImage.rows), CV_8UC1);
+
+	Mat sourceChannelsSplit[3];
+	split(_sourceImage, sourceChannelsSplit);
+
+	for (int i = 0; i < _sourceImage.rows; i++) {
+		for (int j = 0; j < _sourceImage.cols; j++) {
+			//grayscale = 0.3 * R + 0.59 * G + 0.11 * B}
+			targetImage.at<uchar>(i, j) = (0.3f * sourceChannelsSplit[2].at<uchar>(i, j))
+				+ (0.59f * sourceChannelsSplit[1].at<uchar>(i, j))
+				+ (0.11f * sourceChannelsSplit[0].at<uchar>(i, j));
+		}
+	}
+	return targetImage;
+}
+
 int main(int argc, char** argv)
 {
 	// Read the image file
@@ -173,7 +250,20 @@ int main(int argc, char** argv)
 
 	Mat rotatedImage = RotateFilter(image, 7, ANTI_CLOCKWISE);
 
-	bool wasImageWritten = imwrite(imageWriteAddress[0], resizedImage);
+	int cropTopLeftX = 1700, cropTopLeftY=10, croppedWidth = 200, croppedHeight = 200;
+	Mat croppedImage = image;
+	if (CanCropImage(cropTopLeftX, cropTopLeftY, image)) {
+		 croppedImage = Crop(cropTopLeftX, cropTopLeftY, croppedWidth, croppedHeight, image);
+	}
+	else {
+		cout << "\nImage cannot be cropped with the given parameteres.";
+	}
+	
+	Mat flippedImage = FlipVertically(image);
+
+	Mat grayscaleImage = ConvertRGBToGrayscale(image);
+
+	bool wasImageWritten = imwrite(imageWriteAddress[0], grayscaleImage);
 	if (!wasImageWritten) {
 		cout << "\nError while writing the image.";
 	}
