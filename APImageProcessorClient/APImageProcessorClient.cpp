@@ -222,6 +222,40 @@ Mat ConvertRGBToGrayscale(Mat _sourceImage)
 	return targetImage;
 }
 
+float clampPixelValue(float unClampedValue, const float minValue, const float maxValue)
+{
+	if (unClampedValue < minValue) {
+		return minValue;
+	}
+
+	if (unClampedValue > maxValue) {
+		return  maxValue;
+	}
+
+	return unClampedValue;
+}
+
+Mat AdjustBrigthness(Mat _sourceImage, float _brightnessAdjFactor)
+{
+	Mat targetImage = Mat(cv::Size(_sourceImage.cols, _sourceImage.rows), _sourceImage.type());
+
+	Mat sourceBGRChannels[3];
+
+	cv::split(_sourceImage, sourceBGRChannels);
+
+	for (int i = 0; i < _sourceImage.rows; i++) {
+		for (int j = 0; j < _sourceImage.cols; j++) {
+			uchar red = round(clampPixelValue(sourceBGRChannels[2].at<uchar>(i, j) * _brightnessAdjFactor, 0.0f, 255.0f));
+			uchar green = round(clampPixelValue(sourceBGRChannels[1].at<uchar>(i, j) * _brightnessAdjFactor, 0.0f, 255.0f));
+			uchar blue = round(clampPixelValue(sourceBGRChannels[0].at<uchar>(i, j) * _brightnessAdjFactor, 0.0f, 255.0f));
+
+			targetImage.at<Vec3b>(i, j) = Vec3b(blue, green, red);
+		}
+	}
+
+	return targetImage;
+}
+
 int main(int argc, char** argv)
 {
 	// Read the image file
@@ -263,7 +297,9 @@ int main(int argc, char** argv)
 
 	Mat grayscaleImage = ConvertRGBToGrayscale(image);
 
-	bool wasImageWritten = imwrite(imageWriteAddress[0], grayscaleImage);
+	Mat brigthnessAdjustedImg = AdjustBrigthness(image, 0.25f);
+
+	bool wasImageWritten = imwrite(imageWriteAddress[0], brigthnessAdjustedImg);
 	if (!wasImageWritten) {
 		cout << "\nError while writing the image.";
 	}
