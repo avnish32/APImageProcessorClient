@@ -3,7 +3,7 @@
 
 using std::string;
 
-const unsigned short MIN_CMD_LINE_ARGS = 5;
+const short MIN_CMD_LINE_ARGS = 5;
 
 const int MAX_RETRY_COUNT = 3;
 const string SERVER_IP_ADDRESS = "127.0.0.1";
@@ -20,6 +20,8 @@ const string SIZE_PAYLOAD_KEY = "SIZE";
 const string SEQUENCE_PAYLOAD_KEY = "SEQ";
 const string RESPONSE_PAYLOAD_KEY = "RES";
 
-const ushort MAX_SERVER_MSG_PAYLOAD_SIZE_BYTES = 60025;
+const unsigned short MAX_SERVER_MSG_PAYLOAD_SIZE_BYTES = 60025;
 const string CLIENT_MSG_DELIMITER = " ";
 const char SERVER_RESPONSE_DELIMITER = ' ';
+
+const short IMAGE_PAYLOAD_RECV_TIMEOUT_MILLIS = 2000;

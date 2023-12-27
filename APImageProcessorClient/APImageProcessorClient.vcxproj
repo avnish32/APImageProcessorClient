@@ -141,6 +141,7 @@
     <ClCompile Include="FilterParamsValidator.cpp" />
     <ClCompile Include="FlipFilterParamsValidator.cpp" />
     <ClCompile Include="ImageFilterTypes.cpp" />
+    <ClCompile Include="ImageProcessor.cpp" />
     <ClCompile Include="ImageRequest.cpp" />
     <ClCompile Include="InputProcessor.cpp" />
     <ClCompile Include="ResizeFilterParamsValidator.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="FilterParamsValidator.h" />
     <ClInclude Include="FlipFilterParamsValidator.h" />
     <ClInclude Include="ImageFilterTypes.h" />
+    <ClInclude Include="ImageProcessor.h" />
     <ClInclude Include="ImageRequest.h" />
     <ClInclude Include="InputProcessor.h" />
     <ClInclude Include="ResizeFilterParamsValidator.h" />

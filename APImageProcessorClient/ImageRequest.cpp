@@ -15,6 +15,7 @@ std::string ImageRequest::_ConvertFilterParamsToString()
 	auto iter = _filterParams.begin();
 	
 	while (iter != _filterParams.end()) {
+		//TODO truncate float to 2 decimal places
 		filterParamsString.append(to_string(*iter)).append(CLIENT_MSG_DELIMITER);
 		iter++;
 	}

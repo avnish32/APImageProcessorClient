@@ -3,6 +3,7 @@
 #include <opencv2/opencv.hpp>
 
 #include <iostream>
+#include<fstream>
 #include <string>
 #include <thread>
 
@@ -264,6 +265,12 @@ int main(int argc, char** argv)
 {
 	//Cmd line args format: <server ip:port><space><absolute path of image><space><filter name><space><filter params...>
 
+	//Below snippet to redirect cout buffer to external file was taken from https://gist.github.com/mandyedi/ae68a3191096222c62655d54935e7bb2
+	//Performs 9 times faster when output is written to file.
+	std::ofstream out("outLogs.txt");
+	std::streambuf* coutbuf = std::cout.rdbuf(); //save old buf
+	std::cout.rdbuf(out.rdbuf()); //redirect std::cout to out.txt!
+
 	cout << "\nArg values: " << *(argv) << " | " << *(argv + 1) << " | " << *(argv + 2);
 	cout << "\nArg values contd: " << *(argv + 3) << " | " << *(argv + 4) << " | " << *(argv + 5);
 
@@ -314,6 +321,7 @@ int main(int argc, char** argv)
 	//destroyWindow(windowName);
 	//destroyWindow(savedImgWindowName);//destroy the created window
 
+	std::cout.rdbuf(coutbuf); //reset to standard output again
 	return 0;
 }
 
@@ -376,41 +384,64 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	cout << "\nThread initialized to send image to server.";
 	UDPClient udpClient;
 	if (!udpClient.isValid()) {
-		cout << "\nSocket could not be created. Application will now exit.";
-		//return RESPONSE_FAILURE;
+		cout << "\nSocket could not be created.";
+		return;
 	}
 
-	//int responseCode = udpClient.sendImageSize(SERVER_IP_ADDRESS, SERVER_PORT);
+	//TODO spawn a new thread here to push recd server msgs in queue.
+	//This current thread will be the listening thread.
+	//New thread will require queue, udpClient object
 	cout << "\nBefore accessing image request params.";
-	int responseCode = udpClient.SendImageMetadata(imageRequest.GetImageMetadataPayload(), imageRequest.GetServerIp(), imageRequest.GetServerPort());
+	int responseCode = udpClient.SendImageMetadata(imageRequest.GetImageMetadataPayload());
 	if (responseCode == RESPONSE_FAILURE) {
-		cout << "\nSending image size to server failed. Application will now exit.";
-		//return RESPONSE_FAILURE;
+		cout << "\nSending image size to server failed.";
+		return;
 	}
 
 	short serverResponseCode;
-	responseCode = udpClient.receiveAndValidateServerResponse(imageRequest.GetServerIp(), imageRequest.GetServerPort(), serverResponseCode);
+	responseCode = udpClient.receiveAndValidateServerResponse(serverResponseCode);
 	if (responseCode == RESPONSE_FAILURE) {
-		cout << "\nReceving/validating response from server failed. Application will now exit.";
+		cout << "\nReceving/validating response from server failed.";
 		return;
 		//return RESPONSE_FAILURE;
 	}
 
 	if (serverResponseCode == SERVER_NEGATIVE_ACK) {
-		cout << "\nServer sent negative acknowldgement. Application will now exit.";
+		cout << "\nServer sent negative acknowldgement.";
 		return;
 		//return RESPONSE_FAILURE;
 	}
 
-	responseCode = udpClient.sendImage(imageRequest.GetImage(), imageRequest.GetServerIp(), imageRequest.GetServerPort());
+	responseCode = udpClient.sendImage(imageRequest.GetImage());
 	if (responseCode == RESPONSE_FAILURE) {
-		cout << "\nSending image to server failed. Application will now exit.";
+		cout << "\nSending image to server failed.";
+		return;
 		//return RESPONSE_FAILURE;
 	}
 
 	//Recv filtered image dimensions
+	cv::Size processedImageDimensions;
+	short clientResponseCode = CLIENT_POSITIVE_ACK;
+	responseCode = udpClient.ReceiveAndValidateImageMetadata(processedImageDimensions);
+	if (responseCode == RESPONSE_FAILURE) {
+		cout << "\nError while receiving/validating dimensions of processed image from server.";
+		clientResponseCode = CLIENT_NEGATIVE_ACK;
+		//return RESPONSE_FAILURE;
+	}
 
 	//Send Ack
+	responseCode = udpClient.SendClientResponseToServer(clientResponseCode, nullptr);
+	if (responseCode == RESPONSE_FAILURE) {
+		cout << "\nCould not send response to server.";
+		return;
+		//return RESPONSE_FAILURE;
+	}
 
 	//Recv filtered image and send ack depending on payloads recd
+	responseCode = udpClient.receiveImage(processedImageDimensions);
+	if (responseCode == RESPONSE_FAILURE) {
+		cout << "\nError while receiving processed image from server.";
+		return;
+		//return RESPONSE_FAILURE;
+	}
 }

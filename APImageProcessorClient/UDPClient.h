@@ -16,32 +16,36 @@ class UDPClient
 {
 private:
 	SOCKET _socket = INVALID_SOCKET;
+	sockaddr_in _serverAddress;
 
 	void initializeSocket();
-	const sockaddr_in makeServerAddress(const std::string& serverIp, const long& serverPort);
+	void _MakeServerAddress(const std::string& serverIp, const long& serverPort);
 	const vector<std::string> SplitString(char* inputString, char delimiter);
 	const vector<string> SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
 	void buildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap,
 		map<u_short, u_short>& sequenceNumToPayloadSizeMap, vector<u_short>& sequenceNumbers);
-	short fragmentAndSendImageData(cv::Mat& imageToSend, const long& imageSize, const sockaddr_in& serverAddress);
+	short _CheckForTimeout(std::chrono::steady_clock::time_point& lastImagePayloadRecdTime,
+		std::map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads);
+	vector<u_short> _CalculateMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads);
+	short fragmentAndSendImageData(cv::Mat& imageToSend, const long& imageSize);
 	short sendImageDataPayloadsBySequenceNumbers(map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap,
-		const vector<u_short>& payloadSeqNumbersToSend, const sockaddr_in& serverAddress);
+		const vector<u_short>& payloadSeqNumbersToSend);
 	short validateServerResponse(std::vector<cv::String>& serverResponseSplit, short& serverResponseCode);
-	short _ValidateImageDimensionsFromServer(std::vector<cv::String>& serverMsgSplit, cv::Size& imageDimensions);
+	short _ValidateImageMetadataFromServer(std::vector<cv::String>& serverMsgSplit, cv::Size& imageDimensions);
 
 public:
 	UDPClient();
+	UDPClient(const string& serverIp, const long& serverPort);
 	~UDPClient();
 	
 	bool isValid();
-	short sendClientResponse(const short& clientResponseCode, std::string serverIp, long serverPort, const vector<u_short>* missingSeqNumbers);
-	short SendImageMetadata(std::string imageMetadataPayload, std::string serverIp, long serverPort);
-	short sendImageSize(cv::String imageAddress, std::string serverIp, long serverPort);
-	short sendImage(const Mat imageToSend, const std::string& serverIp, const long& serverPort); //TODO use abstract class here : Client -> UDPClient -> ImageSendingClient
-	short ReceiveAndValidateImageMetadata(std::string serverIp, long serverPort, cv::Size& imageDimensions);
+	short SendClientResponseToServer(const short& clientResponseCode, const vector<u_short>* missingSeqNumbers);
+	short SendImageMetadata(std::string imageMetadataPayload);
+	short sendImageSize(cv::String imageAddress);
+	short sendImage(const Mat imageToSend); //TODO use abstract class here : Client -> UDPClient -> ImageSendingClient
+	short ReceiveAndValidateImageMetadata(cv::Size& imageDimensions);
 	short receiveImage(const cv::Size& imageDimensions);
-	short receiveServerMsg(std::string serverIp, long serverPort, string& serverMsg);
-	short receiveAndValidateServerResponse(std::string serverIp, long serverPort, short& serverResponseCode);
-	short receiveAndValidateImageDimensions(std::string serverIp, long serverPort, cv::Size& imageDimensions);
+	short receiveServerMsg(string& serverMsg);
+	short receiveAndValidateServerResponse(short& serverResponseCode);
 };
 

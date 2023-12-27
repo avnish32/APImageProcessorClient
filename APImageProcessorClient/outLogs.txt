@@ -1,0 +1,943 @@
+
+Arg values: F:\UoL\Sem A\Advanced Programming\APImageProcessorClient\x64\Debug\APImageProcessorClient.exe | 127.0.0.1:8080 | G:/Wallpapers/Catalyst.jpg
+Arg values contd: Resize | 800 | 600
+Image read successfully.
+Raw filter params obtained.
+Inside ResizeFilterParamsValidator::ValidateFilterParams(). Filter params size: 2
+Inside ResizeFilterParamsValidator::ValidateFilterParams(). Validation successful.
+Validation successful.
+Starting to split string.
+String after splitting: 127.0.0.1|8080|
+Returning output vector. 
+Inside ImageRequest constructor. Server IP: 127.0.0.1 | server port: 8080 | Image path: G:/Wallpapers/Catalyst.jpg | Filter type: 1 | Filter params: 800 600 
+Exiting constructor. Image empty: 0 | Image size: 6220800 | filter params: 800 600 
+ImageRequest destroyed.
+Before looping over image requests.
+Thread initialized to send image to server.
+Client socket created successfully.
+Socket IP: 3435973836 | Socket port: 52428
+Before accessing image request params.
+Image metadata payload before sending: SIZE 1920 1080 1 800.000000 600.000000  | Size: 40
+Image metadata successfully sent to server.
+Starting to split the server response.
+String after splitting: RES|10|
+Returning output vector. 
+Validating server response.
+Server response validation successful.[ INFO:0@0.273] global registry.impl.hpp:114 cv::highgui_backend::UIBackendRegistry::UIBackendRegistry UI: Enabled backends(4, sorted by priority): GTK(1000); GTK3(990); GTK2(980); WIN32(970) + BUILTIN(WIN32UI)
+[ INFO:0@0.273] global plugin_loader.impl.hpp:67 cv::plugin::impl::DynamicLib::libraryLoad load F:\OpenCV\opencv\build\x64\vc16\bin\opencv_highgui_gtk480_64.dll => FAILED
+[ INFO:0@0.274] global plugin_loader.impl.hpp:67 cv::plugin::impl::DynamicLib::libraryLoad load opencv_highgui_gtk480_64.dll => FAILED
+[ INFO:0@0.274] global plugin_loader.impl.hpp:67 cv::plugin::impl::DynamicLib::libraryLoad load F:\OpenCV\opencv\build\x64\vc16\bin\opencv_highgui_gtk3480_64.dll => FAILED
+[ INFO:0@0.275] global plugin_loader.impl.hpp:67 cv::plugin::impl::DynamicLib::libraryLoad load opencv_highgui_gtk3480_64.dll => FAILED
+[ INFO:0@0.275] global plugin_loader.impl.hpp:67 cv::plugin::impl::DynamicLib::libraryLoad load F:\OpenCV\opencv\build\x64\vc16\bin\opencv_highgui_gtk2480_64.dll => FAILED
+[ INFO:0@0.275] global plugin_loader.impl.hpp:67 cv::plugin::impl::DynamicLib::libraryLoad load opencv_highgui_gtk2480_64.dll => FAILED
+[ INFO:0@0.276] global backend.cpp:90 cv::highgui_backend::createUIBackend UI: using backend: WIN32 (priority=970)
+[ INFO:0@0.276] global window_w32.cpp:2993 cv::impl::Win32BackendUI::createWindow OpenCV/UI: Creating Win32UI window: Client Image Before Sending (0)
+
+Bytes processd: 60000
+Bytes processd: 120000
+Bytes processd: 180000
+Bytes processd: 240000
+Bytes processd: 300000
+Bytes processd: 360000
+Bytes processd: 420000
+Bytes processd: 480000
+Bytes processd: 540000
+Bytes processd: 600000
+Bytes processd: 660000
+Bytes processd: 720000
+Bytes processd: 780000
+Bytes processd: 840000
+Bytes processd: 900000
+Bytes processd: 960000
+Bytes processd: 1020000
+Bytes processd: 1080000
+Bytes processd: 1140000
+Bytes processd: 1200000
+Bytes processd: 1260000
+Bytes processd: 1320000
+Bytes processd: 1380000
+Bytes processd: 1440000
+Bytes processd: 1500000
+Bytes processd: 1560000
+Bytes processd: 1620000
+Bytes processd: 1680000
+Bytes processd: 1740000
+Bytes processd: 1800000
+Bytes processd: 1860000
+Bytes processd: 1920000
+Bytes processd: 1980000
+Bytes processd: 2040000
+Bytes processd: 2100000
+Bytes processd: 2160000
+Bytes processd: 2220000
+Bytes processd: 2280000
+Bytes processd: 2340000
+Bytes processd: 2400000
+Bytes processd: 2460000
+Bytes processd: 2520000
+Bytes processd: 2580000
+Bytes processd: 2640000
+Bytes processd: 2700000
+Bytes processd: 2760000
+Bytes processd: 2820000
+Bytes processd: 2880000
+Bytes processd: 2940000
+Bytes processd: 3000000
+Bytes processd: 3060000
+Bytes processd: 3120000
+Bytes processd: 3180000
+Bytes processd: 3240000
+Bytes processd: 3300000
+Bytes processd: 3360000
+Bytes processd: 3420000
+Bytes processd: 3480000
+Bytes processd: 3540000
+Bytes processd: 3600000
+Bytes processd: 3660000
+Bytes processd: 3720000
+Bytes processd: 3780000
+Bytes processd: 3840000
+Bytes processd: 3900000
+Bytes processd: 3960000
+Bytes processd: 4020000
+Bytes processd: 4080000
+Bytes processd: 4140000
+Bytes processd: 4200000
+Bytes processd: 4260000
+Bytes processd: 4320000
+Bytes processd: 4380000
+Bytes processd: 4440000
+Bytes processd: 4500000
+Bytes processd: 4560000
+Bytes processd: 4620000
+Bytes processd: 4680000
+Bytes processd: 4740000
+Bytes processd: 4800000
+Bytes processd: 4860000
+Bytes processd: 4920000
+Bytes processd: 4980000
+Bytes processd: 5040000
+Bytes processd: 5100000
+Bytes processd: 5160000
+Bytes processd: 5220000
+Bytes processd: 5280000
+Bytes processd: 5340000
+Bytes processd: 5400000
+Bytes processd: 5460000
+Bytes processd: 5520000
+Bytes processd: 5580000
+Bytes processd: 5640000
+Bytes processd: 5700000
+Bytes processd: 5760000
+Bytes processd: 5820000
+Bytes processd: 5880000
+Bytes processd: 5940000
+Bytes processd: 6000000
+Bytes processd: 6060000
+Bytes processd: 6120000
+Bytes processd: 6180000
+Bytes processd: 6220800
+Sent payload #1
+Sent payload #2
+Sent payload #3
+Sent payload #4
+Sent payload #5
+Sent payload #6
+Sent payload #7
+Sent payload #8
+Sent payload #9
+Sent payload #10
+Sent payload #11
+Sent payload #12
+Sent payload #13
+Sent payload #14
+Sent payload #15
+Sent payload #16
+Sent payload #17
+Sent payload #18
+Sent payload #19
+Sent payload #20
+Sent payload #21
+Sent payload #22
+Sent payload #23
+Sent payload #24
+Sent payload #25
+Sent payload #26
+Sent payload #27
+Sent payload #28
+Sent payload #29
+Sent payload #30
+Sent payload #31
+Sent payload #32
+Sent payload #33
+Sent payload #34
+Sent payload #35
+Sent payload #36
+Sent payload #37
+Sent payload #38
+Sent payload #39
+Sent payload #40
+Sent payload #41
+Sent payload #42
+Sent payload #43
+Sent payload #44
+Sent payload #45
+Sent payload #46
+Sent payload #47
+Sent payload #48
+Sent payload #49
+Sent payload #50
+Sent payload #51
+Sent payload #52
+Sent payload #53
+Sent payload #54
+Sent payload #55
+Sent payload #56
+Sent payload #57
+Sent payload #58
+Sent payload #59
+Sent payload #60
+Sent payload #61
+Sent payload #62
+Sent payload #63
+Sent payload #64
+Sent payload #65
+Sent payload #66
+Sent payload #67
+Sent payload #68
+Sent payload #69
+Sent payload #70
+Sent payload #71
+Sent payload #72
+Sent payload #73
+Sent payload #74
+Sent payload #75
+Sent payload #76
+Sent payload #77
+Sent payload #78
+Sent payload #79
+Sent payload #80
+Sent payload #81
+Sent payload #82
+Sent payload #83
+Sent payload #84
+Sent payload #85
+Sent payload #86
+Sent payload #87
+Sent payload #88
+Sent payload #89
+Sent payload #90
+Sent payload #91
+Sent payload #92
+Sent payload #93
+Sent payload #94
+Sent payload #95
+Sent payload #96
+Sent payload #97
+Sent payload #98
+Sent payload #99
+Sent payload #100
+Sent payload #101
+Sent payload #102
+Sent payload #103
+Sent payload #104
+Image payloads sent to server.
+Starting to split the server response.
+String after splitting: RES|11|4|5|6|7|8|9|11|12|13|14|15|17|18|19|21|22|23|24|26|27|28|30|31|32|34|35|36|37|38|40|41|43|44|45|47|49|50|51|53|54|56|57|59|60|62|63|64|66|67|68|70|71|73|74|75|76|78|79|80|82|83|85|86|88|89|90|92|93|95|96|97|98|99|100|101|102|103|104|
+Returning output vector. 
+Validating server response.
+Server response validation successful.
+Sent payload #4
+Sent payload #5
+Sent payload #6
+Sent payload #7
+Sent payload #8
+Sent payload #9
+Sent payload #11
+Sent payload #12
+Sent payload #13
+Sent payload #14
+Sent payload #15
+Sent payload #17
+Sent payload #18
+Sent payload #19
+Sent payload #21
+Sent payload #22
+Sent payload #23
+Sent payload #24
+Sent payload #26
+Sent payload #27
+Sent payload #28
+Sent payload #30
+Sent payload #31
+Sent payload #32
+Sent payload #34
+Sent payload #35
+Sent payload #36
+Sent payload #37
+Sent payload #38
+Sent payload #40
+Sent payload #41
+Sent payload #43
+Sent payload #44
+Sent payload #45
+Sent payload #47
+Sent payload #49
+Sent payload #50
+Sent payload #51
+Sent payload #53
+Sent payload #54
+Sent payload #56
+Sent payload #57
+Sent payload #59
+Sent payload #60
+Sent payload #62
+Sent payload #63
+Sent payload #64
+Sent payload #66
+Sent payload #67
+Sent payload #68
+Sent payload #70
+Sent payload #71
+Sent payload #73
+Sent payload #74
+Sent payload #75
+Sent payload #76
+Sent payload #78
+Sent payload #79
+Sent payload #80
+Sent payload #82
+Sent payload #83
+Sent payload #85
+Sent payload #86
+Sent payload #88
+Sent payload #89
+Sent payload #90
+Sent payload #92
+Sent payload #93
+Sent payload #95
+Sent payload #96
+Sent payload #97
+Sent payload #98
+Sent payload #99
+Sent payload #100
+Sent payload #101
+Sent payload #102
+Sent payload #103
+Sent payload #104
+Image payloads sent to server.
+Starting to split the server response.
+String after splitting: RES|11|7|8|9|11|13|14|15|17|19|21|22|23|26|27|28|30|31|32|34|35|37|38|40|41|44|45|47|50|51|53|54|57|59|60|62|64|66|67|71|74|75|76|78|80|82|83|86|88|89|90|93|95|96|98|100|102|103|
+Returning output vector. 
+Validating server response.
+Server response validation successful.
+Sent payload #7
+Sent payload #8
+Sent payload #9
+Sent payload #11
+Sent payload #13
+Sent payload #14
+Sent payload #15
+Sent payload #17
+Sent payload #19
+Sent payload #21
+Sent payload #22
+Sent payload #23
+Sent payload #26
+Sent payload #27
+Sent payload #28
+Sent payload #30
+Sent payload #31
+Sent payload #32
+Sent payload #34
+Sent payload #35
+Sent payload #37
+Sent payload #38
+Sent payload #40
+Sent payload #41
+Sent payload #44
+Sent payload #45
+Sent payload #47
+Sent payload #50
+Sent payload #51
+Sent payload #53
+Sent payload #54
+Sent payload #57
+Sent payload #59
+Sent payload #60
+Sent payload #62
+Sent payload #64
+Sent payload #66
+Sent payload #67
+Sent payload #71
+Sent payload #74
+Sent payload #75
+Sent payload #76
+Sent payload #78
+Sent payload #80
+Sent payload #82
+Sent payload #83
+Sent payload #86
+Sent payload #88
+Sent payload #89
+Sent payload #90
+Sent payload #93
+Sent payload #95
+Sent payload #96
+Sent payload #98
+Sent payload #100
+Sent payload #102
+Sent payload #103
+Image payloads sent to server.
+Starting to split the server response.
+String after splitting: RES|11|11|13|14|15|17|19|21|23|26|28|30|31|32|35|37|38|40|41|45|47|50|53|54|57|59|62|64|67|71|75|76|80|82|86|88|90|93|96|98|102|103|
+Returning output vector. 
+Validating server response.
+Server response validation successful.
+Sent payload #11
+Sent payload #13
+Sent payload #14
+Sent payload #15
+Sent payload #17
+Sent payload #19
+Sent payload #21
+Sent payload #23
+Sent payload #26
+Sent payload #28
+Sent payload #30
+Sent payload #31
+Sent payload #32
+Sent payload #35
+Sent payload #37
+Sent payload #38
+Sent payload #40
+Sent payload #41
+Sent payload #45
+Sent payload #47
+Sent payload #50
+Sent payload #53
+Sent payload #54
+Sent payload #57
+Sent payload #59
+Sent payload #62
+Sent payload #64
+Sent payload #67
+Sent payload #71
+Sent payload #75
+Sent payload #76
+Sent payload #80
+Sent payload #82
+Sent payload #86
+Sent payload #88
+Sent payload #90
+Sent payload #93
+Sent payload #96
+Sent payload #98
+Sent payload #102
+Sent payload #103
+Image payloads sent to server.
+Starting to split the server response.
+String after splitting: RES|11|15|17|19|21|23|26|28|30|31|32|35|38|40|41|45|50|53|54|57|62|64|67|75|76|80|82|88|90|93|96|102|103|
+Returning output vector. 
+Validating server response.
+Server response validation successful.
+Sent payload #15
+Sent payload #17
+Sent payload #19
+Sent payload #21
+Sent payload #23
+Sent payload #26
+Sent payload #28
+Sent payload #30
+Sent payload #31
+Sent payload #32
+Sent payload #35
+Sent payload #38
+Sent payload #40
+Sent payload #41
+Sent payload #45
+Sent payload #50
+Sent payload #53
+Sent payload #54
+Sent payload #57
+Sent payload #62
+Sent payload #64
+Sent payload #67
+Sent payload #75
+Sent payload #76
+Sent payload #80
+Sent payload #82
+Sent payload #88
+Sent payload #90
+Sent payload #93
+Sent payload #96
+Sent payload #102
+Sent payload #103
+Image payloads sent to server.
+Starting to split the server response.
+String after splitting: RES|11|23|26|28|31|32|38|40|45|50|54|62|64|75|76|82|88|93|96|103|
+Returning output vector. 
+Validating server response.
+Server response validation successful.
+Sent payload #23
+Sent payload #26
+Sent payload #28
+Sent payload #31
+Sent payload #32
+Sent payload #38
+Sent payload #40
+Sent payload #45
+Sent payload #50
+Sent payload #54
+Sent payload #62
+Sent payload #64
+Sent payload #75
+Sent payload #76
+Sent payload #82
+Sent payload #88
+Sent payload #93
+Sent payload #96
+Sent payload #103
+Image payloads sent to server.
+Starting to split the server response.
+String after splitting: RES|11|31|32|38|40|45|50|54|62|64|76|82|88|93|103|
+Returning output vector. 
+Validating server response.
+Server response validation successful.
+Sent payload #31
+Sent payload #32
+Sent payload #38
+Sent payload #40
+Sent payload #45
+Sent payload #50
+Sent payload #54
+Sent payload #62
+Sent payload #64
+Sent payload #76
+Sent payload #82
+Sent payload #88
+Sent payload #93
+Sent payload #103
+Image payloads sent to server.
+Starting to split the server response.
+String after splitting: RES|11|40|45|50|62|64|76|88|93|
+Returning output vector. 
+Validating server response.
+Server response validation successful.
+Sent payload #40
+Sent payload #45
+Sent payload #50
+Sent payload #62
+Sent payload #64
+Sent payload #76
+Sent payload #88
+Sent payload #93
+Image payloads sent to server.
+Starting to split the server response.
+String after splitting: RES|11|62|64|88|93|
+Returning output vector. 
+Validating server response.
+Server response validation successful.
+Sent payload #62
+Sent payload #64
+Sent payload #88
+Sent payload #93
+Image payloads sent to server.
+Starting to split the server response.
+String after splitting: RES|10|
+Returning output vector. 
+Validating server response.
+Server response validation successful.
+All image payloads received by server.
+Starting to split the server response.
+String after splitting: SIZE|1920|1080|
+Returning output vector. 
+Entered sendClientResponse.
+Client response string: RES 20  | string length: 7
+Split image payload size: 5
+Image data after splitting: SEQ | 1 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 60000 | image bytes left to receive: 6160800
+Split image payload size: 5
+Image data after splitting: SEQ | 2 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 120000 | image bytes left to receive: 6100800
+Split image payload size: 5
+Image data after splitting: SEQ | 3 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 180000 | image bytes left to receive: 6040800
+Entered sendClientResponse.
+Client response string: RES 21 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 309
+Split image payload size: 5
+Image data after splitting: SEQ | 4 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 240000 | image bytes left to receive: 5980800
+Split image payload size: 5
+Image data after splitting: SEQ | 5 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 300000 | image bytes left to receive: 5920800
+Split image payload size: 5
+Image data after splitting: SEQ | 6 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 360000 | image bytes left to receive: 5860800
+Entered sendClientResponse.
+Client response string: RES 21 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 303
+Split image payload size: 5
+Image data after splitting: SEQ | 7 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 420000 | image bytes left to receive: 5800800
+Split image payload size: 5
+Image data after splitting: SEQ | 8 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 480000 | image bytes left to receive: 5740800
+Split image payload size: 5
+Image data after splitting: SEQ | 9 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 540000 | image bytes left to receive: 5680800
+Entered sendClientResponse.
+Client response string: RES 21 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 297
+Split image payload size: 5
+Image data after splitting: SEQ | 10 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 600000 | image bytes left to receive: 5620800
+Split image payload size: 5
+Image data after splitting: SEQ | 11 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 660000 | image bytes left to receive: 5560800
+Split image payload size: 5
+Image data after splitting: SEQ | 12 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 720000 | image bytes left to receive: 5500800
+Entered sendClientResponse.
+Client response string: RES 21 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 288
+Split image payload size: 5
+Image data after splitting: SEQ | 13 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 780000 | image bytes left to receive: 5440800
+Split image payload size: 5
+Image data after splitting: SEQ | 14 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 840000 | image bytes left to receive: 5380800
+Split image payload size: 5
+Image data after splitting: SEQ | 15 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 900000 | image bytes left to receive: 5320800
+Entered sendClientResponse.
+Client response string: RES 21 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 279
+Split image payload size: 5
+Image data after splitting: SEQ | 16 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 960000 | image bytes left to receive: 5260800
+Split image payload size: 5
+Image data after splitting: SEQ | 17 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1020000 | image bytes left to receive: 5200800
+Split image payload size: 5
+Image data after splitting: SEQ | 18 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1080000 | image bytes left to receive: 5140800
+Entered sendClientResponse.
+Client response string: RES 21 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 270
+Split image payload size: 5
+Image data after splitting: SEQ | 19 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1140000 | image bytes left to receive: 5080800
+Split image payload size: 5
+Image data after splitting: SEQ | 20 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1200000 | image bytes left to receive: 5020800
+Split image payload size: 5
+Image data after splitting: SEQ | 21 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1260000 | image bytes left to receive: 4960800
+Entered sendClientResponse.
+Client response string: RES 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 261
+Split image payload size: 5
+Image data after splitting: SEQ | 22 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1320000 | image bytes left to receive: 4900800
+Split image payload size: 5
+Image data after splitting: SEQ | 23 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1380000 | image bytes left to receive: 4840800
+Split image payload size: 5
+Image data after splitting: SEQ | 24 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1440000 | image bytes left to receive: 4780800
+Entered sendClientResponse.
+Client response string: RES 21 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 252
+Split image payload size: 5
+Image data after splitting: SEQ | 25 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1500000 | image bytes left to receive: 4720800
+Split image payload size: 5
+Image data after splitting: SEQ | 26 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1560000 | image bytes left to receive: 4660800
+Split image payload size: 5
+Image data after splitting: SEQ | 27 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1620000 | image bytes left to receive: 4600800
+Entered sendClientResponse.
+Client response string: RES 21 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 243
+Split image payload size: 5
+Image data after splitting: SEQ | 28 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1680000 | image bytes left to receive: 4540800
+Split image payload size: 5
+Image data after splitting: SEQ | 29 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1740000 | image bytes left to receive: 4480800
+Split image payload size: 5
+Image data after splitting: SEQ | 30 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1800000 | image bytes left to receive: 4420800
+Entered sendClientResponse.
+Client response string: RES 21 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 234
+Split image payload size: 5
+Image data after splitting: SEQ | 31 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1860000 | image bytes left to receive: 4360800
+Split image payload size: 5
+Image data after splitting: SEQ | 32 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1920000 | image bytes left to receive: 4300800
+Split image payload size: 5
+Image data after splitting: SEQ | 33 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 1980000 | image bytes left to receive: 4240800
+Entered sendClientResponse.
+Client response string: RES 21 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 225
+Split image payload size: 5
+Image data after splitting: SEQ | 34 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2040000 | image bytes left to receive: 4180800
+Split image payload size: 5
+Image data after splitting: SEQ | 35 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2100000 | image bytes left to receive: 4120800
+Split image payload size: 5
+Image data after splitting: SEQ | 36 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2160000 | image bytes left to receive: 4060800
+Entered sendClientResponse.
+Client response string: RES 21 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 216
+Split image payload size: 5
+Image data after splitting: SEQ | 37 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2220000 | image bytes left to receive: 4000800
+Split image payload size: 5
+Image data after splitting: SEQ | 38 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2280000 | image bytes left to receive: 3940800
+Split image payload size: 5
+Image data after splitting: SEQ | 39 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2340000 | image bytes left to receive: 3880800
+Entered sendClientResponse.
+Client response string: RES 21 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 207
+Split image payload size: 5
+Image data after splitting: SEQ | 40 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2400000 | image bytes left to receive: 3820800
+Split image payload size: 5
+Image data after splitting: SEQ | 41 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2460000 | image bytes left to receive: 3760800
+Split image payload size: 5
+Image data after splitting: SEQ | 42 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2520000 | image bytes left to receive: 3700800
+Entered sendClientResponse.
+Client response string: RES 21 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 198
+Split image payload size: 5
+Image data after splitting: SEQ | 43 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2580000 | image bytes left to receive: 3640800
+Split image payload size: 5
+Image data after splitting: SEQ | 44 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2640000 | image bytes left to receive: 3580800
+Split image payload size: 5
+Image data after splitting: SEQ | 45 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2700000 | image bytes left to receive: 3520800
+Entered sendClientResponse.
+Client response string: RES 21 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 189
+Split image payload size: 5
+Image data after splitting: SEQ | 46 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2760000 | image bytes left to receive: 3460800
+Split image payload size: 5
+Image data after splitting: SEQ | 47 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2820000 | image bytes left to receive: 3400800
+Split image payload size: 5
+Image data after splitting: SEQ | 48 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2880000 | image bytes left to receive: 3340800
+Entered sendClientResponse.
+Client response string: RES 21 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 180
+Split image payload size: 5
+Image data after splitting: SEQ | 49 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 2940000 | image bytes left to receive: 3280800
+Split image payload size: 5
+Image data after splitting: SEQ | 50 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3000000 | image bytes left to receive: 3220800
+Split image payload size: 5
+Image data after splitting: SEQ | 51 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3060000 | image bytes left to receive: 3160800
+Entered sendClientResponse.
+Client response string: RES 21 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 171
+Split image payload size: 5
+Image data after splitting: SEQ | 52 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3120000 | image bytes left to receive: 3100800
+Split image payload size: 5
+Image data after splitting: SEQ | 53 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3180000 | image bytes left to receive: 3040800
+Split image payload size: 5
+Image data after splitting: SEQ | 54 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3240000 | image bytes left to receive: 2980800
+Entered sendClientResponse.
+Client response string: RES 21 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 162
+Split image payload size: 5
+Image data after splitting: SEQ | 55 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3300000 | image bytes left to receive: 2920800
+Split image payload size: 5
+Image data after splitting: SEQ | 56 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3360000 | image bytes left to receive: 2860800
+Split image payload size: 5
+Image data after splitting: SEQ | 57 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3420000 | image bytes left to receive: 2800800
+Entered sendClientResponse.
+Client response string: RES 21 58 59 60 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 153
+Split image payload size: 5
+Image data after splitting: SEQ | 58 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3480000 | image bytes left to receive: 2740800
+Split image payload size: 5
+Image data after splitting: SEQ | 59 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3540000 | image bytes left to receive: 2680800
+Split image payload size: 5
+Image data after splitting: SEQ | 60 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3600000 | image bytes left to receive: 2620800
+Entered sendClientResponse.
+Client response string: RES 21 61 62 63 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 144
+Split image payload size: 5
+Image data after splitting: SEQ | 61 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3660000 | image bytes left to receive: 2560800
+Split image payload size: 5
+Image data after splitting: SEQ | 62 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3720000 | image bytes left to receive: 2500800
+Split image payload size: 5
+Image data after splitting: SEQ | 63 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3780000 | image bytes left to receive: 2440800
+Entered sendClientResponse.
+Client response string: RES 21 64 65 66 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 135
+Split image payload size: 5
+Image data after splitting: SEQ | 64 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3840000 | image bytes left to receive: 2380800
+Split image payload size: 5
+Image data after splitting: SEQ | 65 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3900000 | image bytes left to receive: 2320800
+Split image payload size: 5
+Image data after splitting: SEQ | 66 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 3960000 | image bytes left to receive: 2260800
+Entered sendClientResponse.
+Client response string: RES 21 67 68 69 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 126
+Split image payload size: 5
+Image data after splitting: SEQ | 67 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4020000 | image bytes left to receive: 2200800
+Split image payload size: 5
+Image data after splitting: SEQ | 68 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4080000 | image bytes left to receive: 2140800
+Split image payload size: 5
+Image data after splitting: SEQ | 69 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4140000 | image bytes left to receive: 2080800
+Entered sendClientResponse.
+Client response string: RES 21 70 71 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 117
+Split image payload size: 5
+Image data after splitting: SEQ | 70 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4200000 | image bytes left to receive: 2020800
+Split image payload size: 5
+Image data after splitting: SEQ | 71 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4260000 | image bytes left to receive: 1960800
+Split image payload size: 5
+Image data after splitting: SEQ | 72 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4320000 | image bytes left to receive: 1900800
+Entered sendClientResponse.
+Client response string: RES 21 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 108
+Split image payload size: 5
+Image data after splitting: SEQ | 73 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4380000 | image bytes left to receive: 1840800
+Split image payload size: 5
+Image data after splitting: SEQ | 74 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4440000 | image bytes left to receive: 1780800
+Split image payload size: 5
+Image data after splitting: SEQ | 75 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4500000 | image bytes left to receive: 1720800
+Entered sendClientResponse.
+Client response string: RES 21 76 77 78 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 99
+Split image payload size: 5
+Image data after splitting: SEQ | 76 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4560000 | image bytes left to receive: 1660800
+Split image payload size: 5
+Image data after splitting: SEQ | 77 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4620000 | image bytes left to receive: 1600800
+Split image payload size: 5
+Image data after splitting: SEQ | 78 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4680000 | image bytes left to receive: 1540800
+Entered sendClientResponse.
+Client response string: RES 21 79 80 81 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 90
+Split image payload size: 5
+Image data after splitting: SEQ | 79 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4740000 | image bytes left to receive: 1480800
+Split image payload size: 5
+Image data after splitting: SEQ | 80 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4800000 | image bytes left to receive: 1420800
+Split image payload size: 5
+Image data after splitting: SEQ | 81 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4860000 | image bytes left to receive: 1360800
+Entered sendClientResponse.
+Client response string: RES 21 82 83 84 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 81
+Split image payload size: 5
+Image data after splitting: SEQ | 82 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4920000 | image bytes left to receive: 1300800
+Split image payload size: 5
+Image data after splitting: SEQ | 83 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 4980000 | image bytes left to receive: 1240800
+Split image payload size: 5
+Image data after splitting: SEQ | 84 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5040000 | image bytes left to receive: 1180800
+Entered sendClientResponse.
+Client response string: RES 21 85 86 87 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 72
+Split image payload size: 5
+Image data after splitting: SEQ | 85 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5100000 | image bytes left to receive: 1120800
+Split image payload size: 5
+Image data after splitting: SEQ | 86 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5160000 | image bytes left to receive: 1060800
+Split image payload size: 5
+Image data after splitting: SEQ | 87 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5220000 | image bytes left to receive: 1000800
+Entered sendClientResponse.
+Client response string: RES 21 88 89 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 63
+Split image payload size: 5
+Image data after splitting: SEQ | 88 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5280000 | image bytes left to receive: 940800
+Split image payload size: 5
+Image data after splitting: SEQ | 89 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5340000 | image bytes left to receive: 880800
+Split image payload size: 5
+Image data after splitting: SEQ | 90 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5400000 | image bytes left to receive: 820800
+Entered sendClientResponse.
+Client response string: RES 21 91 92 93 94 95 96 97 98 99 100 101 102 103 104  | string length: 54
+Split image payload size: 5
+Image data after splitting: SEQ | 91 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5460000 | image bytes left to receive: 760800
+Split image payload size: 5
+Image data after splitting: SEQ | 92 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5520000 | image bytes left to receive: 700800
+Split image payload size: 5
+Image data after splitting: SEQ | 93 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5580000 | image bytes left to receive: 640800
+Entered sendClientResponse.
+Client response string: RES 21 94 95 96 97 98 99 100 101 102 103 104  | string length: 45
+Split image payload size: 5
+Image data after splitting: SEQ | 94 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5640000 | image bytes left to receive: 580800
+Split image payload size: 5
+Image data after splitting: SEQ | 95 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5700000 | image bytes left to receive: 520800
+Split image payload size: 5
+Image data after splitting: SEQ | 96 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5760000 | image bytes left to receive: 460800
+Entered sendClientResponse.
+Client response string: RES 21 97 98 99 100 101 102 103 104  | string length: 36
+Split image payload size: 5
+Image data after splitting: SEQ | 97 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5820000 | image bytes left to receive: 400800
+Split image payload size: 5
+Image data after splitting: SEQ | 98 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5880000 | image bytes left to receive: 340800
+Split image payload size: 5
+Image data after splitting: SEQ | 99 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 5940000 | image bytes left to receive: 280800
+Entered sendClientResponse.
+Client response string: RES 21 100 101 102 103 104  | string length: 27
+Split image payload size: 5
+Image data after splitting: SEQ | 100 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 6000000 | image bytes left to receive: 220800
+Split image payload size: 5
+Image data after splitting: SEQ | 101 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 6060000 | image bytes left to receive: 160800
+Split image payload size: 5
+Image data after splitting: SEQ | 102 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 6120000 | image bytes left to receive: 100800
+Entered sendClientResponse.
+Client response string: RES 21 103 104  | string length: 15
+Split image payload size: 5
+Image data after splitting: SEQ | 103 | SIZE | 60000 | Length of image data: 60000
+Image bytes recd: 6180000 | image bytes left to receive: 40800
+Split image payload size: 5
+Image data after splitting: SEQ | 104 | SIZE | 40800 | Length of image data: 40800
+Image bytes recd: 6220800 | image bytes left to receive: 0
+All image data received. Sending positive ACK to server.
+Entered sendClientResponse.
+Client response string: RES 20  | string length: 7
+Constructing image. Image data map size: 104
+Image re-shaped.
+Image written to file successfully.
+Image processor destructor.
