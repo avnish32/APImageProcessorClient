@@ -11,11 +11,11 @@ std::string ImageRequest::_ConvertFilterParamsToString()
 		return "";
 	}
 
-	std::string filterParamsString = IMAGE_METADATA_PAYLOAD_DELIMITER;
+	std::string filterParamsString = CLIENT_MSG_DELIMITER;
 	auto iter = _filterParams.begin();
 	
 	while (iter != _filterParams.end()) {
-		filterParamsString.append(to_string(*iter)).append(IMAGE_METADATA_PAYLOAD_DELIMITER);
+		filterParamsString.append(to_string(*iter)).append(CLIENT_MSG_DELIMITER);
 		iter++;
 	}
 	return filterParamsString;
@@ -60,9 +60,9 @@ ImageRequest::~ImageRequest()
 std::string ImageRequest::GetImageMetadataPayload()
 {
 	std::string payload = SIZE_PAYLOAD_KEY;
-	payload.append(IMAGE_METADATA_PAYLOAD_DELIMITER)
-		.append(to_string(_image.cols)).append(IMAGE_METADATA_PAYLOAD_DELIMITER)
-		.append(to_string(_image.rows)).append(IMAGE_METADATA_PAYLOAD_DELIMITER)
+	payload.append(CLIENT_MSG_DELIMITER)
+		.append(to_string(_image.cols)).append(CLIENT_MSG_DELIMITER)
+		.append(to_string(_image.rows)).append(CLIENT_MSG_DELIMITER)
 		.append(to_string(_filterTypeEnum)).append(_ConvertFilterParamsToString()).append("\0");
 
 	return payload;

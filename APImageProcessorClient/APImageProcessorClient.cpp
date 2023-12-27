@@ -407,4 +407,10 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 		cout << "\nSending image to server failed. Application will now exit.";
 		//return RESPONSE_FAILURE;
 	}
+
+	//Recv filtered image dimensions
+
+	//Send Ack
+
+	//Recv filtered image and send ack depending on payloads recd
 }

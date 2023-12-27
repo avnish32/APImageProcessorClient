@@ -8,9 +8,11 @@ using std::cout;
 using std::thread;
 using std::vector;
 using std::to_string;
+using std::stoi;
 using std::invalid_argument;
 using std::this_thread::sleep_for;
 using std::chrono::milliseconds;
+using std::chrono::high_resolution_clock;
 
 using cv::Size;
 using cv::Mat;
@@ -32,9 +34,7 @@ UDPClient::~UDPClient()
 	closesocket(_socket);
 }
 
-//---------------------- Utility functions
-
-const sockaddr_in makeServerAddress(const std::string& serverIp, const long& serverPort) {
+const sockaddr_in UDPClient::makeServerAddress(const std::string& serverIp, const long& serverPort) {
 	sockaddr_in serverAddress;
 	inet_pton(AF_INET, serverIp.c_str(), &(serverAddress.sin_addr));
 	serverAddress.sin_family = AF_INET;
@@ -43,7 +43,7 @@ const sockaddr_in makeServerAddress(const std::string& serverIp, const long& ser
 	return serverAddress;
 }
 
-const vector<std::string> splitString(char* inputString, char delimiter) {
+const vector<std::string> UDPClient::SplitString(char* inputString, char delimiter) {
 	std::string currentWord = "";
 	vector<std::string> outputVector;
 	char* charPtr = inputString;
@@ -77,7 +77,46 @@ const vector<std::string> splitString(char* inputString, char delimiter) {
 	return outputVector;
 }
 
-void buildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap, vector<u_short>& sequenceNumbers) 
+const vector<string> UDPClient::SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength) {
+	std::string currentWord = "";
+	int numberOfCurrentSplits = 1;
+	vector<string> outputVector;
+	//char* charPtr = inputString;
+	//cout << "\nString array at beginning: " << *stringArray;
+
+	for (int i = 0; i < inputStringLength; i++) {
+		char currentChar = *(inputString + i);
+		//cout << "\nCurrent word: " << currentWord<<" | current char = "<<currentChar;
+		if (currentChar == delimiter && numberOfCurrentSplits < numberOfSplits) {
+			outputVector.push_back(currentWord);
+			currentWord = "";
+			numberOfCurrentSplits++;
+		}
+		else {
+			currentWord += currentChar;
+		}
+		//++charPtr;
+	}
+
+	if (currentWord.length() > 0) {
+		outputVector.push_back(currentWord);
+	}
+
+	//cout << "\nString after splitting: ";
+	/*auto iter = outputVector.begin();
+	while (iter != outputVector.end()) {
+		cout << *iter << "|";
+		iter++;
+	}*/
+	//cout << "\nReturning output vector. ";
+	if (outputVector.size() < numberOfSplits) {
+		cout << "\nUnexpected split. Original string: " << inputString;
+	}
+	return outputVector;
+}
+
+void UDPClient::buildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap,
+	map<u_short, u_short>& sequenceNumToPayloadSizeMap, vector<u_short>& sequenceNumbers) 
 {
 	u_int imageBytesLeft = image.elemSize() * image.total();
 	u_int imageBytesProcessed = 0;
@@ -132,8 +171,6 @@ void buildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadM
 	}
 }
 
-//----------------Member functions
-
 bool UDPClient::isValid()
 {
 	return _socket != INVALID_SOCKET;
@@ -163,6 +200,38 @@ short UDPClient::SendImageMetadata(std::string imageMetadataPayload, std::string
 	}
 
 	cout << "\nImage metadata successfully sent to server.";
+	return RESPONSE_SUCCESS;
+}
+
+short UDPClient::sendClientResponse(const short& clientResponseCode, std::string serverIp, long serverPort, const vector<u_short>* missingSeqNumbers)
+{
+	cout << "\nEntered sendClientResponse.";
+	if (_socket == INVALID_SOCKET) {
+		cout << "\nERROR: Invalid socket.";
+		return RESPONSE_FAILURE;
+	}
+
+	string missingSeqNumbersString = "";
+	if (missingSeqNumbers != nullptr) {
+		for (const u_short& missingSeqNumber : *missingSeqNumbers) {
+			missingSeqNumbersString.append(to_string(missingSeqNumber)).append(" ");
+		}
+	}
+	string clientResponsePayload = string(RESPONSE_PAYLOAD_KEY).append(CLIENT_MSG_DELIMITER)
+		.append(to_string(clientResponseCode)).append(CLIENT_MSG_DELIMITER)
+		.append(missingSeqNumbersString).append("\0");
+	cout << "\nClient response string: " << clientResponsePayload << " | string length: " << clientResponsePayload.length();
+
+	const sockaddr_in serverAddress = makeServerAddress(serverIp, serverPort);
+
+	//'\0' not counted in string.length(), hence adding 1 to the payload size parameter below.
+	short bytesSent = sendto(_socket, &clientResponsePayload[0], clientResponsePayload.length() + 1, 0, 
+		(const sockaddr*)&serverAddress, sizeof(serverAddress));
+
+	if (bytesSent <= 0) {
+		cout << "\nError while sending acknowldgement to server. Error code: " << WSAGetLastError();
+		return RESPONSE_FAILURE;
+	}
 	return RESPONSE_SUCCESS;
 }
 
@@ -222,7 +291,7 @@ short UDPClient::sendImage(const Mat imageToSend, const std::string& serverIp, c
 	waitKey(0);
 	destroyWindow(windowName);*/
 
-	long imageSize = imageToSend.total() * imageToSend.elemSize();
+	//long imageSize = imageToSend.total() * imageToSend.elemSize();
 
 	map<u_short, string> imageDataPayloadMap;
 	map<u_short, u_short> sequenceNumToPayloadSizeMap;
@@ -241,7 +310,7 @@ short UDPClient::sendImage(const Mat imageToSend, const std::string& serverIp, c
 		}
 
 		vector<string> serverResponseSplit;
-		responseCode = receiveServerResponse(serverIp, serverPort, serverResponseSplit);
+		responseCode = receiveServerMsg(serverIp, serverPort, serverResponseSplit);
 		if (responseCode == RESPONSE_FAILURE) {
 			cout << "\nCould not receive response from server.";
 			return RESPONSE_FAILURE;
@@ -272,6 +341,134 @@ short UDPClient::sendImage(const Mat imageToSend, const std::string& serverIp, c
 	return RESPONSE_SUCCESS;
 }
 
+short UDPClient::ReceiveAndValidateImageMetadata(std::string serverIp, long serverPort, cv::Size& imageDimensions)
+{
+	vector <std::string> serverMsgSplit;
+	short responseCode = receiveServerMsg(serverIp, serverPort, serverMsgSplit);
+	if (responseCode == RESPONSE_FAILURE) {
+		cout << "\nERROR: Could not receive server message.";
+		return RESPONSE_FAILURE;
+	}
+
+	return _ValidateImageDimensionsFromServer(serverMsgSplit, imageDimensions);
+}
+
+short UDPClient::receiveImage(const cv::Size& imageDimensions, const std::string& serverIp, const long& serverPort)
+{
+	long imageBytesRecd = 0, imageBytesLeftToReceive = imageDimensions.width * imageDimensions.height * 3;
+
+	u_short expectedNumberOfPayloads = imageBytesLeftToReceive / 60000;
+	if (imageBytesLeftToReceive % 60000 > 0) {
+		expectedNumberOfPayloads++;
+	}
+	
+	string imageDataString = "";
+	char* imageDataFromServer = new char[MAX_SERVER_MSG_PAYLOAD_SIZE_BYTES];
+	map<u_short, string> imagePayloadSeqMap;
+
+	const sockaddr_in serverAddress = makeServerAddress(serverIp, serverPort);
+	int serverAddressSize = (sizeof(serverAddress));
+
+	auto lastImagePayloadRecdTime = high_resolution_clock::now();
+	while (imageBytesLeftToReceive > 0) {
+
+		int bytesRecdThisIteration = recvfrom(_socket, imageDataFromServer, MAX_SERVER_MSG_PAYLOAD_SIZE_BYTES, 0, 
+			(sockaddr*)&serverAddress, &serverAddressSize);
+		if (bytesRecdThisIteration == SOCKET_ERROR) {
+			int lastError = WSAGetLastError();
+
+			if (lastError != WSAEWOULDBLOCK) {
+				cout << "\nError while receving data from server. Error code: " << WSAGetLastError();
+				return RESPONSE_FAILURE;
+			}
+			
+			else {
+				//check for timeout
+			}
+		}
+		else {
+			//add to payload map
+			//serverMsg = string(serverResponse, bytesRecd);
+			break;
+		}
+
+		if (clientQueue.empty()) {
+			responseCode = CheckForTimeout(lastImagePayloadRecdTime, imagePayloadSeqMap, expectedNumberOfPayloads, clientAddress);
+			if (responseCode == RESPONSE_FAILURE) {
+				cout << "\nError when sending response to client on timeout.";
+				//TODO client cleanup
+				return;
+			}
+			continue;
+		}
+
+		/*long lastPayloadSize = 0;
+		try {
+			lastPayloadSize = stol(clientQueue.front());
+			clientQueue.pop();
+		}
+		catch (invalid_argument) {
+			cout << "\nERROR::Invalid payload size value found in queue.";
+		}
+
+		cout << "\nLast payload size for image data: " << lastPayloadSize;*/
+
+		if (clientQueue.empty()) {
+			cout << "\nClient queue is empty before fetching image data.";
+		}
+
+		if (clientQueue.front().length() < 17) {
+			cout << "\nUnexpected msg found in queue. Msg: " << clientQueue.front();
+			clientQueue.pop();
+		}
+		cout << "\nQueue msg size before splitting: " << clientQueue.front().length();
+		vector<string> splitImageDataPayload = SplitString(&(clientQueue.front()[0]), ' ', 5, clientQueue.front().length());
+		cout << "\nSplit image payload size: " << splitImageDataPayload.size();
+
+		//TODO shift hardcoded values to constants
+		if (splitImageDataPayload.size() != 5 || splitImageDataPayload.at(0) != SEQUENCE_PAYLOAD_KEY || splitImageDataPayload.at(2) != SIZE_PAYLOAD_KEY) {
+			cout << "\nERROR: Image data payload in incorrect format. First word: " << splitImageDataPayload.at(0);
+			return;
+		}
+
+		u_int payloadSeqNum = 0, payloadSize = 0;
+		try {
+			payloadSeqNum = stoi(splitImageDataPayload.at(1));
+			payloadSize = stoi(splitImageDataPayload.at(3));
+		}
+		catch (invalid_argument) {
+			cout << "\nERROR: Image data payload sequence num or size not an int. Seq num: " << splitImageDataPayload.at(1)
+				<< " | Size:" << splitImageDataPayload.at(3);
+			return;
+		}
+
+
+		imagePayloadSeqMap[payloadSeqNum] = splitImageDataPayload.at(4);
+		cout << "\nImage data after splitting: " << splitImageDataPayload.at(0) << " | " << splitImageDataPayload.at(1) << " | "
+			<< splitImageDataPayload.at(2) << " | " << splitImageDataPayload.at(3) << " | Length of image data: " << splitImageDataPayload.at(4).length();
+		//imageDataString += splitImageDataPayload.at(4);
+		clientQueue.pop();
+
+		cout << "\nAfter popping image data payload from queue. Queue size: " << clientQueue.size();
+
+		imageBytesRecd += payloadSize;
+		imageBytesLeftToReceive -= payloadSize;
+
+		cout << "\nImage bytes recd: " << imageBytesRecd << " | image bytes left to receive: " << imageBytesLeftToReceive;
+		lastImagePayloadRecdTime = chrono::high_resolution_clock::now();
+	}
+
+	//Check for data integrity - hash? - can match hash only after re-creating the image
+	//Removed data integrity check as above loop is exited only when all bytes are received.
+
+	cout << "\nAll image data received. Sending positive ACK to client.";
+	responseCode = sendServerResponse(SERVER_POSITIVE_ACK, clientAddress, nullptr);
+	if (responseCode == RESPONSE_FAILURE) {
+		cout << "\nCould not send ACK to client.";
+		return;
+	}
+}
+
 short UDPClient::validateServerResponse(std::vector<std::string>& serverResponseSplit, short& serverResponseCode)
 {
 	cout << "\nValidating server response.";
@@ -291,6 +488,23 @@ short UDPClient::validateServerResponse(std::vector<std::string>& serverResponse
 	}
 	
 	cout << "\nServer response validation successful.";
+	return RESPONSE_SUCCESS;
+}
+
+short UDPClient::_ValidateImageDimensionsFromServer(std::vector<cv::String>& serverMsgSplit, cv::Size& imageDimensions)
+{
+	if (serverMsgSplit.at(0) != SIZE_PAYLOAD_KEY || serverMsgSplit.size() < 3) {
+		cout << "\nServer sent image meta data in wrong format.";
+		return RESPONSE_FAILURE;
+	}
+	try {
+		imageDimensions = cv::Size(stoi(serverMsgSplit.at(1)), stoi(serverMsgSplit.at(2)));
+	}
+	catch (invalid_argument iaExp) {
+		cout << "\nInvalid image size values received.";
+		return RESPONSE_FAILURE;
+	}
+
 	return RESPONSE_SUCCESS;
 }
 
@@ -314,16 +528,18 @@ short UDPClient::sendImageDataPayloadsBySequenceNumbers(map<u_short, string>& im
 
 
 
-short UDPClient::receiveServerResponse(std::string serverIp, long serverPort, vector<string>& splitServerResponse)
+short UDPClient::receiveServerMsg(std::string serverIp, long serverPort, string& serverMsg)
 {
+	//TODO make this a member variable
 	const sockaddr_in serverAddress = makeServerAddress(serverIp, serverPort);
 	int serverAddressSize = sizeof(serverAddress);
-	char* serverResponse = new char[MAX_SERVER_RESPONSE_PAYLOAD_SIZE_BYTES];
+
+	char* serverResponse = new char[MAX_SERVER_MSG_PAYLOAD_SIZE_BYTES];
 	int bytesRecd = 0;
 
 	while (true) {
 
-		bytesRecd = recvfrom(_socket, serverResponse, MAX_SERVER_RESPONSE_PAYLOAD_SIZE_BYTES, 0, (sockaddr*)&serverAddress, &serverAddressSize);
+		bytesRecd = recvfrom(_socket, serverResponse, MAX_SERVER_MSG_PAYLOAD_SIZE_BYTES, 0, (sockaddr*)&serverAddress, &serverAddressSize);
 		if (bytesRecd == SOCKET_ERROR) {
 			int lastError = WSAGetLastError();
 
@@ -331,12 +547,10 @@ short UDPClient::receiveServerResponse(std::string serverIp, long serverPort, ve
 				cout << "\nError while receving data from server. Error code: " << WSAGetLastError();
 				return RESPONSE_FAILURE;
 			}
-			sleep_for(milliseconds(50));
+			//sleep_for(milliseconds(50));
 		}
 		else {
-			cout << "\nResponse from server: " << serverResponse;
-			//auto serverResponseBroken;
-			splitServerResponse = splitString(serverResponse, SERVER_RESPONSE_DELIMITER);
+			serverMsg = string(serverResponse, bytesRecd);
 			break;
 		}
 	}
@@ -346,14 +560,28 @@ short UDPClient::receiveServerResponse(std::string serverIp, long serverPort, ve
 
 short UDPClient::receiveAndValidateServerResponse(std::string serverIp, long serverPort, short& serverResponseCode)
 {
-	vector<string> serverResponse;
-	short responseCode = receiveServerResponse(serverIp, serverPort, serverResponse);
+	string serverResponse;
+	short responseCode = receiveServerMsg(serverIp, serverPort, serverResponse);
+	if (responseCode == RESPONSE_FAILURE) {
+		cout << "\nERROR: Could not receive server response.";
+		return RESPONSE_FAILURE;
+	}
+	
+	vector<string> serverResponseSplit = SplitString(&serverResponse[0], SERVER_RESPONSE_DELIMITER);
+	return validateServerResponse(serverResponseSplit, serverResponseCode);
+}
+
+short UDPClient::receiveAndValidateImageDimensions(std::string serverIp, long serverPort, cv::Size& imageDimensions)
+{
+	string serverMsg;
+	short responseCode = receiveServerMsg(serverIp, serverPort, serverMsg);
 	if (responseCode == RESPONSE_FAILURE) {
 		cout << "\nERROR: Could not receive server response.";
 		return RESPONSE_FAILURE;
 	}
 
-	return validateServerResponse(serverResponse, serverResponseCode);
+	vector<string> serverResponseSplit = SplitString(&serverMsg[0], SERVER_RESPONSE_DELIMITER);
+	return _ValidateImageDimensionsFromServer(serverResponseSplit, imageDimensions);
 }
 
 short UDPClient::fragmentAndSendImageData(cv::Mat& imageToSend, const long& imageSize, const sockaddr_in& serverAddress)
