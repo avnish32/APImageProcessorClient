@@ -139,6 +139,33 @@ bool UDPClient::isValid()
 	return _socket != INVALID_SOCKET;
 }
 
+short UDPClient::SendImageMetadata(std::string imageMetadataPayload, std::string serverIp, long serverPort)
+{
+	if (_socket == INVALID_SOCKET) {
+		cout << "\nERROR: Invalid client socket.";
+		return RESPONSE_FAILURE;
+	}
+
+	ushort payloadSize = imageMetadataPayload.length();
+	cout << "\nImage metadata payload before sending: " << imageMetadataPayload << " | Size: " << payloadSize;
+
+	const sockaddr_in serverAddress = makeServerAddress(serverIp, serverPort);
+
+	int bytesSent = 0;
+
+	while (bytesSent < payloadSize) {
+		int bytesSentThisIteration = sendto(_socket, &imageMetadataPayload[0] + bytesSent, imageMetadataPayload.length()+1-bytesSent, 0, (sockaddr*)&serverAddress, sizeof(serverAddress));
+		if (bytesSentThisIteration <= 0) {
+			cout << "\nError while sending image size. Error code: " << WSAGetLastError();
+			return RESPONSE_FAILURE;
+		}
+		bytesSent += bytesSentThisIteration;
+	}
+
+	cout << "\nImage metadata successfully sent to server.";
+	return RESPONSE_SUCCESS;
+}
+
 short UDPClient::sendImageSize(cv::String imageAddress, std::string serverIp, long serverPort)
 {
 	if (_socket == INVALID_SOCKET) {
@@ -179,16 +206,10 @@ short UDPClient::sendImageSize(cv::String imageAddress, std::string serverIp, lo
 	return RESPONSE_SUCCESS;
 }
 
-short UDPClient::sendImage(cv::String imageAddress, std::string serverIp, long serverPort)
+short UDPClient::sendImage(const Mat imageToSend, const std::string& serverIp, const long& serverPort)
 {
 	if (_socket == INVALID_SOCKET) {
 		cout << "\nERROR: Invalid client socket.";
-		return RESPONSE_FAILURE;
-	}
-
-	Mat imageToSend = imread(imageAddress, IMREAD_COLOR);
-	if (imageToSend.empty()) {
-		cout << "\nERROR: Cannot send empty image.";
 		return RESPONSE_FAILURE;
 	}
 	

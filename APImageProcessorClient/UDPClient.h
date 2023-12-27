@@ -9,6 +9,8 @@ using std::string;
 using std::map;
 using std::vector;
 
+using cv::Mat;
+
 #pragma once
 class UDPClient
 {
@@ -26,8 +28,9 @@ public:
 	~UDPClient();
 	
 	bool isValid();
+	short SendImageMetadata(std::string imageMetadataPayload, std::string serverIp, long serverPort);
 	short sendImageSize(cv::String imageAddress, std::string serverIp, long serverPort);
-	short sendImage(cv::String imageAddress, std::string serverIp, long serverPort); //TODO use abstract class here : Client -> UDPClient -> ImageSendingClient
+	short sendImage(const Mat imageToSend, const std::string& serverIp, const long& serverPort); //TODO use abstract class here : Client -> UDPClient -> ImageSendingClient
 	short receiveServerResponse(std::string serverIp, long serverPort, vector<string>& splitServerResponse);
 	short receiveAndValidateServerResponse(std::string serverIp, long serverPort, short& serverResponseCode);
 };

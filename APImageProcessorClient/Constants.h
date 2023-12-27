@@ -3,6 +3,8 @@
 
 using std::string;
 
+const unsigned short MIN_CMD_LINE_ARGS = 5;
+
 const int MAX_RETRY_COUNT = 3;
 const string SERVER_IP_ADDRESS = "127.0.0.1";
 const long SERVER_PORT = 8080;
@@ -17,4 +19,5 @@ const string SEQUENCE_PAYLOAD_KEY = "SEQ";
 const string RESPONSE_PAYLOAD_KEY = "RES";
 
 const short MAX_SERVER_RESPONSE_PAYLOAD_SIZE_BYTES = 5000;
+const string IMAGE_METADATA_PAYLOAD_DELIMITER = " ";
 const char SERVER_RESPONSE_DELIMITER = ' ';

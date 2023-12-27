@@ -136,10 +136,28 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="APImageProcessorClient.cpp" />
+    <ClCompile Include="BrightnessAdjFilterParamsValidator.cpp" />
+    <ClCompile Include="CropFilterParamsValidator.cpp" />
+    <ClCompile Include="FilterParamsValidator.cpp" />
+    <ClCompile Include="FlipFilterParamsValidator.cpp" />
+    <ClCompile Include="ImageFilterTypes.cpp" />
+    <ClCompile Include="ImageRequest.cpp" />
+    <ClCompile Include="InputProcessor.cpp" />
+    <ClCompile Include="ResizeFilterParamsValidator.cpp" />
+    <ClCompile Include="RotateFilterParamsValidator.cpp" />
     <ClCompile Include="UDPClient.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BrightnessAdjFilterParamsValidator.h" />
     <ClInclude Include="Constants.h" />
+    <ClInclude Include="CropFilterParamsValidator.h" />
+    <ClInclude Include="FilterParamsValidator.h" />
+    <ClInclude Include="FlipFilterParamsValidator.h" />
+    <ClInclude Include="ImageFilterTypes.h" />
+    <ClInclude Include="ImageRequest.h" />
+    <ClInclude Include="InputProcessor.h" />
+    <ClInclude Include="ResizeFilterParamsValidator.h" />
+    <ClInclude Include="RotateFilterParamsValidator.h" />
     <ClInclude Include="UDPClient.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

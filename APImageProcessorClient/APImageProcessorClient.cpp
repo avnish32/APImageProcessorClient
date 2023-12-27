@@ -8,6 +8,8 @@
 
 #include "UDPClient.h"
 #include "Constants.h"
+#include "InputProcessor.h"
+#include "ImageRequest.h"
 
 typedef unsigned short u_short;
 
@@ -25,7 +27,9 @@ using std::endl;
 using std::thread;
 using std::vector;
 
-void sendImageToServer(cv::String& imageWriteAddress);
+void SendImageRequestToServer(ImageRequest& imageRequest);
+
+void TestImageFunctionalities(cv::String  imageWriteAddress[8], bool& retFlag);
 
 //TODO remove filter methods after testing
 enum RotationMode { CLOCKWISE, ANTI_CLOCKWISE };
@@ -258,65 +262,34 @@ Mat AdjustBrigthness(Mat _sourceImage, float _brightnessAdjFactor)
 
 int main(int argc, char** argv)
 {
-	// Read the image file
-	Mat image = imread("G:/Wallpapers/wp2003072-firewatch-wallpapers.jpg", IMREAD_COLOR);
-	//Mat image(Size(1024, 768), CV_8UC3, Scalar(10, 80, 45));
+	//Cmd line args format: <server ip:port><space><absolute path of image><space><filter name><space><filter params...>
 
-	if (image.empty()) // Check for failure
-	{
-		cout << "Could not open or find the image" << endl;
-		system("pause"); //wait for any key press
-		return -1;
+	cout << "\nArg values: " << *(argv) << " | " << *(argv + 1) << " | " << *(argv + 2);
+	cout << "\nArg values contd: " << *(argv + 3) << " | " << *(argv + 4) << " | " << *(argv + 5);
+
+	InputProcessor inputProcessor(argc, argv);
+	if (!inputProcessor.ValidateInput()) {
+		cout << "\nInvalid input.";
+		return EXIT_FAILURE;
 	}
 
-	//String windowName = "My HelloWorld Window"; //Name of the window
-	String savedImgWindowName = "Saved Image";
+	cout << "\nValidation successful.";
 
-	//namedWindow(windowName, WINDOW_NORMAL); // Create a window
-	//imshow(windowName, image); // Show our image inside the created window.
+	vector<ImageRequest> imageRequests = inputProcessor.InitializeImageRequests();
 
 	String imageWriteAddress[] = { "./Resources/1.jpg", "./Resources/2.jpg", "./Resources/3.jpg", "./Resources/4.jpg",
 	"./Resources/5.jpg" , "./Resources/6.jpg" , "./Resources/7.jpg" , "./Resources/8.jpg" };
-	Mat resizedImage;
 
-	//resize(image, resizedImage, Size(1024, 768), INTER_LINEAR);
-	resizedImage = ResizeFilter(image, 800, 1080);
-
-	Mat rotatedImage = RotateFilter(image, 7, ANTI_CLOCKWISE);
-
-	int cropTopLeftX = 1700, cropTopLeftY=10, croppedWidth = 200, croppedHeight = 200;
-	Mat croppedImage = image;
-	if (CanCropImage(cropTopLeftX, cropTopLeftY, image)) {
-		 croppedImage = Crop(cropTopLeftX, cropTopLeftY, croppedWidth, croppedHeight, image);
-	}
-	else {
-		cout << "\nImage cannot be cropped with the given parameteres.";
-	}
-	
-	Mat flippedImage = FlipVertically(image);
-
-	Mat grayscaleImage = ConvertRGBToGrayscale(image);
-
-	Mat brigthnessAdjustedImg = AdjustBrigthness(image, 0.25f);
-
-	bool wasImageWritten = imwrite(imageWriteAddress[0], brigthnessAdjustedImg);
-	if (!wasImageWritten) {
-		cout << "\nError while writing the image.";
-	}
-	else {
-		//namedWindow(savedImgWindowName, WINDOW_NORMAL);
-		Mat savedImage = imread(imageWriteAddress[0]);
-		//imshow(savedImgWindowName, savedImage);
-	}
+	//TestImageFunctionalities(imageWriteAddress, retFlag);
 
 	//#######Sending to server
 
-	bool retFlag;
-
 	vector<thread> threadVector;
-	for (int i = 0; i < 0; i++) {
+
+	cout << "\nBefore looping over image requests.";
+	for (ImageRequest& imageRequest : imageRequests) {
 		//thread t(&sendImageToServer, ref(imageWriteAddress[i]));
-		threadVector.push_back(thread(&sendImageToServer, ref(imageWriteAddress[i])));
+		threadVector.push_back(thread(&SendImageRequestToServer, std::ref(imageRequest)));
 	}
 
 	for (thread &t : threadVector) {
@@ -344,7 +317,61 @@ int main(int argc, char** argv)
 	return 0;
 }
 
-void sendImageToServer(cv::String& imageWriteAddress)
+void TestImageFunctionalities(cv::String  imageWriteAddress[8], bool& retFlag)
+{
+	retFlag = true;
+	// Read the image file
+	Mat image = imread("G:/Wallpapers/wp2003072-firewatch-wallpapers.jpg", IMREAD_COLOR);
+	//Mat image(Size(1024, 768), CV_8UC3, Scalar(10, 80, 45));
+
+	if (image.empty()) // Check for failure
+	{
+		cout << "Could not open or find the image" << endl;
+		system("pause"); //wait for any key press
+		return;
+	}
+
+	//String windowName = "My HelloWorld Window"; //Name of the window
+	String savedImgWindowName = "Saved Image";
+
+	//namedWindow(windowName, WINDOW_NORMAL); // Create a window
+	//imshow(windowName, image); // Show our image inside the created window.
+
+
+	Mat resizedImage;
+
+	//resize(image, resizedImage, Size(1024, 768), INTER_LINEAR);
+	resizedImage = ResizeFilter(image, 800, 1080);
+
+	Mat rotatedImage = RotateFilter(image, 7, ANTI_CLOCKWISE);
+
+	int cropTopLeftX = 1700, cropTopLeftY = 10, croppedWidth = 200, croppedHeight = 200;
+	Mat croppedImage = image;
+	if (CanCropImage(cropTopLeftX, cropTopLeftY, image)) {
+		croppedImage = Crop(cropTopLeftX, cropTopLeftY, croppedWidth, croppedHeight, image);
+	}
+	else {
+		cout << "\nImage cannot be cropped with the given parameteres.";
+	}
+
+	Mat flippedImage = FlipVertically(image);
+
+	Mat grayscaleImage = ConvertRGBToGrayscale(image);
+
+	Mat brigthnessAdjustedImg = AdjustBrigthness(image, 0.25f);
+
+	bool wasImageWritten = imwrite(imageWriteAddress[0], brigthnessAdjustedImg);
+	if (!wasImageWritten) {
+		cout << "\nError while writing the image.";
+	}
+	else {
+		//namedWindow(savedImgWindowName, WINDOW_NORMAL);
+		Mat savedImage = imread(imageWriteAddress[0]);
+		//imshow(savedImgWindowName, savedImage);
+	}
+}
+
+void SendImageRequestToServer(ImageRequest& imageRequest)
 {
 	cout << "\nThread initialized to send image to server.";
 	UDPClient udpClient;
@@ -353,14 +380,16 @@ void sendImageToServer(cv::String& imageWriteAddress)
 		//return RESPONSE_FAILURE;
 	}
 
-	int responseCode = udpClient.sendImageSize(imageWriteAddress, SERVER_IP_ADDRESS, SERVER_PORT);
+	//int responseCode = udpClient.sendImageSize(SERVER_IP_ADDRESS, SERVER_PORT);
+	cout << "\nBefore accessing image request params.";
+	int responseCode = udpClient.SendImageMetadata(imageRequest.GetImageMetadataPayload(), imageRequest.GetServerIp(), imageRequest.GetServerPort());
 	if (responseCode == RESPONSE_FAILURE) {
 		cout << "\nSending image size to server failed. Application will now exit.";
 		//return RESPONSE_FAILURE;
 	}
 
 	short serverResponseCode;
-	responseCode = udpClient.receiveAndValidateServerResponse(SERVER_IP_ADDRESS, SERVER_PORT, serverResponseCode);
+	responseCode = udpClient.receiveAndValidateServerResponse(imageRequest.GetServerIp(), imageRequest.GetServerPort(), serverResponseCode);
 	if (responseCode == RESPONSE_FAILURE) {
 		cout << "\nReceving/validating response from server failed. Application will now exit.";
 		return;
@@ -373,7 +402,7 @@ void sendImageToServer(cv::String& imageWriteAddress)
 		//return RESPONSE_FAILURE;
 	}
 
-	responseCode = udpClient.sendImage(imageWriteAddress, SERVER_IP_ADDRESS, SERVER_PORT);
+	responseCode = udpClient.sendImage(imageRequest.GetImage(), imageRequest.GetServerIp(), imageRequest.GetServerPort());
 	if (responseCode == RESPONSE_FAILURE) {
 		cout << "\nSending image to server failed. Application will now exit.";
 		//return RESPONSE_FAILURE;
