@@ -11,7 +11,7 @@ class ImageRequest
 {
 private:
 	std::string _serverIp;
-	long _serverPort;
+	ushort _serverPort;
 	cv::String _imageAbsolutePath;
 	ImageFilterTypesEnum _filterTypeEnum;
 	vector<float> _filterParams;
@@ -20,12 +20,12 @@ private:
 	std::string _ConvertFilterParamsToString();
 	
 public:
-	ImageRequest(std::string serverIp, long serverPort, cv::String imageAbsolutePath, 
+	ImageRequest(std::string serverIp, ushort serverPort, cv::String imageAbsolutePath, 
 		ImageFilterTypesEnum filterTypeEnum, vector<float> filterParams);
 	~ImageRequest();
 	std::string GetImageMetadataPayload();
 	Mat GetImage();
 	const std::string& GetServerIp();
-	const long& GetServerPort();
+	const ushort& GetServerPort();
 };
 

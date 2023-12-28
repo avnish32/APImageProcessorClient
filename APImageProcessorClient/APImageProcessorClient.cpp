@@ -27,6 +27,7 @@ using std::cout;
 using std::endl;
 using std::thread;
 using std::vector;
+using std::bind;
 
 void SendImageRequestToServer(ImageRequest& imageRequest);
 
@@ -267,9 +268,9 @@ int main(int argc, char** argv)
 
 	//Below snippet to redirect cout buffer to external file was taken from https://gist.github.com/mandyedi/ae68a3191096222c62655d54935e7bb2
 	//Performs 9 times faster when output is written to file.
-	std::ofstream out("outLogs.txt");
-	std::streambuf* coutbuf = std::cout.rdbuf(); //save old buf
-	std::cout.rdbuf(out.rdbuf()); //redirect std::cout to out.txt!
+	//std::ofstream out("outLogs.txt");
+	//std::streambuf* coutbuf = std::cout.rdbuf(); //save old buf
+	//std::cout.rdbuf(out.rdbuf()); //redirect std::cout to out.txt!
 
 	cout << "\nArg values: " << *(argv) << " | " << *(argv + 1) << " | " << *(argv + 2);
 	cout << "\nArg values contd: " << *(argv + 3) << " | " << *(argv + 4) << " | " << *(argv + 5);
@@ -302,26 +303,8 @@ int main(int argc, char** argv)
 	for (thread &t : threadVector) {
 		t.join();
 	}
-	//short retVal = sendImageToServer(imageWriteAddress, retFlag);
-	
-	/*if (retVal == RESPONSE_FAILURE) {
-		cout << "\nError while sending image to server.";
-	}
-	else {
-		cout << "\nSuccessfully sent image to server.";
-	}*/
 
-	//cout << "\nResized Image data before reshaping: Rows: "<<resizedImage.rows<<" | Cols: "<<resizedImage.cols <<endl<< resizedImage;
-	//resizedImage = resizedImage.reshape(0, 1);
-	//cout << "\nResized Image data after reshaping: Rows: " << resizedImage.rows << " | Cols: " << resizedImage.cols << endl << resizedImage;
-	//cout << "\nAt (0,8): " << resizedImage.at<Vec3b>(0,8);
-
-	//waitKey(0); // Wait for any keystroke in the window
-
-	//destroyWindow(windowName);
-	//destroyWindow(savedImgWindowName);//destroy the created window
-
-	std::cout.rdbuf(coutbuf); //reset to standard output again
+	//std::cout.rdbuf(coutbuf); //reset to standard output again
 	return 0;
 }
 
@@ -381,22 +364,22 @@ void TestImageFunctionalities(cv::String  imageWriteAddress[8], bool& retFlag)
 
 void SendImageRequestToServer(ImageRequest& imageRequest)
 {
-	cout << "\nThread initialized to send image to server.";
-	UDPClient udpClient;
+	cout << "\nThread initialized to send image to server. Thread ID: "<<std::this_thread::get_id();
+	UDPClient udpClient(imageRequest.GetServerIp(), imageRequest.GetServerPort());
 	if (!udpClient.isValid()) {
 		cout << "\nSocket could not be created.";
 		return;
 	}
 
-	//TODO spawn a new thread here to push recd server msgs in queue.
-	//This current thread will be the listening thread.
-	//New thread will require queue, udpClient object
-	cout << "\nBefore accessing image request params.";
 	int responseCode = udpClient.SendImageMetadata(imageRequest.GetImageMetadataPayload());
 	if (responseCode == RESPONSE_FAILURE) {
 		cout << "\nSending image size to server failed.";
 		return;
 	}
+
+	//TODO spawn a new thread here to push recd server msgs in queue.
+	//This current thread will be the listening thread.
+	thread serverMsgReceivingThread(bind(&(UDPClient::StartListeningForServerMsgs), &udpClient));
 
 	short serverResponseCode;
 	responseCode = udpClient.receiveAndValidateServerResponse(serverResponseCode);
@@ -438,10 +421,12 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	}
 
 	//Recv filtered image and send ack depending on payloads recd
-	responseCode = udpClient.receiveImage(processedImageDimensions);
+	responseCode = udpClient.ConsumeImageDataFromQueue(processedImageDimensions);
 	if (responseCode == RESPONSE_FAILURE) {
 		cout << "\nError while receiving processed image from server.";
-		return;
 		//return RESPONSE_FAILURE;
 	}
+
+	udpClient.StopListeningForServerMsgs();
+	serverMsgReceivingThread.join();
 }

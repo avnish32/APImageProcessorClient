@@ -2,12 +2,15 @@
 #include<WS2tcpip.h>
 #include<string>
 #include<map>
+#include<queue>
+#include<mutex>
 
 #include<opencv2/opencv.hpp>
 
 using std::string;
 using std::map;
 using std::vector;
+using std::queue;
 
 using cv::Mat;
 
@@ -17,9 +20,12 @@ class UDPClient
 private:
 	SOCKET _socket = INVALID_SOCKET;
 	sockaddr_in _serverAddress;
+	queue<std::string> _receivedServerMsgsQueue;
+	bool _shouldKeepListening;
+	std::mutex _mtx;
 
 	void initializeSocket();
-	void _MakeServerAddress(const std::string& serverIp, const long& serverPort);
+	void _MakeServerAddress(const std::string& serverIp, const USHORT& serverPort);
 	const vector<std::string> SplitString(char* inputString, char delimiter);
 	const vector<string> SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
 	void buildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap,
@@ -32,10 +38,15 @@ private:
 		const vector<u_short>& payloadSeqNumbersToSend);
 	short validateServerResponse(std::vector<cv::String>& serverResponseSplit, short& serverResponseCode);
 	short _ValidateImageMetadataFromServer(std::vector<cv::String>& serverMsgSplit, cv::Size& imageDimensions);
+	short _ValidateImageDataPayload(const std::vector<cv::String>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
+	bool _ShouldListenThreadSafe();
+	bool _IsQueueEmptyThreadSafe();
+	short _ConsumeServerMsgFromQueue(std::string& serverResponse);
+	int _DrainQueue(std::string& msgInQueue);
 
 public:
 	UDPClient();
-	UDPClient(const string& serverIp, const long& serverPort);
+	UDPClient(const string& serverIp, const USHORT& serverPort);
 	~UDPClient();
 	
 	bool isValid();
@@ -44,8 +55,10 @@ public:
 	short sendImageSize(cv::String imageAddress);
 	short sendImage(const Mat imageToSend); //TODO use abstract class here : Client -> UDPClient -> ImageSendingClient
 	short ReceiveAndValidateImageMetadata(cv::Size& imageDimensions);
-	short receiveImage(const cv::Size& imageDimensions);
-	short receiveServerMsg(string& serverMsg);
+	short ConsumeImageDataFromQueue(const cv::Size& imageDimensions);
+	short ReceiveServerMsgs();
 	short receiveAndValidateServerResponse(short& serverResponseCode);
+	void StartListeningForServerMsgs();
+	void StopListeningForServerMsgs();
 };
 

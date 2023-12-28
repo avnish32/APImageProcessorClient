@@ -22,7 +22,7 @@ std::string ImageRequest::_ConvertFilterParamsToString()
 	return filterParamsString;
 }
 
-ImageRequest::ImageRequest(std::string serverIp, long serverPort, cv::String imageAbsolutePath,
+ImageRequest::ImageRequest(std::string serverIp, ushort serverPort, cv::String imageAbsolutePath,
 	ImageFilterTypesEnum filterTypeEnum, vector<float> filterParams)
 {
 	cout << "\nInside ImageRequest constructor. Server IP: " << serverIp
@@ -79,7 +79,7 @@ const std::string& ImageRequest::GetServerIp()
 	return _serverIp;
 }
 
-const long& ImageRequest::GetServerPort()
+const ushort& ImageRequest::GetServerPort()
 {
 	return _serverPort;
 }

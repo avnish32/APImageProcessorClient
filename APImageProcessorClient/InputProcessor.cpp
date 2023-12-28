@@ -151,7 +151,7 @@ vector<ImageRequest> InputProcessor::InitializeImageRequests()
 
 	char* serverDetails = *(_argValues + 1);
 	vector<string> serverIpAndPort = _SplitString(serverDetails, ':');
-	long serverPort = stol(serverIpAndPort.at(1));
+	ushort serverPort = stoi(serverIpAndPort.at(1));
 
 	int i = 2;
 	while (*(_argValues + i) != nullptr) {
