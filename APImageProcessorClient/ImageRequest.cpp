@@ -64,6 +64,7 @@ std::string ImageRequest::GetImageMetadataPayload()
 	payload.append(CLIENT_MSG_DELIMITER)
 		.append(to_string(_image.cols)).append(CLIENT_MSG_DELIMITER)
 		.append(to_string(_image.rows)).append(CLIENT_MSG_DELIMITER)
+		.append(to_string(_image.total() * _image.elemSize())).append(CLIENT_MSG_DELIMITER)
 		.append(to_string(_filterTypeEnum)).append(_ConvertFilterParamsToString()).append("\0");
 
 	return payload;

@@ -37,7 +37,7 @@ private:
 	short sendImageDataPayloadsBySequenceNumbers(map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap,
 		const vector<u_short>& payloadSeqNumbersToSend);
 	short validateServerResponse(std::vector<cv::String>& serverResponseSplit, short& serverResponseCode);
-	short _ValidateImageMetadataFromServer(std::vector<cv::String>& serverMsgSplit, cv::Size& imageDimensions);
+	short _ValidateImageMetadataFromServer(std::vector<cv::String>& serverMsgSplit, cv::Size& imageDimensions, uint& imageFileSize);
 	short _ValidateImageDataPayload(const std::vector<cv::String>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
 	bool _ShouldListenThreadSafe();
 	bool _IsQueueEmptyThreadSafe();
@@ -54,8 +54,8 @@ public:
 	short SendImageMetadata(std::string imageMetadataPayload);
 	short sendImageSize(cv::String imageAddress);
 	short sendImage(const Mat imageToSend); //TODO use abstract class here : Client -> UDPClient -> ImageSendingClient
-	short ReceiveAndValidateImageMetadata(cv::Size& imageDimensions);
-	short ConsumeImageDataFromQueue(const cv::Size& imageDimensions);
+	short ReceiveAndValidateImageMetadata(cv::Size& imageDimensions, uint& imageFileSize);
+	short ConsumeImageDataFromQueue(const cv::Size& imageDimensions, const uint& imageFileSize);
 	short ReceiveServerMsgs();
 	short receiveAndValidateServerResponse(short& serverResponseCode);
 	void StartListeningForServerMsgs();

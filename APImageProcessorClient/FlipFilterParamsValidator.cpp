@@ -19,7 +19,8 @@ bool FlipFilterParamsValidator::ValidateFilterParams()
 
 	short direction = stoi(_filterParams.at(0));
 
-	if (direction != 0 || direction != 1) {
+	//TODO use enum for this
+	if (direction != 0 && direction != 1) {
 		cout << "\nERROR: Invalid direction given for flipping.";
 		return false;
 	}

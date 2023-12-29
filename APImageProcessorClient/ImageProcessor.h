@@ -14,11 +14,15 @@ private:
 	Mat _image;
 
 	cv::String _GetAddressToSaveImage();
+	void _ConstructOneChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
+	void _ConstructTwoChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
+	void _ConstructThreeChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
+	void _ConstructFourChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
 
 public:
 	ImageProcessor();
 	ImageProcessor(Mat image);
-	ImageProcessor(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
+	ImageProcessor(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions, const uint& imageFileSize);
 	~ImageProcessor();
 	void DisplayImage(cv::String windowName);
 	void SaveImage();

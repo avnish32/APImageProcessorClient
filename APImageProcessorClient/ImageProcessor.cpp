@@ -4,25 +4,77 @@
 
 using cv::imwrite;
 using cv::imshow;
+using cv::Vec2b;
 using cv::Vec3b;
+using cv::Vec4b;
 
 using std::cout;
 
-ImageProcessor::ImageProcessor()
+
+void ImageProcessor::_ConstructOneChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
 {
-	cout << "\nImage processor default constructor.";
-	_image = Mat(1, 1, CV_8UC1);
+	cout << "\nConstructing one channel image. Image data map size: " << imageDataMap.size();
+
+	_image = Mat(imageDimensions, CV_8UC1);
+	unsigned short numberOfImageFragments = imageDataMap.size(), currentImageFragment = 1;
+	int currentImageFragmentByte = 0;
+	const char* currentImageFragmentData = &(imageDataMap[currentImageFragment][0]);
+
+	for (int i = 0; i < imageDimensions.height; i++) {
+		for (int j = 0; j < imageDimensions.width; j++) {
+			//cout << "\nInside reconstruction loop. i= " << i << " | j= " << j;
+			if (currentImageFragmentByte >= 60000) {
+
+				//cout << "\nCurrent fragment " << currentImageFragment << " completed. ";
+
+				currentImageFragment++;
+				currentImageFragmentData = &(imageDataMap[currentImageFragment][0]);
+				currentImageFragmentByte = 0;
+			}
+
+			_image.at<uchar>(i, j) = *(currentImageFragmentData + currentImageFragmentByte);
+			currentImageFragmentByte += 1;
+		}
+	}
+
+	cout << "\nImage re-shaped.";
 }
 
-ImageProcessor::ImageProcessor(Mat image)
+void ImageProcessor::_ConstructTwoChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
 {
-	_image = image;
+	cout << "\nConstructing two channel image. Image data map size: " << imageDataMap.size();
+
+	_image = Mat(imageDimensions, CV_8UC2);
+	unsigned short numberOfImageFragments = imageDataMap.size(), currentImageFragment = 1;
+	int currentImageFragmentByte = 0;
+	const char* currentImageFragmentData = &(imageDataMap[currentImageFragment][0]);
+
+	for (int i = 0; i < imageDimensions.height; i++) {
+		for (int j = 0; j < imageDimensions.width; j++) {
+			//cout << "\nInside reconstruction loop. i= " << i << " | j= " << j;
+			if (currentImageFragmentByte >= 60000) {
+
+				//cout << "\nCurrent fragment " << currentImageFragment << " completed. ";
+
+				currentImageFragment++;
+				currentImageFragmentData = &(imageDataMap[currentImageFragment][0]);
+				currentImageFragmentByte = 0;
+			}
+
+			_image.at<Vec2b>(i, j) = Vec2b(*(currentImageFragmentData + currentImageFragmentByte),
+				*(currentImageFragmentData + currentImageFragmentByte + 1));
+			currentImageFragmentByte += 2;
+		}
+	}
+
+	cout << "\nImage re-shaped.";
 }
 
-ImageProcessor::ImageProcessor(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
+void ImageProcessor::_ConstructThreeChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
 {
+	cout << "\nConstructing three channel image. Image data map size: " << imageDataMap.size();
+
 	_image = Mat(imageDimensions, CV_8UC3);
-	cout << "\nConstructing image. Image data map size: " << imageDataMap.size();
 	unsigned short numberOfImageFragments = imageDataMap.size(), currentImageFragment = 1;
 	int currentImageFragmentByte = 0;
 	const char* currentImageFragmentData = &(imageDataMap[currentImageFragment][0]);
@@ -47,6 +99,73 @@ ImageProcessor::ImageProcessor(map<unsigned short, std::string> imageDataMap, co
 	}
 
 	cout << "\nImage re-shaped.";
+}
+
+void ImageProcessor::_ConstructFourChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
+{
+	cout << "\nConstructing four channel image. Image data map size: " << imageDataMap.size();
+
+	_image = Mat(imageDimensions, CV_8UC4);
+	unsigned short numberOfImageFragments = imageDataMap.size(), currentImageFragment = 1;
+	int currentImageFragmentByte = 0;
+	const char* currentImageFragmentData = &(imageDataMap[currentImageFragment][0]);
+
+	for (int i = 0; i < imageDimensions.height; i++) {
+		for (int j = 0; j < imageDimensions.width; j++) {
+			//cout << "\nInside reconstruction loop. i= " << i << " | j= " << j;
+			if (currentImageFragmentByte >= 60000) {
+
+				//cout << "\nCurrent fragment " << currentImageFragment << " completed. ";
+
+				currentImageFragment++;
+				currentImageFragmentData = &(imageDataMap[currentImageFragment][0]);
+				currentImageFragmentByte = 0;
+			}
+
+			_image.at<Vec4b>(i, j) = Vec4b(*(currentImageFragmentData + currentImageFragmentByte),
+				*(currentImageFragmentData + currentImageFragmentByte + 1),
+				*(currentImageFragmentData + currentImageFragmentByte + 2),
+				*(currentImageFragmentData + currentImageFragmentByte + 3));
+			currentImageFragmentByte += 4;
+		}
+	}
+
+	cout << "\nImage re-shaped.";
+}
+
+ImageProcessor::ImageProcessor()
+{
+	cout << "\nImage processor default constructor.";
+	_image = Mat(1, 1, CV_8UC1);
+}
+
+ImageProcessor::ImageProcessor(Mat image)
+{
+	_image = image;
+}
+
+ImageProcessor::ImageProcessor(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions, const uint& imageFileSize)
+{
+	short numOfChannels = imageFileSize / (imageDimensions.width * imageDimensions.height);
+	cout << "\nInside ImageProcessor. Number of channels: " << numOfChannels;
+
+	switch (numOfChannels) {
+	case 1:
+		_ConstructOneChannelImage(imageDataMap, imageDimensions);
+		break;
+	case 2:
+		_ConstructTwoChannelImage(imageDataMap, imageDimensions);
+		break;
+	case 3:
+		_ConstructThreeChannelImage(imageDataMap, imageDimensions);
+		break;
+	case 4:
+		_ConstructFourChannelImage(imageDataMap, imageDimensions);
+		break;
+	default:
+		_ConstructThreeChannelImage(imageDataMap, imageDimensions);
+		break;
+	}
 }
 
 ImageProcessor::~ImageProcessor()
@@ -104,3 +223,4 @@ cv::String ImageProcessor::_GetAddressToSaveImage() {
 	cv::String imageSaveAddress = "./Resources/savedImage_" + sStream.str() + "_" + timestamp + ".jpg";
 	return imageSaveAddress;
 }
+

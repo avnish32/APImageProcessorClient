@@ -4,7 +4,7 @@
 #include<string>
 
 using std::cout;
-using std::stoi;
+using std::stof;
 
 BrightnessAdjFilterParamsValidator::BrightnessAdjFilterParamsValidator(const vector<char*>& filterParams):FilterParamsValidator(filterParams)
 {
@@ -17,7 +17,7 @@ bool BrightnessAdjFilterParamsValidator::ValidateFilterParams()
 		return false;
 	}
 
-	short brightnessAdjFactor = stoi(_filterParams.at(0));
+	float brightnessAdjFactor = stof(_filterParams.at(0));
 	if (brightnessAdjFactor < 0) {
 		cout << "\nERROR: Invalid value for BRIGHTNESS ADJUSTMENT filter parameters.";
 		return false;

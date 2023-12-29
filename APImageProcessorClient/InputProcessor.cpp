@@ -5,11 +5,7 @@
 #include "Constants.h"
 #include "ImageFilterTypes.h"
 #include "FilterParamsValidator.h"
-#include "ResizeFilterParamsValidator.h"
-#include "RotateFilterParamsValidator.h"
-#include "CropFilterParamsValidator.h"
-#include "FlipFilterParamsValidator.h"
-#include "BrightnessAdjFilterParamsValidator.h"
+#include "FilterParamsValidatorFactory.h"
 
 using std::cout;
 using std::stoi;
@@ -34,7 +30,8 @@ vector<float> InputProcessor::_GetFilterParams(const ushort& currentIndex, const
 	vector<float> filterParams;
 
 	for (int i = 1; i <= numberOfParams; i++) {
-		filterParams.push_back(stof(*(_argValues + currentIndex + i)));
+		float roundedToTwoDecimals = std::roundf(stof(*(_argValues + currentIndex + i)) * 100) / 100;
+		filterParams.push_back(roundedToTwoDecimals);
 	}
 	return filterParams;
 }
@@ -90,7 +87,7 @@ bool InputProcessor::ValidateInput()
 	//TODO Regex to check server IP and port
 
 	FilterParamsValidator* filterParamsValidator = new FilterParamsValidator();
-	int i = 2;
+	ushort i = 2;
 	while (*(_argValues + i) != nullptr) {
 
 		Mat image = cv::imread(*(_argValues + i++));
@@ -101,47 +98,22 @@ bool InputProcessor::ValidateInput()
 
 		cout << "\nImage read successfully.";
 
-		switch (ImageFilterTypes::GetImageFilterTypeEnumFromString(*(_argValues+i)))
-		{
-		case NONE:
+		ImageFilterTypesEnum filterType = ImageFilterTypes::GetImageFilterTypeEnumFromString(*(_argValues + i));
+		if (filterType == NONE) {
 			cout << "\nERROR: Invalid filter name: " << *(_argValues + i) << " in input.";
 			return false;
-		case RESIZE:
-			filterParamsValidator = new ResizeFilterParamsValidator(_GetFilterParamsRaw(i, 2));
-			i += 3;
-			break;
-		case ROTATE:
-			//TODO can consider taking direction input as string instead of numbers
-			filterParamsValidator = new RotateFilterParamsValidator(_GetFilterParamsRaw(i, 2));
-			i += 3;
-			break;
-		case FLIP:
-			//TODO can consider taking direction input as string instead of numbers
-			filterParamsValidator = new FlipFilterParamsValidator(_GetFilterParamsRaw(i, 1));
-			i += 2;
-			break;
-		case CROP:
-			filterParamsValidator = new CropFilterParamsValidator(_GetFilterParamsRaw(i, 4), image);
-			i += 5;
-			break;
-		case RGB_TO_GRAYSCALE:
-			//filterParamsValidator = new FilterParamsValidator();
-			i += 1;
-			break;
-		case BRIGHTNESS_ADJ:
-			filterParamsValidator = new BrightnessAdjFilterParamsValidator(_GetFilterParamsRaw(i, 1));
-			i += 2;
-			break;
-		default:
-			cout << "\nERROR: Invalid filter type.";
 		}
+			
+		filterParamsValidator = FilterParamsValidatorFactory::GetFilterParamsValidator(filterType, _argValues, i, image);
 
-		if (!filterParamsValidator->ValidateFilterParams()) {
+		if (filterParamsValidator == nullptr || !filterParamsValidator->ValidateFilterParams()) {
 			cout << "\nFilter parameter validation failed.";
+			delete filterParamsValidator;
 			return false;
 		}
 	}
 
+	delete filterParamsValidator;
 	return true;
 }
 

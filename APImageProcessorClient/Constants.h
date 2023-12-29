@@ -3,7 +3,8 @@
 
 using std::string;
 
-const short MIN_CMD_LINE_ARGS = 5;
+const short MIN_CMD_LINE_ARGS = 4;
+const short MIN_IMAGE_METADATA_PARAMS_FROM_SERVER = 4;
 
 const int MAX_RETRY_COUNT = 3;
 const string SERVER_IP_ADDRESS = "127.0.0.1";

@@ -6,4 +6,3 @@ public:
 	ResizeFilterParamsValidator(const vector<char*>& filterParams);
 	bool ValidateFilterParams();
 };
-

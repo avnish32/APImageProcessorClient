@@ -139,6 +139,7 @@
     <ClCompile Include="BrightnessAdjFilterParamsValidator.cpp" />
     <ClCompile Include="CropFilterParamsValidator.cpp" />
     <ClCompile Include="FilterParamsValidator.cpp" />
+    <ClCompile Include="FilterParamsValidatorFactory.cpp" />
     <ClCompile Include="FlipFilterParamsValidator.cpp" />
     <ClCompile Include="ImageFilterTypes.cpp" />
     <ClCompile Include="ImageProcessor.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="CropFilterParamsValidator.h" />
     <ClInclude Include="FilterParamsValidator.h" />
+    <ClInclude Include="FilterParamsValidatorFactory.h" />
     <ClInclude Include="FlipFilterParamsValidator.h" />
     <ClInclude Include="ImageFilterTypes.h" />
     <ClInclude Include="ImageProcessor.h" />

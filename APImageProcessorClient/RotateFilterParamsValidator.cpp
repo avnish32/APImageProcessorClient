@@ -20,7 +20,8 @@ bool RotateFilterParamsValidator::ValidateFilterParams()
 	short direction = stoi(_filterParams.at(0));
 	short numOfTurns = stoi(_filterParams.at(1));
 
-	if (direction != 0 || direction != 1) {
+	//TODO use enum for this
+	if (direction != 0 && direction != 1) {
 		cout << "\nERROR: Invalid direction given for rotation.";
 		return false;
 	}

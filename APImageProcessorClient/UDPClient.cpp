@@ -287,10 +287,9 @@ short UDPClient::sendImage(const Mat imageToSend)
 		return RESPONSE_FAILURE;
 	}
 	
-	cv::String windowName = "Client Image Before Sending";
+	/*cv::String windowName = "Client Image Before Sending";
 	namedWindow(windowName, WINDOW_NORMAL);
-	
-	/*imshow(windowName, imageToSend);
+	imshow(windowName, imageToSend);
 	waitKey(0);
 	destroyWindow(windowName);*/
 
@@ -346,9 +345,9 @@ short UDPClient::sendImage(const Mat imageToSend)
 	return RESPONSE_SUCCESS;
 }
 
-short UDPClient::ConsumeImageDataFromQueue(const cv::Size& imageDimensions)
+short UDPClient::ConsumeImageDataFromQueue(const cv::Size& imageDimensions, const uint& imageFileSize)
 {
-	long imageBytesProcessed = 0, imageBytesLeftToProcess = imageDimensions.width * imageDimensions.height * 3;
+	long imageBytesProcessed = 0, imageBytesLeftToProcess = imageFileSize;
 	short responseCode;
 
 	u_short expectedNumberOfPayloads = imageBytesLeftToProcess / 60000;
@@ -407,7 +406,7 @@ short UDPClient::ConsumeImageDataFromQueue(const cv::Size& imageDimensions)
 		return RESPONSE_FAILURE;
 	}
 
-	ImageProcessor imageProcessor(imagePayloadSeqMap, imageDimensions);
+	ImageProcessor imageProcessor(imagePayloadSeqMap, imageDimensions, imageFileSize);
 	imageProcessor.SaveImage();
 
 	return RESPONSE_SUCCESS;
@@ -501,14 +500,15 @@ short UDPClient::validateServerResponse(std::vector<std::string>& serverResponse
 	return RESPONSE_SUCCESS;
 }
 
-short UDPClient::_ValidateImageMetadataFromServer(std::vector<cv::String>& serverMsgSplit, cv::Size& imageDimensions)
+short UDPClient::_ValidateImageMetadataFromServer(std::vector<cv::String>& serverMsgSplit, cv::Size& imageDimensions, uint& imageFileSize)
 {
-	if (serverMsgSplit.at(0) != SIZE_PAYLOAD_KEY || serverMsgSplit.size() < 3) {
+	if (serverMsgSplit.at(0) != SIZE_PAYLOAD_KEY || serverMsgSplit.size() < MIN_IMAGE_METADATA_PARAMS_FROM_SERVER) {
 		cout << "\nServer sent image meta data in wrong format.";
 		return RESPONSE_FAILURE;
 	}
 	try {
 		imageDimensions = cv::Size(stoi(serverMsgSplit.at(1)), stoi(serverMsgSplit.at(2)));
+		imageFileSize = stoi(serverMsgSplit.at(3));
 	}
 	catch (invalid_argument iaExp) {
 		cout << "\nInvalid image size values received.";
@@ -647,7 +647,7 @@ short UDPClient::_ConsumeServerMsgFromQueue(std::string& serverMsg)
 	return RESPONSE_SUCCESS;
 }
 
-short UDPClient::ReceiveAndValidateImageMetadata(cv::Size& imageDimensions)
+short UDPClient::ReceiveAndValidateImageMetadata(cv::Size& imageDimensions, uint& imageFileSize)
 {
 	string serverMsg = "";
 
@@ -658,7 +658,7 @@ short UDPClient::ReceiveAndValidateImageMetadata(cv::Size& imageDimensions)
 	}
 
 	vector<string> serverMsgSplit = SplitString(&serverMsg[0], SERVER_RESPONSE_DELIMITER);
-	return _ValidateImageMetadataFromServer(serverMsgSplit, imageDimensions);
+	return _ValidateImageMetadataFromServer(serverMsgSplit, imageDimensions, imageFileSize);
 }
 
 void UDPClient::StartListeningForServerMsgs()

@@ -272,8 +272,10 @@ int main(int argc, char** argv)
 	//std::streambuf* coutbuf = std::cout.rdbuf(); //save old buf
 	//std::cout.rdbuf(out.rdbuf()); //redirect std::cout to out.txt!
 
-	cout << "\nArg values: " << *(argv) << " | " << *(argv + 1) << " | " << *(argv + 2);
-	cout << "\nArg values contd: " << *(argv + 3) << " | " << *(argv + 4) << " | " << *(argv + 5);
+	cout << "\nArg values: ";
+	for (int i = 0; i < argc; i++) {
+		cout << *(argv + i) << " | ";
+	}
 
 	InputProcessor inputProcessor(argc, argv);
 	if (!inputProcessor.ValidateInput()) {
@@ -404,8 +406,10 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 
 	//Recv filtered image dimensions
 	cv::Size processedImageDimensions;
+	uint processedImageFileSize;
+
 	short clientResponseCode = CLIENT_POSITIVE_ACK;
-	responseCode = udpClient.ReceiveAndValidateImageMetadata(processedImageDimensions);
+	responseCode = udpClient.ReceiveAndValidateImageMetadata(processedImageDimensions, processedImageFileSize);
 	if (responseCode == RESPONSE_FAILURE) {
 		cout << "\nError while receiving/validating dimensions of processed image from server.";
 		clientResponseCode = CLIENT_NEGATIVE_ACK;
@@ -421,7 +425,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	}
 
 	//Recv filtered image and send ack depending on payloads recd
-	responseCode = udpClient.ConsumeImageDataFromQueue(processedImageDimensions);
+	responseCode = udpClient.ConsumeImageDataFromQueue(processedImageDimensions, processedImageFileSize);
 	if (responseCode == RESPONSE_FAILURE) {
 		cout << "\nError while receiving processed image from server.";
 		//return RESPONSE_FAILURE;
