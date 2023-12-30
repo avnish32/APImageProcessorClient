@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Filter Parameters Validators">
+      <UniqueIdentifier>{207f932c-a1ff-41f3-9efc-3347853ae8e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Filter Parameters Validators">
+      <UniqueIdentifier>{27a01db1-bf4f-414b-ae05-ea21579a17d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APImageProcessorClient.cpp">
@@ -30,28 +36,31 @@
     <ClCompile Include="InputProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FilterParamsValidator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ResizeFilterParamsValidator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RotateFilterParamsValidator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CropFilterParamsValidator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FlipFilterParamsValidator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BrightnessAdjFilterParamsValidator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ImageProcessor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BrightnessAdjFilterParamsValidator.cpp">
+      <Filter>Source Files\Filter Parameters Validators</Filter>
+    </ClCompile>
+    <ClCompile Include="CropFilterParamsValidator.cpp">
+      <Filter>Source Files\Filter Parameters Validators</Filter>
+    </ClCompile>
+    <ClCompile Include="FilterParamsValidator.cpp">
+      <Filter>Source Files\Filter Parameters Validators</Filter>
+    </ClCompile>
     <ClCompile Include="FilterParamsValidatorFactory.cpp">
+      <Filter>Source Files\Filter Parameters Validators</Filter>
+    </ClCompile>
+    <ClCompile Include="FlipFilterParamsValidator.cpp">
+      <Filter>Source Files\Filter Parameters Validators</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizeFilterParamsValidator.cpp">
+      <Filter>Source Files\Filter Parameters Validators</Filter>
+    </ClCompile>
+    <ClCompile Include="RotateFilterParamsValidator.cpp">
+      <Filter>Source Files\Filter Parameters Validators</Filter>
+    </ClCompile>
+    <ClCompile Include="MsgLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,28 +80,31 @@
     <ClInclude Include="InputProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FilterParamsValidator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResizeFilterParamsValidator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RotateFilterParamsValidator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CropFilterParamsValidator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FlipFilterParamsValidator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BrightnessAdjFilterParamsValidator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ImageProcessor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BrightnessAdjFilterParamsValidator.h">
+      <Filter>Header Files\Filter Parameters Validators</Filter>
+    </ClInclude>
+    <ClInclude Include="CropFilterParamsValidator.h">
+      <Filter>Header Files\Filter Parameters Validators</Filter>
+    </ClInclude>
+    <ClInclude Include="FilterParamsValidator.h">
+      <Filter>Header Files\Filter Parameters Validators</Filter>
+    </ClInclude>
     <ClInclude Include="FilterParamsValidatorFactory.h">
+      <Filter>Header Files\Filter Parameters Validators</Filter>
+    </ClInclude>
+    <ClInclude Include="FlipFilterParamsValidator.h">
+      <Filter>Header Files\Filter Parameters Validators</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizeFilterParamsValidator.h">
+      <Filter>Header Files\Filter Parameters Validators</Filter>
+    </ClInclude>
+    <ClInclude Include="RotateFilterParamsValidator.h">
+      <Filter>Header Files\Filter Parameters Validators</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgLogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

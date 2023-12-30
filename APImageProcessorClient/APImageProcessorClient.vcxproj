@@ -145,6 +145,7 @@
     <ClCompile Include="ImageProcessor.cpp" />
     <ClCompile Include="ImageRequest.cpp" />
     <ClCompile Include="InputProcessor.cpp" />
+    <ClCompile Include="MsgLogger.cpp" />
     <ClCompile Include="ResizeFilterParamsValidator.cpp" />
     <ClCompile Include="RotateFilterParamsValidator.cpp" />
     <ClCompile Include="UDPClient.cpp" />
@@ -160,6 +161,7 @@
     <ClInclude Include="ImageProcessor.h" />
     <ClInclude Include="ImageRequest.h" />
     <ClInclude Include="InputProcessor.h" />
+    <ClInclude Include="MsgLogger.h" />
     <ClInclude Include="ResizeFilterParamsValidator.h" />
     <ClInclude Include="RotateFilterParamsValidator.h" />
     <ClInclude Include="UDPClient.h" />

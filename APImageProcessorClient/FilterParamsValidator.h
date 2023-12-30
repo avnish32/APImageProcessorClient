@@ -1,6 +1,8 @@
 #include<vector>
 #include<opencv2/opencv.hpp>
 
+#include "MsgLogger.h"
+
 #pragma once
 
 using std::vector;
@@ -13,6 +15,7 @@ protected:
 	Mat _image;
 	bool _ValidateIntegerParams(int startIndex, int numberOfParams);
 	bool _ValidateFloatParams(int startIndex, int numberOfParams);
+	MsgLogger* _msgLogger = MsgLogger::GetInstance();
 
 public:
 	FilterParamsValidator();

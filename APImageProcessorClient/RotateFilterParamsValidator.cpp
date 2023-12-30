@@ -13,7 +13,8 @@ RotateFilterParamsValidator::RotateFilterParamsValidator(const vector<char*>& fi
 bool RotateFilterParamsValidator::ValidateFilterParams()
 {
 	if (!_ValidateIntegerParams(0, 2)) {
-		cout << "\nERROR: Incorrect format for ROTATE filter parameters.";
+		//cout << "\nERROR: Incorrect format for ROTATE filter parameters.";
+		_msgLogger->LogError("ERROR: Incorrect format for ROTATE filter parameters.");
 		return false;
 	}
 
@@ -22,12 +23,14 @@ bool RotateFilterParamsValidator::ValidateFilterParams()
 
 	//TODO use enum for this
 	if (direction != 0 && direction != 1) {
-		cout << "\nERROR: Invalid direction given for rotation.";
+		//cout << "\nERROR: Invalid direction given for rotation.";
+		_msgLogger->LogError("ERROR: Invalid direction given for rotation.");
 		return false;
 	}
 
 	if (numOfTurns < 0) {
-		cout << "\nERROR: Invalid number of turns given for rotation.";
+		//cout << "\nERROR: Invalid number of turns given for rotation.";
+		_msgLogger->LogError("ERROR: Invalid number of turns given for rotation.");
 		return false;
 	}
 	

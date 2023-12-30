@@ -5,6 +5,7 @@
 
 using std::cout;
 using std::stoi;
+using std::to_string;
 
 CropFilterParamsValidator::CropFilterParamsValidator(const vector<char*>& filterParams, Mat image):FilterParamsValidator(filterParams, image)
 {
@@ -14,7 +15,8 @@ CropFilterParamsValidator::CropFilterParamsValidator(const vector<char*>& filter
 bool CropFilterParamsValidator::ValidateFilterParams()
 {
 	if (!_ValidateIntegerParams(0, 4)) {
-		cout << "\nERROR: Invalid format for CROP filter parameters.";
+		//cout << "\nERROR: Invalid format for CROP filter parameters.";
+		_msgLogger->LogError("ERROR: Invalid format for CROP filter parameters.");
 		return false;
 	}
 
@@ -24,14 +26,18 @@ bool CropFilterParamsValidator::ValidateFilterParams()
 	short targetHeight = stoi(_filterParams.at(3));
 
 	if (targetWidth <= 0 || targetHeight <= 0) {
-		cout << "\nERROR: Invalid target dimension values for CROP filter parameters.";
+		//cout << "\nERROR: Invalid target dimension values for CROP filter parameters.";
+		_msgLogger->LogError("ERROR: Invalid target dimension values for CROP filter parameters.");
 		return false;
 	}
 
 	if (_IsCoordinateOutsideImage(cropTopLeftCornerX, cropTopLeftCornerY)) {
-		cout << "\nERROR: Given coordinate lies outside the image. Coordinate: ("
+		/*cout << "\nERROR: Given coordinate lies outside the image. Coordinate: ("
 			<<cropTopLeftCornerX<<","<<cropTopLeftCornerY<<") | Image dimensions: "
-			<<_image.cols<<"x"<<_image.rows;
+			<<_image.cols<<"x"<<_image.rows;*/
+		_msgLogger->LogError("ERROR: Given coordinate lies outside the image. Coordinate: ("
+			+ to_string(cropTopLeftCornerX) + "," + to_string(cropTopLeftCornerY) + ") | Image dimensions: "
+			+ to_string(_image.cols) + "x" + to_string(_image.rows));
 
 		return false;
 	}

@@ -11,12 +11,15 @@
 #include "Constants.h"
 #include "InputProcessor.h"
 #include "ImageRequest.h"
-
-typedef unsigned short u_short;
+#include "MsgLogger.h"
 
 using cv::Size;
 using cv::Mat;
 using cv::imread;
+using cv::imshow;
+using cv::waitKey;
+using cv::namedWindow;
+using cv::destroyAllWindows;
 using cv::IMREAD_COLOR;
 using cv::INTER_LINEAR;
 using cv::String;
@@ -28,10 +31,181 @@ using std::endl;
 using std::thread;
 using std::vector;
 using std::bind;
+using std::stringstream;
+using std::to_string;
+
+typedef unsigned short u_short;
+
+MsgLogger* MsgLogger::_loggerInstance = nullptr;
 
 void SendImageRequestToServer(ImageRequest& imageRequest);
 
+void DisplayOriginalAndFilteredImage(ImageRequest& imageRequest, cv::Mat& filteredImage);
+
 void TestImageFunctionalities(cv::String  imageWriteAddress[8], bool& retFlag);
+
+int main(int argc, char** argv)
+{
+	//Cmd line args format: <server ip:port><space><absolute path of image><space><filter name><space><filter params...>
+
+	//TODO move this to log file
+	//Below snippet to redirect cout buffer to external file was taken from https://gist.github.com/mandyedi/ae68a3191096222c62655d54935e7bb2
+	//Performs 9 times faster when output is written to file.
+	//std::ofstream out("outLogs.txt");
+	//std::streambuf* coutbuf = std::cout.rdbuf(); //save old buf
+	//std::cout.rdbuf(out.rdbuf()); //redirect std::cout to out.txt!
+
+	MsgLogger* msgLogger = MsgLogger::GetInstance();
+
+	std::string argValues = "Command line arguments: ";
+	//cout << "\nArg values: ";
+
+	for (int i = 0; i < argc; i++) {
+		//cout << *(argv + i) << " | ";
+		stringstream sStream;
+		sStream << *(argv + i);
+		argValues.append(sStream.str()).append(" | ");
+	}
+
+	msgLogger->LogError(argValues);
+
+	InputProcessor inputProcessor(argc, argv);
+	if (!inputProcessor.ValidateInput()) {
+		//cout << "\nInvalid input.";
+		msgLogger->LogError("ERROR: Invalid input.");
+		return EXIT_FAILURE;
+	}
+
+	//cout << "\nValidation successful.";
+	msgLogger->LogError("Validation of command line arguments successful.");
+
+	vector<ImageRequest> imageRequests = inputProcessor.InitializeImageRequests();
+
+	/*String imageWriteAddress[] = { "./Resources/1.jpg", "./Resources/2.jpg", "./Resources/3.jpg", "./Resources/4.jpg",
+	"./Resources/5.jpg" , "./Resources/6.jpg" , "./Resources/7.jpg" , "./Resources/8.jpg" };*/
+
+	//TestImageFunctionalities(imageWriteAddress, retFlag);
+
+	//#######Sending to server
+
+	vector<thread> threadVector;
+
+	//cout << "\nBefore looping over image requests.";
+	msgLogger->LogDebug("Before looping over image requests.");
+
+	for (ImageRequest& imageRequest : imageRequests) {
+		//thread t(&sendImageToServer, ref(imageWriteAddress[i]));
+		threadVector.push_back(thread(&SendImageRequestToServer, std::ref(imageRequest)));
+	}
+
+	for (thread &t : threadVector) {
+		t.join();
+	}
+
+	//std::cout.rdbuf(coutbuf); //reset to standard output again
+	return 0;
+}
+
+void SendImageRequestToServer(ImageRequest& imageRequest)
+{
+	MsgLogger* msgLogger = MsgLogger::GetInstance();
+
+	//cout << "\nThread initialized to send image to server. Thread ID: "<<std::this_thread::get_id();
+	cout << "\n\n";
+	msgLogger->LogError("Thread initialized to communicate with server.");
+
+	UDPClient udpClient(imageRequest.GetServerIp(), imageRequest.GetServerPort());
+	if (!udpClient.isValid()) {
+		//cout << "\nSocket could not be created.";
+		msgLogger->LogError("ERROR: Socket could not be created.");
+		return;
+	}
+
+	int responseCode = udpClient.SendImageMetadata(imageRequest.GetImageMetadataPayload());
+	if (responseCode == RESPONSE_FAILURE) {
+		//cout << "\nSending image size to server failed.";
+		msgLogger->LogError("Sending image size to server failed.");
+
+		return;
+	}
+
+	//Below call spawns a new thread here to push messages received from server in queue.
+	//This current thread will consume these messages from the queue.
+	//This was done to minimise packet loss while client processes the received payload.
+	thread serverMsgReceivingThread(bind(&(UDPClient::StartListeningForServerMsgs), &udpClient));
+
+	short serverResponseCode;
+	responseCode = udpClient.ReceiveAndValidateServerResponse(serverResponseCode);
+	if (responseCode == RESPONSE_FAILURE) {
+		//cout << "\nReceving/validating response from server failed.";
+		msgLogger->LogError("Receving/validating response from server failed.");
+
+		return;
+	}
+
+	if (serverResponseCode == SERVER_NEGATIVE_ACK) {
+		//cout << "\nServer sent negative acknowldgement.";
+		msgLogger->LogError("Server sent negative acknowldgement.");
+		return;
+	}
+
+	responseCode = udpClient.SendImage(imageRequest.GetImage());
+	if (responseCode == RESPONSE_FAILURE) {
+		//cout << "\nSending image to server failed.";
+		msgLogger->LogError("Sending image to server failed.");
+		return;
+		//return RESPONSE_FAILURE;
+	}
+
+	//Recv filtered image dimensions
+	cv::Size processedImageDimensions;
+	uint processedImageFileSize;
+
+	short clientResponseCode = CLIENT_POSITIVE_ACK;
+	responseCode = udpClient.ReceiveAndValidateImageMetadata(processedImageDimensions, processedImageFileSize);
+	if (responseCode == RESPONSE_FAILURE) {
+		//cout << "\nError while receiving/validating dimensions of processed image from server.";
+		msgLogger->LogError("Error while receiving/validating dimensions of processed image from server.");
+		clientResponseCode = CLIENT_NEGATIVE_ACK;
+		//return RESPONSE_FAILURE;
+	}
+
+	//Send Ack
+	msgLogger->LogError("Sending response to server. Response code: " + to_string(clientResponseCode));
+	responseCode = udpClient.SendClientResponseToServer(clientResponseCode, nullptr);
+	if (responseCode == RESPONSE_FAILURE) {
+		//cout << "\nCould not send response to server.";
+		msgLogger->LogError("Error while sending response to server.");
+		return;
+		//return RESPONSE_FAILURE;
+	}
+
+	//Recv filtered image and send ack depending on payloads recd
+	Mat filteredImage;
+	responseCode = udpClient.ConsumeImageDataFromQueue(processedImageDimensions, processedImageFileSize, filteredImage);
+	if (responseCode == RESPONSE_FAILURE) {
+		//cout << "\nError while receiving processed image from server.";
+		msgLogger->LogError("Error while receiving processed image from server.");
+		//return RESPONSE_FAILURE;
+	}
+
+	udpClient.StopListeningForServerMsgs();
+	serverMsgReceivingThread.join();
+
+	DisplayOriginalAndFilteredImage(imageRequest, filteredImage);
+}
+
+void DisplayOriginalAndFilteredImage(ImageRequest& imageRequest, cv::Mat& filteredImage)
+{
+	namedWindow(ORIGINAL_IMAGE_WINDOW_NAME, cv::WINDOW_KEEPRATIO);
+	imshow(ORIGINAL_IMAGE_WINDOW_NAME, imageRequest.GetImage());
+
+	namedWindow(FILTERED_IMAGE_WINDOW_NAME, cv::WINDOW_KEEPRATIO);
+	imshow(FILTERED_IMAGE_WINDOW_NAME, filteredImage);
+
+	waitKey(0);
+	destroyAllWindows();
+}
 
 //TODO remove filter methods after testing
 enum RotationMode { CLOCKWISE, ANTI_CLOCKWISE };
@@ -262,54 +436,6 @@ Mat AdjustBrigthness(Mat _sourceImage, float _brightnessAdjFactor)
 	return targetImage;
 }
 
-int main(int argc, char** argv)
-{
-	//Cmd line args format: <server ip:port><space><absolute path of image><space><filter name><space><filter params...>
-
-	//Below snippet to redirect cout buffer to external file was taken from https://gist.github.com/mandyedi/ae68a3191096222c62655d54935e7bb2
-	//Performs 9 times faster when output is written to file.
-	//std::ofstream out("outLogs.txt");
-	//std::streambuf* coutbuf = std::cout.rdbuf(); //save old buf
-	//std::cout.rdbuf(out.rdbuf()); //redirect std::cout to out.txt!
-
-	cout << "\nArg values: ";
-	for (int i = 0; i < argc; i++) {
-		cout << *(argv + i) << " | ";
-	}
-
-	InputProcessor inputProcessor(argc, argv);
-	if (!inputProcessor.ValidateInput()) {
-		cout << "\nInvalid input.";
-		return EXIT_FAILURE;
-	}
-
-	cout << "\nValidation successful.";
-
-	vector<ImageRequest> imageRequests = inputProcessor.InitializeImageRequests();
-
-	String imageWriteAddress[] = { "./Resources/1.jpg", "./Resources/2.jpg", "./Resources/3.jpg", "./Resources/4.jpg",
-	"./Resources/5.jpg" , "./Resources/6.jpg" , "./Resources/7.jpg" , "./Resources/8.jpg" };
-
-	//TestImageFunctionalities(imageWriteAddress, retFlag);
-
-	//#######Sending to server
-
-	vector<thread> threadVector;
-
-	cout << "\nBefore looping over image requests.";
-	for (ImageRequest& imageRequest : imageRequests) {
-		//thread t(&sendImageToServer, ref(imageWriteAddress[i]));
-		threadVector.push_back(thread(&SendImageRequestToServer, std::ref(imageRequest)));
-	}
-
-	for (thread &t : threadVector) {
-		t.join();
-	}
-
-	//std::cout.rdbuf(coutbuf); //reset to standard output again
-	return 0;
-}
-
 void TestImageFunctionalities(cv::String  imageWriteAddress[8], bool& retFlag)
 {
 	retFlag = true;
@@ -362,75 +488,4 @@ void TestImageFunctionalities(cv::String  imageWriteAddress[8], bool& retFlag)
 		Mat savedImage = imread(imageWriteAddress[0]);
 		//imshow(savedImgWindowName, savedImage);
 	}
-}
-
-void SendImageRequestToServer(ImageRequest& imageRequest)
-{
-	cout << "\nThread initialized to send image to server. Thread ID: "<<std::this_thread::get_id();
-	UDPClient udpClient(imageRequest.GetServerIp(), imageRequest.GetServerPort());
-	if (!udpClient.isValid()) {
-		cout << "\nSocket could not be created.";
-		return;
-	}
-
-	int responseCode = udpClient.SendImageMetadata(imageRequest.GetImageMetadataPayload());
-	if (responseCode == RESPONSE_FAILURE) {
-		cout << "\nSending image size to server failed.";
-		return;
-	}
-
-	//TODO spawn a new thread here to push recd server msgs in queue.
-	//This current thread will be the listening thread.
-	thread serverMsgReceivingThread(bind(&(UDPClient::StartListeningForServerMsgs), &udpClient));
-
-	short serverResponseCode;
-	responseCode = udpClient.receiveAndValidateServerResponse(serverResponseCode);
-	if (responseCode == RESPONSE_FAILURE) {
-		cout << "\nReceving/validating response from server failed.";
-		return;
-		//return RESPONSE_FAILURE;
-	}
-
-	if (serverResponseCode == SERVER_NEGATIVE_ACK) {
-		cout << "\nServer sent negative acknowldgement.";
-		return;
-		//return RESPONSE_FAILURE;
-	}
-
-	responseCode = udpClient.sendImage(imageRequest.GetImage());
-	if (responseCode == RESPONSE_FAILURE) {
-		cout << "\nSending image to server failed.";
-		return;
-		//return RESPONSE_FAILURE;
-	}
-
-	//Recv filtered image dimensions
-	cv::Size processedImageDimensions;
-	uint processedImageFileSize;
-
-	short clientResponseCode = CLIENT_POSITIVE_ACK;
-	responseCode = udpClient.ReceiveAndValidateImageMetadata(processedImageDimensions, processedImageFileSize);
-	if (responseCode == RESPONSE_FAILURE) {
-		cout << "\nError while receiving/validating dimensions of processed image from server.";
-		clientResponseCode = CLIENT_NEGATIVE_ACK;
-		//return RESPONSE_FAILURE;
-	}
-
-	//Send Ack
-	responseCode = udpClient.SendClientResponseToServer(clientResponseCode, nullptr);
-	if (responseCode == RESPONSE_FAILURE) {
-		cout << "\nCould not send response to server.";
-		return;
-		//return RESPONSE_FAILURE;
-	}
-
-	//Recv filtered image and send ack depending on payloads recd
-	responseCode = udpClient.ConsumeImageDataFromQueue(processedImageDimensions, processedImageFileSize);
-	if (responseCode == RESPONSE_FAILURE) {
-		cout << "\nError while receiving processed image from server.";
-		//return RESPONSE_FAILURE;
-	}
-
-	udpClient.StopListeningForServerMsgs();
-	serverMsgReceivingThread.join();
 }

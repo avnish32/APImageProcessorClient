@@ -2,6 +2,7 @@
 #include<string>
 
 #include "ImageFilterTypes.h"
+#include "MsgLogger.h"
 
 using std::vector;
 using cv::Mat;
@@ -16,6 +17,7 @@ private:
 	ImageFilterTypesEnum _filterTypeEnum;
 	vector<float> _filterParams;
 	Mat _image;
+	MsgLogger* _msgLogger = MsgLogger::GetInstance();
 
 	std::string _ConvertFilterParamsToString();
 	

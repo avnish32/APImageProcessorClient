@@ -1,6 +1,7 @@
 #include<vector>
 
 #include "ImageRequest.h"
+#include "MsgLogger.h"
 
 #pragma once
 
@@ -11,6 +12,7 @@ class InputProcessor
 private:
 	int _argCount;
 	char** _argValues;
+	MsgLogger* _msgLogger = MsgLogger::GetInstance();
 
 	vector<char*> _GetFilterParamsRaw(const ushort& currentIndex, const ushort& numberOfParams);
 	vector<float> _GetFilterParams(const ushort& currentIndex, const ushort& numberOfParams);

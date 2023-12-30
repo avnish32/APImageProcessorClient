@@ -26,3 +26,5 @@ const string CLIENT_MSG_DELIMITER = " ";
 const char SERVER_RESPONSE_DELIMITER = ' ';
 
 const short IMAGE_PAYLOAD_RECV_TIMEOUT_MILLIS = 2000;
+const string ORIGINAL_IMAGE_WINDOW_NAME = "Original Image";
+const string FILTERED_IMAGE_WINDOW_NAME = "Image After Applying Filter";

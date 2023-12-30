@@ -7,7 +7,8 @@ using std::cout;
 std::string ImageRequest::_ConvertFilterParamsToString()
 {
 	if (_filterParams.size() == 0) {
-		cout << "\nFilter params is empty.";
+		//cout << "\nFilter params is empty.";
+		_msgLogger->LogDebug("Filter params is empty.");
 		return "";
 	}
 
@@ -16,7 +17,8 @@ std::string ImageRequest::_ConvertFilterParamsToString()
 	
 	while (iter != _filterParams.end()) {
 		//TODO truncate float to 2 decimal places
-		filterParamsString.append(to_string(*iter)).append(CLIENT_MSG_DELIMITER);
+		float roundedToTwoDecimals = std::roundf((*iter) * 100) / 100;
+		filterParamsString.append(std::format("{:.2f}", roundedToTwoDecimals)).append(CLIENT_MSG_DELIMITER);
 		iter++;
 	}
 	return filterParamsString;
@@ -25,17 +27,26 @@ std::string ImageRequest::_ConvertFilterParamsToString()
 ImageRequest::ImageRequest(std::string serverIp, ushort serverPort, cv::String imageAbsolutePath,
 	ImageFilterTypesEnum filterTypeEnum, vector<float> filterParams)
 {
-	cout << "\nInside ImageRequest constructor. Server IP: " << serverIp
+	/*cout << "\nInside ImageRequest constructor. Server IP: " << serverIp
 		<< " | server port: " << serverPort
 		<< " | Image path: " << imageAbsolutePath
 		<< " | Filter type: " << filterTypeEnum
-		<< " | Filter params: ";
+		<< " | Filter params: ";*/
+
+	string imageRequestParamsLogMsg = string("Inside ImageRequest constructor. Server IP: ").append(serverIp)
+		.append(" | server port: ").append(to_string(serverPort))
+		.append(" | Image path: ").append(imageAbsolutePath)
+		.append(" | Filter type: ").append(to_string(filterTypeEnum))
+		.append(" | Filter params: ");
 
 	auto iter = filterParams.begin();
 	while (iter != filterParams.end()) {
-		cout << *iter << " ";
+		//cout << *iter << " ";
+		imageRequestParamsLogMsg.append(to_string(*iter)).append(" ");
 		iter++;
 	}
+
+	_msgLogger->LogDebug(imageRequestParamsLogMsg);
 
 	_serverIp = serverIp;
 	_serverPort = serverPort;
@@ -44,8 +55,9 @@ ImageRequest::ImageRequest(std::string serverIp, ushort serverPort, cv::String i
 	_filterParams = filterParams;
 	_image = cv::imread(imageAbsolutePath, cv::IMREAD_COLOR);
 
-	cout << "\nExiting constructor. Image empty: " << _image.empty() << " | Image size: " << _image.total() * _image.elemSize()
-		<< " | filter params: ";
+	/*cout << "\nExiting constructor. Image empty: " << _image.empty() << " | Image size: " << _image.total() * _image.elemSize()
+		<< " | filter params: ";*/
+
 	iter = _filterParams.begin();
 	while (iter != _filterParams.end()) {
 		cout << *iter << " ";
@@ -55,7 +67,8 @@ ImageRequest::ImageRequest(std::string serverIp, ushort serverPort, cv::String i
 
 ImageRequest::~ImageRequest()
 {
-	cout << "\nImageRequest destroyed.";
+	//cout << "\nImageRequest destroyed.";
+	_msgLogger->LogDebug("ImageRequest destroyed.");
 }
 
 std::string ImageRequest::GetImageMetadataPayload()

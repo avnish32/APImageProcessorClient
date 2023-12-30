@@ -13,7 +13,8 @@ FlipFilterParamsValidator::FlipFilterParamsValidator(const vector<char*>& filter
 bool FlipFilterParamsValidator::ValidateFilterParams()
 {
 	if (!_ValidateIntegerParams(0, 1)) {
-		cout << "\nERROR: Incorrect format for FLIP filter parameters.";
+		//cout << "\nERROR: Incorrect format for FLIP filter parameters.";
+		_msgLogger->LogError("ERROR: Incorrect format for FLIP filter parameters.");
 		return false;
 	}
 
@@ -21,7 +22,8 @@ bool FlipFilterParamsValidator::ValidateFilterParams()
 
 	//TODO use enum for this
 	if (direction != 0 && direction != 1) {
-		cout << "\nERROR: Invalid direction given for flipping.";
+		//cout << "\nERROR: Invalid direction given for flipping.";
+		_msgLogger->LogError("ERROR: Invalid direction given for flipping.");
 		return false;
 	}
 	return true;
