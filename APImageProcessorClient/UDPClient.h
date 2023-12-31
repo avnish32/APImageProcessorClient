@@ -8,11 +8,13 @@
 #include<opencv2/opencv.hpp>
 
 #include "MsgLogger.h"
+#include "ImageProcessor.h"
 
 using std::string;
 using std::map;
 using std::vector;
 using std::queue;
+using std::chrono::high_resolution_clock;
 
 using cv::Mat;
 
@@ -33,8 +35,9 @@ private:
 	const vector<string> SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
 	void BuildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap,
 		map<u_short, u_short>& sequenceNumToPayloadSizeMap, vector<u_short>& sequenceNumbers);
-	short _CheckForTimeout(std::chrono::steady_clock::time_point& lastImagePayloadRecdTime,
-		std::map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads);
+	bool _HasRequestTimedOut(const high_resolution_clock::time_point& lastMsgRecdTime, const ushort& timeoutDuration);
+	short _SendMissingSeqNumbersToServer(map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads
+		, vector<u_short>& missingSeqNumbersInLastTimeout);
 	vector<u_short> _CalculateMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads);
 	short fragmentAndSendImageData(cv::Mat& imageToSend, const long& imageSize);
 	short SendImageDataPayloadsBySequenceNumbers(map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap,
@@ -45,7 +48,7 @@ private:
 	bool _ShouldListenThreadSafe();
 	bool _IsQueueEmptyThreadSafe();
 	short _ConsumeServerMsgFromQueue(std::string& serverResponse);
-	int _DrainQueue(std::string& msgInQueue);
+	ushort _DrainQueue(std::string& msgInQueue);
 
 public:
 	UDPClient();
@@ -58,7 +61,7 @@ public:
 	short sendImageSize(cv::String imageAddress);
 	short SendImage(const Mat imageToSend); //TODO use abstract class here : Client -> UDPClient -> ImageSendingClient
 	short ReceiveAndValidateImageMetadata(cv::Size& imageDimensions, uint& imageFileSize);
-	short ConsumeImageDataFromQueue(const cv::Size& imageDimensions, const uint& imageFileSize, Mat& filteredImage);
+	short ConsumeImageDataFromQueue(const cv::Size& imageDimensions, const uint& imageFileSize, ImageProcessor& imageProcessor);
 	short ReceiveServerMsgs();
 	short ReceiveAndValidateServerResponse(short& serverResponseCode);
 	void StartListeningForServerMsgs();

@@ -8,6 +8,7 @@ using std::string;
 using std::cout;
 using std::thread;
 using std::vector;
+using std::map;
 using std::to_string;
 using std::stoi;
 using std::invalid_argument;
@@ -37,14 +38,22 @@ UDPClient::UDPClient(const string& serverIp, const USHORT& serverPort)
 {
 	initializeSocket();
 	_MakeServerAddress(serverIp, serverPort);
+
+	_mtx.lock();
 	_shouldKeepListening = true;
+	_mtx.unlock();
 }
 
 UDPClient::~UDPClient()
 {
+	_msgLogger->LogDebug("Destroying UDP Client...");
+	_mtx.lock();
 	_shouldKeepListening = false;
+	_mtx.unlock();
+
 	WSACleanup();
 	closesocket(_socket);
+	_msgLogger->LogDebug("Destroyed UDP Client.");
 }
 
 void UDPClient::_MakeServerAddress(const std::string& serverIp, const USHORT& serverPort) {
@@ -186,6 +195,19 @@ void UDPClient::BuildImageDataPayloadMap(Mat image, map<u_short, string>& imageD
 	}
 }
 
+bool UDPClient::_HasRequestTimedOut(const high_resolution_clock::time_point& lastMsgRecdTime, const ushort& timeoutDuration)
+{
+	//Below snippet to calculate elapsed time taken from https://stackoverflow.com/a/31657669
+	auto now = high_resolution_clock::now();
+	auto timeElapsedSinceLastMsgRecd = duration_cast<milliseconds>(now - lastMsgRecdTime);
+
+	if (timeElapsedSinceLastMsgRecd.count() >= timeoutDuration) {
+		return true;
+	}
+
+	return false;
+}
+
 bool UDPClient::isValid()
 {
 	return _socket != INVALID_SOCKET;
@@ -304,7 +326,7 @@ short UDPClient::sendImageSize(cv::String imageAddress)
 
 short UDPClient::SendImage(const Mat imageToSend)
 {
-	_msgLogger->LogError("Sending image to server.");
+	_msgLogger->LogError("Sending image to server...");
 
 	if (_socket == INVALID_SOCKET) {
 		//cout << "\nERROR: Invalid client socket.";
@@ -370,7 +392,7 @@ short UDPClient::SendImage(const Mat imageToSend)
 	return RESPONSE_SUCCESS;
 }
 
-short UDPClient::ConsumeImageDataFromQueue(const cv::Size& imageDimensions, const uint& imageFileSize, Mat& filteredImage)
+short UDPClient::ConsumeImageDataFromQueue(const cv::Size& imageDimensions, const uint& imageFileSize, ImageProcessor& imageProcessor)
 {
 	_msgLogger->LogError("Receiving image data...");
 	long imageBytesProcessed = 0, imageBytesLeftToProcess = imageFileSize;
@@ -383,18 +405,23 @@ short UDPClient::ConsumeImageDataFromQueue(const cv::Size& imageDimensions, cons
 	
 	string imageDataFromServer;
 	map<u_short, string> imagePayloadSeqMap;
+	vector<u_short> missingPayloadSeqNumbers;
 
 	int serverAddressSize = (sizeof(_serverAddress));
 
 	auto lastImagePayloadRecdTime = high_resolution_clock::now();
+
 	while (imageBytesLeftToProcess > 0) {
 
 		if (_receivedServerMsgsQueue.empty()) {
-			responseCode = _CheckForTimeout(lastImagePayloadRecdTime, imagePayloadSeqMap, expectedNumberOfPayloads);
-			if (responseCode == RESPONSE_FAILURE) {
-				//cout << "\nError when sending response to server on timeout.";
-				_msgLogger->LogError("Error while sending response to server on timeout.");
-				return RESPONSE_FAILURE;
+			if (_HasRequestTimedOut(lastImagePayloadRecdTime, IMAGE_PAYLOAD_RECV_TIMEOUT_MILLIS)) {
+				responseCode = _SendMissingSeqNumbersToServer(imagePayloadSeqMap, expectedNumberOfPayloads, missingPayloadSeqNumbers);
+				lastImagePayloadRecdTime = high_resolution_clock::now();
+				if (responseCode == RESPONSE_FAILURE) {
+					//cout << "\nError when sending response to server on timeout.";
+					_msgLogger->LogError("Error while sending response to server on timeout.");
+					return RESPONSE_FAILURE;
+				}
 			}
 			continue;
 		}
@@ -447,9 +474,8 @@ short UDPClient::ConsumeImageDataFromQueue(const cv::Size& imageDimensions, cons
 		return RESPONSE_FAILURE;
 	}
 
-	ImageProcessor imageProcessor(imagePayloadSeqMap, imageDimensions, imageFileSize);
-	imageProcessor.SaveImage();
-	filteredImage = imageProcessor.GetImage();
+	ImageProcessor modifiedImageProcessor(imagePayloadSeqMap, imageDimensions, imageFileSize);
+	imageProcessor = modifiedImageProcessor;
 
 	return RESPONSE_SUCCESS;
 }
@@ -478,30 +504,27 @@ short UDPClient::_ValidateImageDataPayload(const std::vector<cv::String>& splitI
 	return RESPONSE_SUCCESS;
 }
 
-short UDPClient::_CheckForTimeout(std::chrono::steady_clock::time_point& lastImagePayloadRecdTime,
-	std::map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads)
+short UDPClient::_SendMissingSeqNumbersToServer(map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads
+	, vector<u_short>& missingSeqNumbersInLastTimeout)
 {
 	short responseCode;
 
-	//Below snippet to calculate elapsed time taken from https://stackoverflow.com/a/31657669
-	auto now = high_resolution_clock::now();
-	auto timeElapsedSinceLastImagePayloadRecd = std::chrono::duration_cast<milliseconds>(now - lastImagePayloadRecdTime);
+	vector<u_short> missingSeqNumbersInThisTimeout = _CalculateMissingPayloadSeqNumbers(imagePayloadSeqMap, expectedNumberOfPayloads);
+	if (missingSeqNumbersInThisTimeout.size() > 0) {
+		if (missingSeqNumbersInLastTimeout == missingSeqNumbersInThisTimeout) {
 
-	// cout << "\ntimeElapsedSinceLastImagePayloadRecd: " << timeElapsedSinceLastImagePayloadRecd.count();
+			//Server did not send any more payloads since last timeout. Assuming that it is inactive now.
+			_msgLogger->LogError("Server is inactive.");
+			return RESPONSE_FAILURE;
+		}
+		missingSeqNumbersInLastTimeout = missingSeqNumbersInThisTimeout;
 
-	if (timeElapsedSinceLastImagePayloadRecd.count() < IMAGE_PAYLOAD_RECV_TIMEOUT_MILLIS) {
-		return RESPONSE_SUCCESS;
-	}
-
-	vector<u_short> missingSeqNumbers = _CalculateMissingPayloadSeqNumbers(imagePayloadSeqMap, expectedNumberOfPayloads);
-	if (missingSeqNumbers.size() > 0) {
-		responseCode = SendClientResponseToServer(CLIENT_NEGATIVE_ACK, &missingSeqNumbers);
+		_msgLogger->LogError("Incomplete image data. Requesting missing data from server...");
+		responseCode = SendClientResponseToServer(CLIENT_NEGATIVE_ACK, &missingSeqNumbersInThisTimeout);
 	}
 	else {
 		responseCode = RESPONSE_SUCCESS;
 	}
-
-	lastImagePayloadRecdTime = high_resolution_clock::now();
 
 	if (responseCode == RESPONSE_FAILURE) {
 		//cout << "\nERROR: Could not send response to server.";
@@ -669,11 +692,11 @@ short UDPClient::ReceiveServerMsgs()
 	return RESPONSE_SUCCESS;
 }
 
-int UDPClient::_DrainQueue(std::string& msgInQueue)
+ushort UDPClient::_DrainQueue(std::string& msgInQueue)
 {
 	long bytesRecd = 0;
 
-	while (!_IsQueueEmptyThreadSafe()) {
+	while (!_IsQueueEmptyThreadSafe() && !msgInQueue.ends_with('\0')) {
 
 		//cout << "\nDrainQueue::Before popping from queue.";
 		_msgLogger->LogDebug("DrainQueue::Before popping from queue.");
@@ -713,10 +736,20 @@ short UDPClient::ReceiveAndValidateServerResponse(short& serverResponseCode)
 short UDPClient::_ConsumeServerMsgFromQueue(std::string& serverMsg)
 {
 	string serverMsgInQueue = "";
+	auto lastMsgConsumedTime = high_resolution_clock::now();
+
 	while (!serverMsgInQueue.ends_with('\0')) {
-		//TODO if lastMsgConsumedTime exceeds timeout limit, assume server has died and return response_failure.
-		long bytesRecd = _DrainQueue(serverMsgInQueue);
-		//TODO if bytesRecd > 0, update lastMsgConsumedTime.
+
+		ushort bytesRecdThisIteration = _DrainQueue(serverMsgInQueue);
+		if (bytesRecdThisIteration > 0) {
+			lastMsgConsumedTime = high_resolution_clock::now();
+			continue;
+		}
+		if (_HasRequestTimedOut(lastMsgConsumedTime, SERVER_MSG_RECV_TIMEOUT_MILLIS)) {
+			//Server is inactive.
+			_msgLogger->LogError("ERROR: Client timed out while waiting for server response.");
+			return RESPONSE_FAILURE;
+		}
 	}
 	serverMsg += serverMsgInQueue;
 	return RESPONSE_SUCCESS;
@@ -727,14 +760,14 @@ short UDPClient::ReceiveAndValidateImageMetadata(cv::Size& imageDimensions, uint
 	string serverMsg = "";
 
 	short responseCode = _ConsumeServerMsgFromQueue(serverMsg);
-	
-	_msgLogger->LogError("Received image metadata from server: " + serverMsg);
 
 	if (responseCode == RESPONSE_FAILURE) {
 		//cout << "\nDid not receive image metadata from server.";
 		_msgLogger->LogError("ERROR: Could not receive image metadata from server.");
 		return RESPONSE_FAILURE;
 	}
+
+	_msgLogger->LogError("Received image metadata from server: " + serverMsg);
 
 	vector<string> serverMsgSplit = SplitString(&serverMsg[0], SERVER_RESPONSE_DELIMITER);
 	return _ValidateImageMetadataFromServer(serverMsgSplit, imageDimensions, imageFileSize);
@@ -830,10 +863,10 @@ void UDPClient::initializeSocket() {
 
 		sockaddr_in thisSocket;
 		int thisSocketSize = sizeof(thisSocket);
-		getsockname(_socket, (sockaddr*) & thisSocket, &thisSocketSize);
+		getsockname(_socket, (sockaddr*)&thisSocket, &thisSocketSize);
 
 		cout << "\nSocket IP: " << thisSocket.sin_addr.s_addr << " | Socket port: " << thisSocket.sin_port
-			<<" | Family: "<<thisSocket.sin_family;
+			<< " | Family: " << thisSocket.sin_family;
 
 		/*thisSocket.sin_addr.s_addr = INADDR_ANY;
 		thisSocket.sin_family = AF_INET;
@@ -851,4 +884,4 @@ void UDPClient::initializeSocket() {
 			_socket = INVALID_SOCKET;
 		}
 	}
-}
+};

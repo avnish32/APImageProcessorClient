@@ -40,7 +40,11 @@ MsgLogger* MsgLogger::_loggerInstance = nullptr;
 
 void SendImageRequestToServer(ImageRequest& imageRequest);
 
-void DisplayOriginalAndFilteredImage(ImageRequest& imageRequest, cv::Mat& filteredImage);
+string GetModifiedImageSaveLocation(const string& originalImageLocation);
+
+void CleanUpClient(UDPClient& udpClient, std::thread& serverMsgReceivingThread);
+
+void DisplayOriginalAndFilteredImage(const Mat& imageRequest, const Mat& filteredImage);
 
 void TestImageFunctionalities(cv::String  imageWriteAddress[8], bool& retFlag);
 
@@ -125,7 +129,6 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	if (responseCode == RESPONSE_FAILURE) {
 		//cout << "\nSending image size to server failed.";
 		msgLogger->LogError("Sending image size to server failed.");
-
 		return;
 	}
 
@@ -139,13 +142,14 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	if (responseCode == RESPONSE_FAILURE) {
 		//cout << "\nReceving/validating response from server failed.";
 		msgLogger->LogError("Receving/validating response from server failed.");
-
+		CleanUpClient(udpClient, serverMsgReceivingThread);
 		return;
 	}
 
 	if (serverResponseCode == SERVER_NEGATIVE_ACK) {
 		//cout << "\nServer sent negative acknowldgement.";
 		msgLogger->LogError("Server sent negative acknowldgement.");
+		CleanUpClient(udpClient, serverMsgReceivingThread);
 		return;
 	}
 
@@ -153,6 +157,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	if (responseCode == RESPONSE_FAILURE) {
 		//cout << "\nSending image to server failed.";
 		msgLogger->LogError("Sending image to server failed.");
+		CleanUpClient(udpClient, serverMsgReceivingThread);
 		return;
 		//return RESPONSE_FAILURE;
 	}
@@ -167,7 +172,6 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 		//cout << "\nError while receiving/validating dimensions of processed image from server.";
 		msgLogger->LogError("Error while receiving/validating dimensions of processed image from server.");
 		clientResponseCode = CLIENT_NEGATIVE_ACK;
-		//return RESPONSE_FAILURE;
 	}
 
 	//Send Ack
@@ -176,31 +180,59 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	if (responseCode == RESPONSE_FAILURE) {
 		//cout << "\nCould not send response to server.";
 		msgLogger->LogError("Error while sending response to server.");
+		CleanUpClient(udpClient, serverMsgReceivingThread);
 		return;
 		//return RESPONSE_FAILURE;
 	}
 
+	if (clientResponseCode == CLIENT_NEGATIVE_ACK) {
+		CleanUpClient(udpClient, serverMsgReceivingThread);
+		return;
+	}
+
 	//Recv filtered image and send ack depending on payloads recd
-	Mat filteredImage;
-	responseCode = udpClient.ConsumeImageDataFromQueue(processedImageDimensions, processedImageFileSize, filteredImage);
+	ImageProcessor modifiedImageProcessor;
+	responseCode = udpClient.ConsumeImageDataFromQueue(processedImageDimensions, processedImageFileSize, modifiedImageProcessor);
 	if (responseCode == RESPONSE_FAILURE) {
 		//cout << "\nError while receiving processed image from server.";
 		msgLogger->LogError("Error while receiving processed image from server.");
+		CleanUpClient(udpClient, serverMsgReceivingThread);
+		return;
 		//return RESPONSE_FAILURE;
 	}
 
-	udpClient.StopListeningForServerMsgs();
-	serverMsgReceivingThread.join();
+	CleanUpClient(udpClient, serverMsgReceivingThread);
 
-	DisplayOriginalAndFilteredImage(imageRequest, filteredImage);
+	//Save modified image in the location of the original image
+	string modifiedImageSaveLocation = GetModifiedImageSaveLocation(imageRequest.GetImagePath());
+	msgLogger->LogDebug("Modified image location: " + modifiedImageSaveLocation);
+	modifiedImageProcessor.SaveImage(modifiedImageSaveLocation);
+
+	//Display both images
+	DisplayOriginalAndFilteredImage(imageRequest.GetImage(), modifiedImageProcessor.GetImage());
 }
 
-void DisplayOriginalAndFilteredImage(ImageRequest& imageRequest, cv::Mat& filteredImage)
+string GetModifiedImageSaveLocation(const string& originalImageAddress)
 {
-	namedWindow(ORIGINAL_IMAGE_WINDOW_NAME, cv::WINDOW_KEEPRATIO);
-	imshow(ORIGINAL_IMAGE_WINDOW_NAME, imageRequest.GetImage());
+	ushort dotIndex = originalImageAddress.find_last_of('.');
+	string modifiedImageSaveAddress = string(originalImageAddress, 0, dotIndex)
+		.append(MODIFIED_SUFFIX).append(originalImageAddress, dotIndex, originalImageAddress.length());
+	
+	return modifiedImageSaveAddress;
+}
 
-	namedWindow(FILTERED_IMAGE_WINDOW_NAME, cv::WINDOW_KEEPRATIO);
+void CleanUpClient(UDPClient& udpClient, std::thread& serverMsgReceivingThread)
+{
+	udpClient.StopListeningForServerMsgs();
+	serverMsgReceivingThread.join();
+}
+
+void DisplayOriginalAndFilteredImage(const Mat& originalImage, const Mat& filteredImage)
+{
+	namedWindow(ORIGINAL_IMAGE_WINDOW_NAME, cv::WINDOW_AUTOSIZE);
+	imshow(ORIGINAL_IMAGE_WINDOW_NAME, originalImage);
+
+	namedWindow(FILTERED_IMAGE_WINDOW_NAME, cv::WINDOW_AUTOSIZE);
 	imshow(FILTERED_IMAGE_WINDOW_NAME, filteredImage);
 
 	waitKey(0);

@@ -58,11 +58,11 @@ ImageRequest::ImageRequest(std::string serverIp, ushort serverPort, cv::String i
 	/*cout << "\nExiting constructor. Image empty: " << _image.empty() << " | Image size: " << _image.total() * _image.elemSize()
 		<< " | filter params: ";*/
 
-	iter = _filterParams.begin();
+	/*iter = _filterParams.begin();
 	while (iter != _filterParams.end()) {
 		cout << *iter << " ";
 		iter++;
-	}
+	}*/
 }
 
 ImageRequest::~ImageRequest()
@@ -96,4 +96,9 @@ const std::string& ImageRequest::GetServerIp()
 const ushort& ImageRequest::GetServerPort()
 {
 	return _serverPort;
+}
+
+const cv::String ImageRequest::GetImagePath()
+{
+	return _imageAbsolutePath;;
 }
