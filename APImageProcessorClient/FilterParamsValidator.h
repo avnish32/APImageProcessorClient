@@ -8,6 +8,12 @@
 using std::vector;
 using cv::Mat;
 
+/*
+This is an abstract class having a virtual function ValidateFilterParams().
+The children of this class contain validation logic for filter parameters of
+each filter that the application supports.
+*/
+
 class FilterParamsValidator
 {
 protected:

@@ -16,6 +16,10 @@ using std::stringstream;
 
 using cv::Mat;
 
+/*
+This function extract the filter parameters as a vector of character pointers from the command line arguments 
+by iterating over the arguments starting from currentIndex until numberOfParams are obtained.
+*/
 vector<char*> InputProcessor::_GetFilterParamsRaw(const ushort& currentIndex, const ushort& numberOfParams)
 {
 	vector<char*> filterParams;
@@ -28,6 +32,10 @@ vector<char*> InputProcessor::_GetFilterParamsRaw(const ushort& currentIndex, co
 	return filterParams;
 }
 
+/*
+This function extract the filter parameters as a vector of floating-point numbers from the command line arguments 
+by iterating over the arguments starting from currentIndex until numberOfParams are obtained.
+*/
 vector<float> InputProcessor::_GetFilterParams(const ushort& currentIndex, const ushort& numberOfParams)
 {
 	vector<float> filterParams;
@@ -38,6 +46,9 @@ vector<float> InputProcessor::_GetFilterParams(const ushort& currentIndex, const
 	return filterParams;
 }
 
+/*
+* Splits inputString based on delimiter character until the character '\0' is encountered.
+*/
 const vector<std::string> InputProcessor::_SplitString(char* inputString, char delimiter) {
 	std::string currentWord = "";
 	vector<std::string> outputVector;
@@ -87,9 +98,14 @@ InputProcessor::InputProcessor(int argCount, char** argValues)
 	_argValues = argValues;
 }
 
+/*
+Validates the command line arguments. A valid argument string should follow the below format:
+<server ip:port> <absolute path of image> <filter name> <filter params...>
+This function checks whether the server IP and port are in correct format, if the image at the given path
+is valid, if the filter name is correct and the filter parameters corresponding to the given filter are correct.
+*/
 bool InputProcessor::ValidateInput()
 {
-	//Cmd line args format: <server ip:port><space><absolute path of image><space><filter name><space><filter params...>
 	if (_argCount < MIN_CMD_LINE_ARGS) {
 		//cout << "\nERROR: Too few arguments.";
 		_msgLogger->LogError("ERROR: Too few arguments.");
@@ -138,6 +154,9 @@ bool InputProcessor::ValidateInput()
 	return true;
 }
 
+/*
+This function initializes objects of ImageRequest class based on the given command line arguments.
+*/
 vector<ImageRequest> InputProcessor::InitializeImageRequests()
 {
 	vector<ImageRequest> imageRequests;

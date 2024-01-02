@@ -8,6 +8,11 @@ using std::vector;
 using cv::Mat;
 
 #pragma once
+
+/*
+This class represents a single request that the client makes to the server for image processing.
+*/
+
 class ImageRequest
 {
 private:

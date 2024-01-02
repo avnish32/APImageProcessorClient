@@ -7,6 +7,10 @@
 
 using std::vector;
 
+/*
+This class handles the operations to be performed on input submitted by the user
+through the command line.
+*/
 class InputProcessor
 {
 private:
@@ -22,7 +26,5 @@ public:
 	InputProcessor(int argCount, char** argValues);
 	bool ValidateInput();
 	vector<ImageRequest> InitializeImageRequests();
-
-
 };
 

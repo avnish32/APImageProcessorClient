@@ -12,7 +12,11 @@ using cv::Vec4b;
 using std::cout;
 using std::to_string;
 
-
+/*
+This function constructs a single channel image having the given imageDimensions
+from the imageDataMap.
+*/
+//TODO move this to ImageConstructorFactory.
 void ImageProcessor::_ConstructOneChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
 {
 	//cout << "\nConstructing one channel image. Image data map size: " << imageDataMap.size();
@@ -44,6 +48,10 @@ void ImageProcessor::_ConstructOneChannelImage(map<unsigned short, std::string> 
 	_msgLogger->LogDebug("Image re-shaped.");
 }
 
+/*
+This function constructs a double channel image having the given imageDimensions
+from the imageDataMap.
+*/
 void ImageProcessor::_ConstructTwoChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
 {
 	//cout << "\nConstructing two channel image. Image data map size: " << imageDataMap.size();
@@ -76,6 +84,10 @@ void ImageProcessor::_ConstructTwoChannelImage(map<unsigned short, std::string> 
 	_msgLogger->LogDebug("Image re-shaped.");
 }
 
+/*
+This function constructs a triple channel image having the given imageDimensions
+from the imageDataMap.
+*/
 void ImageProcessor::_ConstructThreeChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
 {
 	//cout << "\nConstructing three channel image. Image data map size: " << imageDataMap.size();
@@ -109,6 +121,10 @@ void ImageProcessor::_ConstructThreeChannelImage(map<unsigned short, std::string
 	_msgLogger->LogDebug("Image re-shaped.");
 }
 
+/*
+This function constructs a quadruple channel image having the given imageDimensions
+from the imageDataMap.
+*/
 void ImageProcessor::_ConstructFourChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions)
 {
 	//cout << "\nConstructing four channel image. Image data map size: " << imageDataMap.size();
@@ -155,6 +171,9 @@ ImageProcessor::ImageProcessor(Mat image)
 	_image = image;
 }
 
+/*
+Parameterized constructor; constructs an image having imageDimensions from the given imageDataMap.
+*/
 ImageProcessor::ImageProcessor(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions, const uint& imageFileSize)
 {
 	short numOfChannels = imageFileSize / (imageDimensions.width * imageDimensions.height);
@@ -207,6 +226,7 @@ void ImageProcessor::SaveImage(cv::String saveAddress)
 	_msgLogger->LogDebug("Image written to file successfully.");
 }
 
+//TODO can choose to remove in the final build
 void ImageProcessor::SaveImage()
 {
 	bool wasImageWritten = imwrite(_GetAddressToSaveImage(), _image);
@@ -224,6 +244,7 @@ Mat ImageProcessor::GetImage()
 	return _image;
 }
 
+//TODO can choose to remove in the final build
 cv::String ImageProcessor::_GetAddressToSaveImage() {
 
 	//Below snippet to convert thread id to string taken from https://stackoverflow.com/a/19255203

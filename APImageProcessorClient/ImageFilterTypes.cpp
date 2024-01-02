@@ -1,5 +1,8 @@
 #include "ImageFilterTypes.h"
 
+/*
+This function returns the enum object based on filterTypeString.
+*/
 ImageFilterTypesEnum ImageFilterTypes::GetImageFilterTypeEnumFromString(string filterTypeString)
 {
     if (filterTypeString == "Resize") {

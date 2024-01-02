@@ -4,6 +4,10 @@
 using std::to_string;
 using std::cout;
 
+/*
+This function converts _filterParams from a float vector to string to be used suitably
+as a payload before sending to the server.
+*/
 std::string ImageRequest::_ConvertFilterParamsToString()
 {
 	if (_filterParams.size() == 0) {
@@ -24,6 +28,9 @@ std::string ImageRequest::_ConvertFilterParamsToString()
 	return filterParamsString;
 }
 
+/*
+Parameterized constructor; it initializes all the members which are needed to make a request to the server.
+*/
 ImageRequest::ImageRequest(std::string serverIp, ushort serverPort, cv::String imageAbsolutePath,
 	ImageFilterTypesEnum filterTypeEnum, vector<float> filterParams)
 {
@@ -71,6 +78,9 @@ ImageRequest::~ImageRequest()
 	_msgLogger->LogDebug("ImageRequest destroyed.");
 }
 
+/*
+This function constructs a string payload from its member variables to be sent to the server.
+*/
 std::string ImageRequest::GetImageMetadataPayload()
 {
 	std::string payload = SIZE_PAYLOAD_KEY;

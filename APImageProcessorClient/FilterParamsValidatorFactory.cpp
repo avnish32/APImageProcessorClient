@@ -5,6 +5,10 @@
 #include "ResizeFilterParamsValidator.h"
 #include "RotateFilterParamsValidator.h"
 
+/*
+This function extract the filter parameters as a vector of character pointers from the command line arguments
+by iterating over argValues starting from currentIndex until numberOfParams are obtained.
+*/
 vector<char*> FilterParamsValidatorFactory::_GetFilterParamsRaw(char** argValues, ushort& currentIndex, const ushort& numberOfParams)
 {
 	vector<char*> filterParams;
@@ -17,6 +21,10 @@ vector<char*> FilterParamsValidatorFactory::_GetFilterParamsRaw(char** argValues
 	return filterParams;
 }
 
+/*
+This function checks filterType and instantiates an object of the corresponding concrete derived class of FilterParamsValidator
+with filterParams and imageDimensions.
+*/
 FilterParamsValidator* FilterParamsValidatorFactory::GetFilterParamsValidator(const ImageFilterTypesEnum& filterType,
 	char** argValues, ushort& currentIndex, const cv::Mat& image)
 {

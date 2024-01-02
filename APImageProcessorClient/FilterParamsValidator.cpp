@@ -3,6 +3,10 @@
 #include<iostream>
 #include <string>
 
+/*
+This function checks whether the parameters starting from startIndex upto numberOfParams in the _filterParams
+vector are proper integers.
+*/
 bool FilterParamsValidator::_ValidateIntegerParams(int startIndex, int numberOfParams)
 {
 	for (int i = startIndex; i < numberOfParams; i++) {
@@ -21,6 +25,10 @@ bool FilterParamsValidator::_ValidateIntegerParams(int startIndex, int numberOfP
 	return true;
 }
 
+/*
+This function checks whether the parameters starting from startIndex upto numberOfParams in the _filterParams
+vector are proper floating-point numbers.
+*/
 bool FilterParamsValidator::_ValidateFloatParams(int startIndex, int numberOfParams)
 {
 	for (int i = startIndex; i < numberOfParams; i++) {

@@ -50,15 +50,6 @@ void TestImageFunctionalities(cv::String  imageWriteAddress[8], bool& retFlag);
 
 int main(int argc, char** argv)
 {
-	//Cmd line args format: <server ip:port><space><absolute path of image><space><filter name><space><filter params...>
-
-	//TODO move this to log file
-	//Below snippet to redirect cout buffer to external file was taken from https://gist.github.com/mandyedi/ae68a3191096222c62655d54935e7bb2
-	//Performs 9 times faster when output is written to file.
-	//std::ofstream out("outLogs.txt");
-	//std::streambuf* coutbuf = std::cout.rdbuf(); //save old buf
-	//std::cout.rdbuf(out.rdbuf()); //redirect std::cout to out.txt!
-
 	MsgLogger* msgLogger = MsgLogger::GetInstance();
 
 	std::string argValues = "Command line arguments: ";
@@ -85,31 +76,28 @@ int main(int argc, char** argv)
 
 	vector<ImageRequest> imageRequests = inputProcessor.InitializeImageRequests();
 
-	/*String imageWriteAddress[] = { "./Resources/1.jpg", "./Resources/2.jpg", "./Resources/3.jpg", "./Resources/4.jpg",
-	"./Resources/5.jpg" , "./Resources/6.jpg" , "./Resources/7.jpg" , "./Resources/8.jpg" };*/
-
-	//TestImageFunctionalities(imageWriteAddress, retFlag);
-
-	//#######Sending to server
-
 	vector<thread> threadVector;
 
 	//cout << "\nBefore looping over image requests.";
-	msgLogger->LogDebug("Before looping over image requests.");
+	//msgLogger->LogDebug("Before looping over image requests.");
 
 	for (ImageRequest& imageRequest : imageRequests) {
 		//thread t(&sendImageToServer, ref(imageWriteAddress[i]));
+
+		//Spawning a new client thread for each request to be sent to the server.
 		threadVector.push_back(thread(&SendImageRequestToServer, std::ref(imageRequest)));
 	}
 
 	for (thread &t : threadVector) {
 		t.join();
 	}
-
-	//std::cout.rdbuf(coutbuf); //reset to standard output again
 	return 0;
 }
 
+/*
+This is the main orchestrator function that calls all the other function in order of the steps to perform
+for processing the image. For each image processing request, this is the function that is called in a separate thred.
+*/
 void SendImageRequestToServer(ImageRequest& imageRequest)
 {
 	MsgLogger* msgLogger = MsgLogger::GetInstance();
@@ -118,14 +106,16 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	cout << "\n\n";
 	msgLogger->LogError("Thread initialized to communicate with server.");
 
+	//Create a new client object.
 	UDPClient udpClient(imageRequest.GetServerIp(), imageRequest.GetServerPort());
-	if (!udpClient.isValid()) {
+	if (!udpClient.IsValid()) {
 		//cout << "\nSocket could not be created.";
 		msgLogger->LogError("ERROR: Socket could not be created.");
 		return;
 	}
 
-	int responseCode = udpClient.SendImageMetadata(imageRequest.GetImageMetadataPayload());
+	//Send image information such as its dimensions, size, filter type and parameters to the server.
+	int responseCode = udpClient.SendImageMetadataToServer(imageRequest.GetImageMetadataPayload());
 	if (responseCode == RESPONSE_FAILURE) {
 		//cout << "\nSending image size to server failed.";
 		msgLogger->LogError("Sending image size to server failed.");
@@ -137,6 +127,8 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	//This was done to minimise packet loss while client processes the received payload.
 	thread serverMsgReceivingThread(bind(&(UDPClient::StartListeningForServerMsgs), &udpClient));
 
+	
+	//Listen for server acknowledgment after sending image metadata.
 	short serverResponseCode;
 	responseCode = udpClient.ReceiveAndValidateServerResponse(serverResponseCode);
 	if (responseCode == RESPONSE_FAILURE) {
@@ -153,6 +145,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 		return;
 	}
 
+	//Send image data to server.
 	responseCode = udpClient.SendImage(imageRequest.GetImage());
 	if (responseCode == RESPONSE_FAILURE) {
 		//cout << "\nSending image to server failed.";
@@ -162,7 +155,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 		//return RESPONSE_FAILURE;
 	}
 
-	//Recv filtered image dimensions
+	//Receive filtered image dimensions
 	cv::Size processedImageDimensions;
 	uint processedImageFileSize;
 
@@ -174,7 +167,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 		clientResponseCode = CLIENT_NEGATIVE_ACK;
 	}
 
-	//Send Ack
+	//Send acknowledgment based on image dimensions received.
 	msgLogger->LogError("Sending response to server. Response code: " + to_string(clientResponseCode));
 	responseCode = udpClient.SendClientResponseToServer(clientResponseCode, nullptr);
 	if (responseCode == RESPONSE_FAILURE) {
@@ -190,7 +183,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 		return;
 	}
 
-	//Recv filtered image and send ack depending on payloads recd
+	//Receive filtered image data/
 	ImageProcessor modifiedImageProcessor;
 	responseCode = udpClient.ConsumeImageDataFromQueue(processedImageDimensions, processedImageFileSize, modifiedImageProcessor);
 	if (responseCode == RESPONSE_FAILURE) {
@@ -201,6 +194,19 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 		//return RESPONSE_FAILURE;
 	}
 
+	//Send positive acknowledgment if all payloads received successfully.
+	msgLogger->LogError("All image data received. Sending positive ACK to server.");
+
+	responseCode = udpClient.SendClientResponseToServer(CLIENT_POSITIVE_ACK, nullptr);
+	if (responseCode == RESPONSE_FAILURE) {
+		//cout << "\nCould not send ACK to server.";
+		msgLogger->LogError("ERROR: Could not send ACK to server.");
+		// Not returning from here as no further communication is required with server,
+		// and application can proceed with saving the received image.
+		//return RESPONSE_FAILURE;
+	}
+
+	//Stop communicating with the server now.
 	CleanUpClient(udpClient, serverMsgReceivingThread);
 
 	//Save modified image in the location of the original image
@@ -212,6 +218,11 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	DisplayOriginalAndFilteredImage(imageRequest.GetImage(), modifiedImageProcessor.GetImage());
 }
 
+/*
+This function returns the location of the original image where the modified image should be saved
+*/
+
+//TODO move this to image processor
 string GetModifiedImageSaveLocation(const string& originalImageAddress)
 {
 	ushort dotIndex = originalImageAddress.find_last_of('.');
@@ -221,6 +232,9 @@ string GetModifiedImageSaveLocation(const string& originalImageAddress)
 	return modifiedImageSaveAddress;
 }
 
+/*
+This function stops any communication with the server.
+*/
 void CleanUpClient(UDPClient& udpClient, std::thread& serverMsgReceivingThread)
 {
 	udpClient.StopListeningForServerMsgs();

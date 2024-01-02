@@ -4,6 +4,9 @@
 
 using std::string;
 
+/*
+Enum to store various filter types supported by the application.
+*/
 enum ImageFilterTypesEnum
 {
 	NONE, RESIZE, ROTATE, CROP, FLIP, RGB_TO_GRAYSCALE, BRIGHTNESS_ADJ
