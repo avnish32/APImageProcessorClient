@@ -19,6 +19,12 @@
     <Filter Include="Source Files\Filter Parameters Validators">
       <UniqueIdentifier>{27a01db1-bf4f-414b-ae05-ea21579a17d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Image Constructors">
+      <UniqueIdentifier>{228754d5-4c05-4edf-837d-94cf7b7a156d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Image Constructor">
+      <UniqueIdentifier>{1b5bda8a-e3c2-4fe1-9200-f4da2cc4ace8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APImageProcessorClient.cpp">
@@ -63,6 +69,24 @@
     <ClCompile Include="MsgLogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FourChannelImageConstructor.cpp">
+      <Filter>Source Files\Image Constructor</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageConstructor.cpp">
+      <Filter>Source Files\Image Constructor</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageConstructorFactory.cpp">
+      <Filter>Source Files\Image Constructor</Filter>
+    </ClCompile>
+    <ClCompile Include="OneChannelImageConstructor.cpp">
+      <Filter>Source Files\Image Constructor</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreeChannelImageConstructor.cpp">
+      <Filter>Source Files\Image Constructor</Filter>
+    </ClCompile>
+    <ClCompile Include="TwoChannelImageConstructor.cpp">
+      <Filter>Source Files\Image Constructor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UDPClient.h">
@@ -106,6 +130,24 @@
     </ClInclude>
     <ClInclude Include="MsgLogger.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FourChannelImageConstructor.h">
+      <Filter>Header Files\Image Constructors</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageConstructor.h">
+      <Filter>Header Files\Image Constructors</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageConstructorFactory.h">
+      <Filter>Header Files\Image Constructors</Filter>
+    </ClInclude>
+    <ClInclude Include="OneChannelImageConstructor.h">
+      <Filter>Header Files\Image Constructors</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreeChannelImageConstructor.h">
+      <Filter>Header Files\Image Constructors</Filter>
+    </ClInclude>
+    <ClInclude Include="TwoChannelImageConstructor.h">
+      <Filter>Header Files\Image Constructors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

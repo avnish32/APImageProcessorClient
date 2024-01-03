@@ -16,7 +16,6 @@ vector<char*> FilterParamsValidatorFactory::_GetFilterParamsRaw(char** argValues
 	for (int i = 1; i <= numberOfParams; i++) {
 		filterParams.push_back(*(argValues + currentIndex + i));
 	}
-	//cout << "\nRaw filter params obtained."
 	currentIndex += numberOfParams + 1;
 	return filterParams;
 }
@@ -34,10 +33,8 @@ FilterParamsValidator* FilterParamsValidatorFactory::GetFilterParamsValidator(co
 	case RESIZE:
 		return new ResizeFilterParamsValidator(_GetFilterParamsRaw(argValues, currentIndex, 2));
 	case ROTATE:
-		//TODO can consider taking direction input as string instead of numbers
 		return new RotateFilterParamsValidator(_GetFilterParamsRaw(argValues, currentIndex, 2));
 	case FLIP:
-		//TODO can consider taking direction input as string instead of numbers
 		return new FlipFilterParamsValidator(_GetFilterParamsRaw(argValues, currentIndex, 1));
 	case CROP:
 		return new CropFilterParamsValidator(_GetFilterParamsRaw(argValues, currentIndex, 4), image);

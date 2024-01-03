@@ -141,13 +141,19 @@
     <ClCompile Include="FilterParamsValidator.cpp" />
     <ClCompile Include="FilterParamsValidatorFactory.cpp" />
     <ClCompile Include="FlipFilterParamsValidator.cpp" />
+    <ClCompile Include="FourChannelImageConstructor.cpp" />
+    <ClCompile Include="ImageConstructor.cpp" />
+    <ClCompile Include="ImageConstructorFactory.cpp" />
     <ClCompile Include="ImageFilterEnums.cpp" />
     <ClCompile Include="ImageProcessor.cpp" />
     <ClCompile Include="ImageRequest.cpp" />
     <ClCompile Include="InputProcessor.cpp" />
     <ClCompile Include="MsgLogger.cpp" />
+    <ClCompile Include="OneChannelImageConstructor.cpp" />
     <ClCompile Include="ResizeFilterParamsValidator.cpp" />
     <ClCompile Include="RotateFilterParamsValidator.cpp" />
+    <ClCompile Include="ThreeChannelImageConstructor.cpp" />
+    <ClCompile Include="TwoChannelImageConstructor.cpp" />
     <ClCompile Include="UDPClient.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -157,13 +163,19 @@
     <ClInclude Include="FilterParamsValidator.h" />
     <ClInclude Include="FilterParamsValidatorFactory.h" />
     <ClInclude Include="FlipFilterParamsValidator.h" />
+    <ClInclude Include="FourChannelImageConstructor.h" />
+    <ClInclude Include="ImageConstructor.h" />
+    <ClInclude Include="ImageConstructorFactory.h" />
     <ClInclude Include="ImageFilterEnums.h" />
     <ClInclude Include="ImageProcessor.h" />
     <ClInclude Include="ImageRequest.h" />
     <ClInclude Include="InputProcessor.h" />
     <ClInclude Include="MsgLogger.h" />
+    <ClInclude Include="OneChannelImageConstructor.h" />
     <ClInclude Include="ResizeFilterParamsValidator.h" />
     <ClInclude Include="RotateFilterParamsValidator.h" />
+    <ClInclude Include="ThreeChannelImageConstructor.h" />
+    <ClInclude Include="TwoChannelImageConstructor.h" />
     <ClInclude Include="UDPClient.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

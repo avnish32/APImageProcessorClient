@@ -3,7 +3,6 @@
 #include<iostream>
 #include <string>
 
-using std::cout;
 using std::stoi;
 
 ResizeFilterParamsValidator::ResizeFilterParamsValidator(const vector<char*>& filterParams):FilterParamsValidator(filterParams)
@@ -12,10 +11,7 @@ ResizeFilterParamsValidator::ResizeFilterParamsValidator(const vector<char*>& fi
 
 bool ResizeFilterParamsValidator::ValidateFilterParams()
 {
-	//cout << "\nInside ResizeFilterParamsValidator::ValidateFilterParams(). Filter params size: "<<_filterParams.size();
-
 	if (!_ValidateIntegerParams(0, 2)) {
-		//cout << "\nERROR: Incorrect format for RESIZE filter parameters.";
 		_msgLogger->LogError("ERROR: Incorrect format for RESIZE filter parameters.");
 		return false;
 	}
@@ -24,12 +20,9 @@ bool ResizeFilterParamsValidator::ValidateFilterParams()
 	short targetHeight = stoi(_filterParams.at(1));
 
 	if (targetWidth <= 0 || targetHeight <= 0) {
-		//cout << "\nERROR: Width and height of resized image cannot be zero or negative.";
 		_msgLogger->LogError("ERROR: Width and height of resized image cannot be zero or negative.");
 		return false;
 	}
-
-	//cout << "\nInside ResizeFilterParamsValidator::ValidateFilterParams(). Validation successful.";
 	return true;
 }
 ;

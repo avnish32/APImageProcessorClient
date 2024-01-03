@@ -20,7 +20,7 @@ private:
 	Mat _image;
 	MsgLogger* _msgLogger = MsgLogger::GetInstance();
 
-	cv::String _GetAddressToSaveImage();
+	std::string _GetAddressToSaveModifiedImage(std::string originalImageAddress);
 	void _ConstructOneChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
 	void _ConstructTwoChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
 	void _ConstructThreeChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
@@ -32,8 +32,8 @@ public:
 	ImageProcessor(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions, const uint& imageFileSize);
 	~ImageProcessor();
 	void DisplayImage(cv::String windowName);
-	void SaveImage();
-	void SaveImage(cv::String saveAddress);
+	void DisplayOriginalAndFilteredImage(const Mat& originalImage, const Mat& filteredImage);
+	void SaveImage(std::string originalImageAddress);
 	Mat GetImage();
 };
 
