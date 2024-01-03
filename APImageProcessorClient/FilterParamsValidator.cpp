@@ -9,8 +9,9 @@ vector are proper integers.
 */
 bool FilterParamsValidator::_ValidateIntegerParams(int startIndex, int numberOfParams)
 {
-	for (int i = startIndex; i < numberOfParams; i++) {
-		char* currentArgValue = _filterParams.at(i);
+	int currentIndex = startIndex;
+	for (int i = 0; i < numberOfParams; i++) {
+		char* currentArgValue = _filterParams.at(currentIndex);
 		if (currentArgValue == nullptr) {
 			return false;
 		}
@@ -21,6 +22,7 @@ bool FilterParamsValidator::_ValidateIntegerParams(int startIndex, int numberOfP
 		catch (std::invalid_argument) {
 			return false;
 		}
+		currentIndex++;
 	}
 	return true;
 }
@@ -31,7 +33,8 @@ vector are proper floating-point numbers.
 */
 bool FilterParamsValidator::_ValidateFloatParams(int startIndex, int numberOfParams)
 {
-	for (int i = startIndex; i < numberOfParams; i++) {
+	int currentIndex = startIndex;
+	for (int i = 0; i < numberOfParams; i++) {
 		char* currentArgValue = _filterParams.at(i);
 		if (currentArgValue == nullptr) {
 			return false;
@@ -43,6 +46,7 @@ bool FilterParamsValidator::_ValidateFloatParams(int startIndex, int numberOfPar
 		catch (std::invalid_argument) {
 			return false;
 		}
+		currentIndex++;
 	}
 	return true;
 }

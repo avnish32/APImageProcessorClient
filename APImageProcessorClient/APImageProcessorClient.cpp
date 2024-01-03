@@ -13,6 +13,9 @@
 #include "ImageRequest.h"
 #include "MsgLogger.h"
 
+//TODO remove after testing
+#include "ImageFilterEnums.h"
+
 using cv::Size;
 using cv::Mat;
 using cv::imread;
@@ -254,8 +257,6 @@ void DisplayOriginalAndFilteredImage(const Mat& originalImage, const Mat& filter
 }
 
 //TODO remove filter methods after testing
-enum RotationMode { CLOCKWISE, ANTI_CLOCKWISE };
-
 Mat ResizeFilter(Mat _sourceImage, int _targetWidth, int _targetHeight)
 {
 	u_short sourceWidth = _sourceImage.cols;
@@ -340,7 +341,7 @@ Mat RotateTwice(Mat _sourceImage)
 	return targetImage;
 }
 
-Mat RotateFilter(Mat sourceImage, u_short _numOfTurns, RotationMode _direction)
+Mat RotateFilter(Mat sourceImage, u_short _numOfTurns, RotationDirection _direction)
 {
 	_numOfTurns %= 4;
 
@@ -508,7 +509,7 @@ void TestImageFunctionalities(cv::String  imageWriteAddress[8], bool& retFlag)
 	//resize(image, resizedImage, Size(1024, 768), INTER_LINEAR);
 	resizedImage = ResizeFilter(image, 800, 1080);
 
-	Mat rotatedImage = RotateFilter(image, 7, ANTI_CLOCKWISE);
+	Mat rotatedImage = RotateFilter(image, 7, RotationDirection::ANTI_CLOCKWISE);
 
 	int cropTopLeftX = 1700, cropTopLeftY = 10, croppedWidth = 200, croppedHeight = 200;
 	Mat croppedImage = image;

@@ -29,7 +29,7 @@ FilterParamsValidator* FilterParamsValidatorFactory::GetFilterParamsValidator(co
 	char** argValues, ushort& currentIndex, const cv::Mat& image)
 {
 	switch (filterType) {
-	case NONE:
+	case ImageFilterTypesEnum::INVALID_FILTER_TYPE:
 		return nullptr;
 	case RESIZE:
 		return new ResizeFilterParamsValidator(_GetFilterParamsRaw(argValues, currentIndex, 2));

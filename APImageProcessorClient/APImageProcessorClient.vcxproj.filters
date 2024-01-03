@@ -30,7 +30,7 @@
     <ClCompile Include="ImageRequest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImageFilterTypes.cpp">
+    <ClCompile Include="ImageFilterEnums.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="InputProcessor.cpp">
@@ -74,7 +74,7 @@
     <ClInclude Include="ImageRequest.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ImageFilterTypes.h">
+    <ClInclude Include="ImageFilterEnums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="InputProcessor.h">

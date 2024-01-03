@@ -3,7 +3,7 @@
 
 #include "InputProcessor.h"
 #include "Constants.h"
-#include "ImageFilterTypes.h"
+#include "ImageFilterEnums.h"
 #include "FilterParamsValidator.h"
 #include "FilterParamsValidatorFactory.h"
 
@@ -130,8 +130,8 @@ bool InputProcessor::ValidateInput()
 		//cout << "\nImage read successfully.";
 		_msgLogger->LogDebug("Image read successfully.");
 
-		ImageFilterTypesEnum filterType = ImageFilterTypes::GetImageFilterTypeEnumFromString(*(_argValues + i));
-		if (filterType == NONE) {
+		ImageFilterTypesEnum filterType = ImageFilterEnums::GetImageFilterTypeEnumFromString(*(_argValues + i));
+		if (filterType == INVALID_FILTER_TYPE) {
 			//cout << "\nERROR: Invalid filter name: " << *(_argValues + i) << " in input.";
 			stringstream sStream;
 			sStream << *(_argValues + i);
@@ -169,27 +169,34 @@ vector<ImageRequest> InputProcessor::InitializeImageRequests()
 	while (*(_argValues + i) != nullptr) {
 		cv::String imagePath = *(_argValues + i++);
 
-		ImageFilterTypesEnum filterTypeEnum = ImageFilterTypes::GetImageFilterTypeEnumFromString(*(_argValues + i));
+		ImageFilterTypesEnum filterTypeEnum = ImageFilterEnums::GetImageFilterTypeEnumFromString(*(_argValues + i));
 		vector<float> filterParams;
 		stringstream sStream;
 
 		switch (filterTypeEnum)
 		{
-		case NONE:
+		case ImageFilterTypesEnum::INVALID_FILTER_TYPE:
 			//cout << "\nERROR: Invalid filter name: " << *(_argValues + i) << " in input.";
 			sStream << *(_argValues + i);
 			_msgLogger->LogError("ERROR: Invalid filter name: " + sStream.str() + " in input.");
 			break;
 		case RESIZE:
-		case ROTATE:
-			//TODO can consider taking direction input as string instead of numbers
 			filterParams = _GetFilterParams(i, 2);
 			i += 3;
 			break;
+		case ROTATE:
+			//TODO can consider taking direction input as string instead of numbers
+			filterParams.push_back(ImageFilterEnums::GetRotationDirectionEnumFromString(*(_argValues + i + 1)));
+			filterParams.push_back(stof(*(_argValues + i + 2)));
+			i += 3;
+			break;
 		case BRIGHTNESS_ADJ:
+			filterParams = _GetFilterParams(i, 1);
+			i += 2;
+			break;
 		case FLIP:
 			//TODO can consider taking direction input as string instead of numbers
-			filterParams = _GetFilterParams(i, 1);
+			filterParams.push_back(ImageFilterEnums::GetFlipDirectionEnumFromString(*(_argValues + i + 1)));
 			i += 2;
 			break;
 		case CROP:
@@ -197,7 +204,6 @@ vector<ImageRequest> InputProcessor::InitializeImageRequests()
 			i += 5;
 			break;
 		case RGB_TO_GRAYSCALE:
-			//filterParamsValidator = new FilterParamsValidator();
 			i += 1;
 			break;
 		default:

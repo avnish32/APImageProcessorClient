@@ -1,6 +1,6 @@
 #include "FilterParamsValidator.h"
 #include "Constants.h"
-#include "ImageFilterTypes.h"
+#include "ImageFilterEnums.h"
 
 #include<opencv2/opencv.hpp>
 #include<vector>

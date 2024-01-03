@@ -1,7 +1,7 @@
 #include<opencv2/opencv.hpp>
 #include<string>
 
-#include "ImageFilterTypes.h"
+#include "ImageFilterEnums.h"
 #include "MsgLogger.h"
 
 using std::vector;
