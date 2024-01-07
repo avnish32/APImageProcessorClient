@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ImageFilterEnums">
+    <Position X="15.25" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>BAAAAABAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImageFilterEnums.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageProcessor">
+    <Position X="19.25" Y="6.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAgAAgIAAAAAQAAAAQIAAAAAAQAAAABA=</HashCode>
+      <FileName>ImageProcessor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageRequest">
+    <Position X="16.75" Y="6.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAQghgAAAAAAAAAQAAAAAQAAIQRIAAAAAAAAIAAAI=</HashCode>
+      <FileName>ImageRequest.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InputProcessor">
+    <Position X="14.5" Y="6.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAQAACAAAAgAAAAACAgAAAAAAgAAAIAAIAAAAAAEAAA=</HashCode>
+      <FileName>InputProcessor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MsgLogger">
+    <Position X="15.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAICABAAAAAAAAAAAAAAAAJAABAAAABABCAAAAAAA=</HashCode>
+      <FileName>MsgLogger.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UDPClient">
+    <Position X="22" Y="6.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>ABAAABABAABAgACAJQkMAChAgBAAAZACIQBCQAQABAQ=</HashCode>
+      <FileName>UDPClient.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BrightnessAdjFilterParamsValidator">
+    <Position X="0.5" Y="4.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
+      <FileName>BrightnessAdjFilterParamsValidator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CropFilterParamsValidator">
+    <Position X="6.5" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAABAAAAAgAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CropFilterParamsValidator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilterParamsValidator">
+    <Position X="5" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AIABAQgAAAAAAAAAAAAAAAAAAAAAQIAAAAAAAAAAQAA=</HashCode>
+      <FileName>FilterParamsValidator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FilterParamsValidatorFactory">
+    <Position X="8" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FilterParamsValidatorFactory.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FlipFilterParamsValidator">
+    <Position X="11.75" Y="4.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FlipFilterParamsValidator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ResizeFilterParamsValidator">
+    <Position X="3.75" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>QAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ResizeFilterParamsValidator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RotateFilterParamsValidator">
+    <Position X="9" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>RotateFilterParamsValidator.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FourChannelImageConstructor">
+    <Position X="7.25" Y="11" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAAAAAKAAAAAAAAAAAAA=</HashCode>
+      <FileName>FourChannelImageConstructor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageConstructor">
+    <Position X="5.5" Y="7.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAgAAAAAAAAAAAAABAAIAAAIAAAAAAAAA=</HashCode>
+      <FileName>ImageConstructor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ImageConstructorFactory">
+    <Position X="8" Y="7.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImageConstructorFactory.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OneChannelImageConstructor">
+    <Position X="1.75" Y="11" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAIAAAAAAAAAIAAQAAAAAAAAAA=</HashCode>
+      <FileName>OneChannelImageConstructor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ThreeChannelImageConstructor">
+    <Position X="4.5" Y="11" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIIAAAAEAAAAAAA=</HashCode>
+      <FileName>ThreeChannelImageConstructor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TwoChannelImageConstructor">
+    <Position X="10" Y="11" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAIAAAACAAAAAAAA=</HashCode>
+      <FileName>TwoChannelImageConstructor.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Typedef Name="u_short" Collapsed="true">
+    <Position X="20.5" Y="2" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>APImageProcessorClient.cpp</FileName>
+    </TypeIdentifier>
+  </Typedef>
+  <Enum Name="ImageFilterTypesEnum">
+    <Position X="18.25" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAgAAgAAEAAQAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ImageFilterEnums.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="RotationDirection">
+    <Position X="20.5" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAIAAAAAAAAAAAAAAAAACAAAAABAAAAAA=</HashCode>
+      <FileName>ImageFilterEnums.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="FlipDirection">
+    <Position X="23.25" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAA=</HashCode>
+      <FileName>ImageFilterEnums.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

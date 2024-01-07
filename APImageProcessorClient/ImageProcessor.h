@@ -21,10 +21,6 @@ private:
 	MsgLogger* _msgLogger = MsgLogger::GetInstance();
 
 	std::string _GetAddressToSaveModifiedImage(std::string originalImageAddress);
-	void _ConstructOneChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
-	void _ConstructTwoChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
-	void _ConstructThreeChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
-	void _ConstructFourChannelImage(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions);
 
 public:
 	ImageProcessor();
