@@ -7,11 +7,11 @@
 This function checks whether the parameters starting from startIndex upto numberOfParams in the _filterParams
 vector are proper integers.
 */
-bool FilterParamsValidator::_ValidateIntegerParams(int startIndex, int numberOfParams)
+bool FilterParamsValidator::ValidateIntegerParams(int startIndex, int numberOfParams)
 {
 	int currentIndex = startIndex;
 	for (int i = 0; i < numberOfParams; i++) {
-		char* currentArgValue = _filterParams.at(currentIndex);
+		char* currentArgValue = filter_params_.at(currentIndex);
 		if (currentArgValue == nullptr) {
 			return false;
 		}
@@ -31,11 +31,11 @@ bool FilterParamsValidator::_ValidateIntegerParams(int startIndex, int numberOfP
 This function checks whether the parameters starting from startIndex upto numberOfParams in the _filterParams
 vector are proper floating-point numbers.
 */
-bool FilterParamsValidator::_ValidateFloatParams(int startIndex, int numberOfParams)
+bool FilterParamsValidator::ValidateFloatParams(int startIndex, int numberOfParams)
 {
 	int currentIndex = startIndex;
 	for (int i = 0; i < numberOfParams; i++) {
-		char* currentArgValue = _filterParams.at(i);
+		char* currentArgValue = filter_params_.at(i);
 		if (currentArgValue == nullptr) {
 			return false;
 		}
@@ -57,13 +57,13 @@ FilterParamsValidator::FilterParamsValidator()
 
 FilterParamsValidator::FilterParamsValidator(const vector<char*>& filterParams)
 {
-	_filterParams = filterParams;
+	filter_params_ = filterParams;
 }
 
 FilterParamsValidator::FilterParamsValidator(const vector<char*>& filterParams, const Mat& image)
 {
-	_filterParams = filterParams;
-	_image = image;
+	filter_params_ = filterParams;
+	image_ = image;
 }
 
 bool FilterParamsValidator::ValidateFilterParams()

@@ -13,13 +13,13 @@ FlipFilterParamsValidator::FlipFilterParamsValidator(const vector<char*>& filter
 
 bool FlipFilterParamsValidator::ValidateFilterParams()
 {
-	FlipDirection flipDirection = ImageFilterEnums::GetFlipDirectionEnumFromString(_filterParams.at(0));
+	FlipDirection flipDirection = ImageFilterEnums::GetFlipDirectionEnumFromString(filter_params_.at(0));
 
 	switch (flipDirection) {
 	case INVALID_FLIP_DIRECTION:
 		stringstream sStream;
-		sStream << _filterParams.at(0);
-		_msgLogger->LogError("ERROR: Invalid direction given for flipping: "+ sStream.str());
+		sStream << filter_params_.at(0);
+		msg_logger_->LogError("ERROR: Invalid direction given for flipping: "+ sStream.str());
 		return false;
 	}
 	return true;

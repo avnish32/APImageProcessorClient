@@ -13,7 +13,7 @@ FourChannelImageConstructor::FourChannelImageConstructor(const map<unsigned shor
 
 FourChannelImageConstructor::~FourChannelImageConstructor()
 {
-	_msgLogger->LogDebug("Destroying object of FourChannelImageConstructor");
+	msg_logger_->LogDebug("Destroying object of FourChannelImageConstructor");
 }
 
 /*
@@ -22,19 +22,19 @@ from the imageDataMap.
 */
 Mat FourChannelImageConstructor::ConstructImage()
 {
-	_msgLogger->LogDebug("Constructing four channel image. Image data map size: " + to_string((ushort)_imageDataMap.size()));
+	msg_logger_->LogDebug("Constructing four channel image. Image data map size: " + to_string((ushort)image_data_map_.size()));
 
-	Mat image = Mat(_imageDimensions, CV_8UC4);
-	unsigned short numberOfImageFragments = _imageDataMap.size(), currentImageFragment = 1;
+	Mat image = Mat(image_dimensions_, CV_8UC4);
+	unsigned short numberOfImageFragments = image_data_map_.size(), currentImageFragment = 1;
 	int currentImageFragmentByte = 0;
-	const char* currentImageFragmentData = &(_imageDataMap[currentImageFragment][0]);
+	const char* currentImageFragmentData = &(image_data_map_[currentImageFragment][0]);
 
-	for (int i = 0; i < _imageDimensions.height; i++) {
-		for (int j = 0; j < _imageDimensions.width; j++) {
-			if (currentImageFragmentByte >= MAX_IMAGE_DATA_BYTES_IN_ONE_PAYLOAD) {
+	for (int i = 0; i < image_dimensions_.height; i++) {
+		for (int j = 0; j < image_dimensions_.width; j++) {
+			if (currentImageFragmentByte >= MAX_IMG_DATA_BYTES_IN_PAYLOAD) {
 
 				currentImageFragment++;
-				currentImageFragmentData = &(_imageDataMap[currentImageFragment][0]);
+				currentImageFragmentData = &(image_data_map_[currentImageFragment][0]);
 				currentImageFragmentByte = 0;
 			}
 
@@ -46,6 +46,6 @@ Mat FourChannelImageConstructor::ConstructImage()
 		}
 	}
 
-	_msgLogger->LogDebug("Image constructed.");
+	msg_logger_->LogDebug("Image constructed.");
 	return image;
 }

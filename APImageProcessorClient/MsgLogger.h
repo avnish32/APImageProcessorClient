@@ -17,9 +17,9 @@ is in memory at any given time during program execution.
 class MsgLogger
 {
 private:
-	static MsgLogger* _loggerInstance;
-	mutex _mtx;
-	ofstream _logFile;
+	static MsgLogger* logger_instance_;
+	mutex mtx_;
+	ofstream log_file_;
 
 	MsgLogger();
 

@@ -13,25 +13,25 @@ CropFilterParamsValidator::CropFilterParamsValidator(const vector<char*>& filter
 
 bool CropFilterParamsValidator::ValidateFilterParams()
 {
-	if (!_ValidateIntegerParams(0, 4)) {
-		_msgLogger->LogError("ERROR: Invalid format for CROP filter parameters.");
+	if (!ValidateIntegerParams(0, 4)) {
+		msg_logger_->LogError("ERROR: Invalid format for CROP filter parameters.");
 		return false;
 	}
 
-	short cropTopLeftCornerX = stoi(_filterParams.at(0));
-	short cropTopLeftCornerY = stoi(_filterParams.at(1));
-	short targetWidth = stoi(_filterParams.at(2));
-	short targetHeight = stoi(_filterParams.at(3));
+	short cropTopLeftCornerX = stoi(filter_params_.at(0));
+	short cropTopLeftCornerY = stoi(filter_params_.at(1));
+	short targetWidth = stoi(filter_params_.at(2));
+	short targetHeight = stoi(filter_params_.at(3));
 
 	if (targetWidth <= 0 || targetHeight <= 0) {
-		_msgLogger->LogError("ERROR: Invalid target dimension values for CROP filter parameters.");
+		msg_logger_->LogError("ERROR: Invalid target dimension values for CROP filter parameters.");
 		return false;
 	}
 
-	if (_IsCoordinateOutsideImage(cropTopLeftCornerX, cropTopLeftCornerY)) {
-		_msgLogger->LogError("ERROR: Given coordinate lies outside the image. Coordinate: ("
+	if (IsCoordinateOutsideImage(cropTopLeftCornerX, cropTopLeftCornerY)) {
+		msg_logger_->LogError("ERROR: Given coordinate lies outside the image. Coordinate: ("
 			+ to_string(cropTopLeftCornerX) + "," + to_string(cropTopLeftCornerY) + ") | Image dimensions: "
-			+ to_string(_image.cols) + "x" + to_string(_image.rows));
+			+ to_string(image_.cols) + "x" + to_string(image_.rows));
 
 		return false;
 	}
@@ -39,7 +39,7 @@ bool CropFilterParamsValidator::ValidateFilterParams()
 	return true;
 }
 
-bool CropFilterParamsValidator::_IsCoordinateOutsideImage(short x, short y)
+bool CropFilterParamsValidator::IsCoordinateOutsideImage(short x, short y)
 {
-	return x < 0 || y < 0 || x > _image.cols || y > _image.rows;
+	return x < 0 || y < 0 || x > image_.cols || y > image_.rows;
 }

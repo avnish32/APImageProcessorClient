@@ -16,16 +16,16 @@ This class represents a single request that the client makes to the server for i
 class ImageRequest
 {
 private:
-	std::string _serverIp;
-	ushort _serverPort;
-	Mat _image;
-	cv::String _imageAbsolutePath;
-	ImageFilterTypesEnum _filterTypeEnum;
-	vector<float> _filterParams;
+	std::string server_ip_;
+	ushort server_port_;
+	Mat image_;
+	cv::String image_absolute_path_;
+	ImageFilterTypesEnum filter_type_enum_;
+	vector<float> filter_params_;
 	
-	MsgLogger* _msgLogger = MsgLogger::GetInstance();
+	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 
-	std::string _ConvertFilterParamsToString();
+	std::string ConvertFilterParamsToString();
 	
 public:
 	ImageRequest(std::string serverIp, ushort serverPort, cv::String imageAbsolutePath, 

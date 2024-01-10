@@ -11,14 +11,14 @@ BrightnessAdjFilterParamsValidator::BrightnessAdjFilterParamsValidator(const vec
 
 bool BrightnessAdjFilterParamsValidator::ValidateFilterParams()
 {
-	if (!_ValidateFloatParams(0, 1)) {
-		_msgLogger->LogError("ERROR: Invalid format for BRIGHTNESS ADJUSTMENT filter parameters.");
+	if (!ValidateFloatParams(0, 1)) {
+		msg_logger_->LogError("ERROR: Invalid format for BRIGHTNESS ADJUSTMENT filter parameters.");
 		return false;
 	}
 
-	float brightnessAdjFactor = stof(_filterParams.at(0));
+	float brightnessAdjFactor = stof(filter_params_.at(0));
 	if (brightnessAdjFactor < 0) {
-		_msgLogger->LogError("ERROR: Invalid value for BRIGHTNESS ADJUSTMENT filter parameters.");
+		msg_logger_->LogError("ERROR: Invalid value for BRIGHTNESS ADJUSTMENT filter parameters.");
 		return false;
 	}
 	return true;

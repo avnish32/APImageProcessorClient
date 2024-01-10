@@ -17,11 +17,12 @@ each filter that the application supports.
 class FilterParamsValidator
 {
 protected:
-	vector<char*> _filterParams;
-	Mat _image;
-	bool _ValidateIntegerParams(int startIndex, int numberOfParams);
-	bool _ValidateFloatParams(int startIndex, int numberOfParams);
-	MsgLogger* _msgLogger = MsgLogger::GetInstance();
+	vector<char*> filter_params_;
+	Mat image_;
+	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
+
+	bool ValidateIntegerParams(int startIndex, int numberOfParams);
+	bool ValidateFloatParams(int startIndex, int numberOfParams);
 
 public:
 	FilterParamsValidator();

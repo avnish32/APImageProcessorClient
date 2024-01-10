@@ -11,16 +11,16 @@ ResizeFilterParamsValidator::ResizeFilterParamsValidator(const vector<char*>& fi
 
 bool ResizeFilterParamsValidator::ValidateFilterParams()
 {
-	if (!_ValidateIntegerParams(0, 2)) {
-		_msgLogger->LogError("ERROR: Incorrect format for RESIZE filter parameters.");
+	if (!ValidateIntegerParams(0, 2)) {
+		msg_logger_->LogError("ERROR: Incorrect format for RESIZE filter parameters.");
 		return false;
 	}
 
-	short targetWidth = stoi(_filterParams.at(0));
-	short targetHeight = stoi(_filterParams.at(1));
+	short targetWidth = stoi(filter_params_.at(0));
+	short targetHeight = stoi(filter_params_.at(1));
 
 	if (targetWidth <= 0 || targetHeight <= 0) {
-		_msgLogger->LogError("ERROR: Width and height of resized image cannot be zero or negative.");
+		msg_logger_->LogError("ERROR: Width and height of resized image cannot be zero or negative.");
 		return false;
 	}
 	return true;

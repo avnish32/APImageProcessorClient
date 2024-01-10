@@ -36,7 +36,7 @@ using std::to_string;
 
 typedef unsigned short u_short;
 
-MsgLogger* MsgLogger::_loggerInstance = nullptr;
+MsgLogger* MsgLogger::logger_instance_ = nullptr;
 
 void SendImageRequestToServer(ImageRequest& imageRequest);
 
@@ -98,7 +98,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 
 	//Send image information such as its dimensions, size, filter type and parameters to the server.
 	int responseCode = udpClient.SendImageMetadataToServer(imageRequest.GetImageMetadataPayload());
-	if (responseCode == RESPONSE_FAILURE) {
+	if (responseCode == FAILURE_RESPONSE) {
 		msgLogger->LogError("Sending image size to server failed.");
 		return;
 	}
@@ -112,7 +112,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	//Listen for server acknowledgment after sending image metadata.
 	short serverResponseCode;
 	responseCode = udpClient.ReceiveAndValidateServerResponse(serverResponseCode);
-	if (responseCode == RESPONSE_FAILURE) {
+	if (responseCode == FAILURE_RESPONSE) {
 		msgLogger->LogError("Receving/validating response from server failed.");
 		CleanUpClient(udpClient, serverMsgReceivingThread);
 		return;
@@ -126,7 +126,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 
 	//Send image data to server.
 	responseCode = udpClient.SendImage(imageRequest.GetImage());
-	if (responseCode == RESPONSE_FAILURE) {
+	if (responseCode == FAILURE_RESPONSE) {
 		msgLogger->LogError("Sending image to server failed.");
 		CleanUpClient(udpClient, serverMsgReceivingThread);
 		return;
@@ -138,7 +138,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 
 	short clientResponseCode = CLIENT_POSITIVE_ACK;
 	responseCode = udpClient.ReceiveAndValidateImageMetadata(processedImageDimensions, processedImageFileSize);
-	if (responseCode == RESPONSE_FAILURE) {
+	if (responseCode == FAILURE_RESPONSE) {
 		msgLogger->LogError("Error while receiving/validating dimensions of processed image from server.");
 		clientResponseCode = CLIENT_NEGATIVE_ACK;
 	}
@@ -146,7 +146,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	//Send acknowledgment based on image dimensions received.
 	msgLogger->LogError("Sending response to server. Response code: " + to_string(clientResponseCode));
 	responseCode = udpClient.SendClientResponseToServer(clientResponseCode, nullptr);
-	if (responseCode == RESPONSE_FAILURE) {
+	if (responseCode == FAILURE_RESPONSE) {
 		msgLogger->LogError("Error while sending response to server.");
 		CleanUpClient(udpClient, serverMsgReceivingThread);
 		return;
@@ -160,7 +160,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	//Receive filtered image data/
 	ImageProcessor modifiedImageProcessor;
 	responseCode = udpClient.ConsumeImageDataFromQueue(processedImageDimensions, processedImageFileSize, modifiedImageProcessor);
-	if (responseCode == RESPONSE_FAILURE) {
+	if (responseCode == FAILURE_RESPONSE) {
 		msgLogger->LogError("Error while receiving processed image from server.");
 		CleanUpClient(udpClient, serverMsgReceivingThread);
 		return;
@@ -170,7 +170,7 @@ void SendImageRequestToServer(ImageRequest& imageRequest)
 	msgLogger->LogError("All image data received. Sending positive ACK to server.");
 
 	responseCode = udpClient.SendClientResponseToServer(CLIENT_POSITIVE_ACK, nullptr);
-	if (responseCode == RESPONSE_FAILURE) {
+	if (responseCode == FAILURE_RESPONSE) {
 		msgLogger->LogError("ERROR: Could not send ACK to server.");
 		// Not returning from here as no further communication is required with server,
 		// and application can proceed with saving the received image.

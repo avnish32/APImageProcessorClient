@@ -27,13 +27,13 @@ using std::to_string;
 
 ImageProcessor::ImageProcessor()
 {
-	_msgLogger->LogDebug("Image processor default constructor.");
-	_image = Mat(1, 1, CV_8UC1);
+	msg_logger_->LogDebug("Image processor default constructor.");
+	image_ = Mat(1, 1, CV_8UC1);
 }
 
 ImageProcessor::ImageProcessor(Mat image)
 {
-	_image = image;
+	image_ = image;
 }
 
 /*
@@ -42,26 +42,26 @@ Parameterized constructor; constructs an image having imageDimensions from the g
 ImageProcessor::ImageProcessor(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions, const uint& imageFileSize)
 {
 	short numOfChannels = imageFileSize / (imageDimensions.width * imageDimensions.height);
-	_msgLogger->LogDebug("Inside ImageProcessor. Number of channels: " + to_string(numOfChannels));
+	msg_logger_->LogDebug("Inside ImageProcessor. Number of channels: " + to_string(numOfChannels));
 
 	ImageConstructor* imageConstructor = ImageConstructorFactory::GetImageConstructor(numOfChannels, imageDataMap, imageDimensions);
 	if (imageConstructor == nullptr) {
-		_msgLogger->LogError("ERROR: Constructing image with " + to_string(numOfChannels) + "is currently not supported.");
+		msg_logger_->LogError("ERROR: Constructing image with " + to_string(numOfChannels) + "is currently not supported.");
 		return;
 	}
 
-	_image = imageConstructor->ConstructImage();
+	image_ = imageConstructor->ConstructImage();
 }
 
 ImageProcessor::~ImageProcessor()
 {
-	_msgLogger->LogDebug("Image processor destructor.");
+	msg_logger_->LogDebug("Image processor destructor.");
 }
 
 void ImageProcessor::DisplayImage(cv::String windowName)
 {
 	namedWindow(windowName, WINDOW_KEEPRATIO);
-	imshow(windowName, _image);
+	imshow(windowName, image_);
 
 	cv::waitKey(0);
 	cv::destroyWindow(windowName);
@@ -72,24 +72,24 @@ This functions saves the modified image at the location of the original image.
 */
 void ImageProcessor::SaveImage(std::string originalImageAddress)
 {
-	bool wasImageWritten = imwrite(_GetAddressToSaveModifiedImage(originalImageAddress), _image);
+	bool wasImageWritten = imwrite(GetAddressToSaveModifiedImage(originalImageAddress), image_);
 	if (!wasImageWritten) {
-		_msgLogger->LogError("ERROR: Image could not be written to file.");
+		msg_logger_->LogError("ERROR: Image could not be written to file.");
 		return;
 	}
-	_msgLogger->LogDebug("Image written to file successfully.");
+	msg_logger_->LogDebug("Image written to file successfully.");
 }
 
 Mat ImageProcessor::GetImage()
 {
-	return _image;
+	return image_;
 }
 
 /*
 This function constructs the address to save the modified image.
 The new address is the same as that of original image, with the suffix '_modified_<timestamp>' added.
 */
-std::string ImageProcessor::_GetAddressToSaveModifiedImage(std::string originalImageAddress) 
+std::string ImageProcessor::GetAddressToSaveModifiedImage(std::string originalImageAddress) 
 {
 	//Below snippet to convert chrono::time_point to string taken from https://stackoverflow.com/a/46240575
 	string currentTimeString = format("{:%H%M%S}", system_clock::now());

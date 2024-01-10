@@ -14,13 +14,13 @@ through the command line.
 class InputProcessor
 {
 private:
-	int _argCount;
-	char** _argValues;
-	MsgLogger* _msgLogger = MsgLogger::GetInstance();
+	int arg_count_;
+	char** arg_values_;
+	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 
-	vector<char*> _GetFilterParamsRaw(const ushort& currentIndex, const ushort& numberOfParams);
-	vector<float> _GetFilterParams(const ushort& currentIndex, const ushort& numberOfParams);
-	const vector<std::string> _SplitString(char* inputString, char delimiter);
+	vector<char*> GetFilterParamsRaw(const ushort& currentIndex, const ushort& numberOfParams);
+	vector<float> GetFilterParams(const ushort& currentIndex, const ushort& numberOfParams);
+	const vector<std::string> SplitString(char* inputString, char delimiter);
 
 public:
 	InputProcessor(int argCount, char** argValues);

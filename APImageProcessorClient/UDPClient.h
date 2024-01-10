@@ -27,42 +27,40 @@ using various functions provided.
 class UDPClient
 {
 private:
-	SOCKET _socket = INVALID_SOCKET;
-	sockaddr_in _serverAddress;
-	queue<std::string> _receivedServerMsgsQueue;
-	bool _shouldKeepListening;
-	std::mutex _mtx;
-	MsgLogger* _msgLogger = MsgLogger::GetInstance();
+	SOCKET socket_ = INVALID_SOCKET;
+	sockaddr_in server_address_;
+	queue<std::string> received_server_msgs_queue_;
+	bool should_keep_listening_;
+	std::mutex mtx_;
+	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 
 	//Utility functions
-	void _InitializeSocket();
-	bool _ShouldListenThreadSafe();
-	bool _IsQueueEmptyThreadSafe();
-	ushort _DrainQueue(std::string& msgInQueue);
-	void _MakeServerAddress(const std::string& serverIp, const USHORT& serverPort);
-	const vector<std::string> _SplitString(char* inputString, char delimiter);
-	const vector<string> _SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
-	void _BuildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap,
+	void InitializeSocket();
+	bool ShouldListenThreadSafe();
+	bool IsQueueEmptyThreadSafe();
+	ushort DrainQueue(std::string& msgInQueue);
+	void MakeServerAddress(const std::string& serverIp, const USHORT& serverPort);
+	const vector<std::string> SplitString(char* inputString, char delimiter);
+	const vector<string> SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
+	void BuildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap,
 		map<u_short, u_short>& sequenceNumToPayloadSizeMap, vector<u_short>& sequenceNumbers);
-	bool _HasRequestTimedOut(const high_resolution_clock::time_point& lastMsgRecdTime, const ushort& timeoutDuration);
-	vector<u_short> _GetMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads);
+	bool HasRequestTimedOut(const high_resolution_clock::time_point& lastMsgRecdTime, const ushort& timeoutDuration);
+	vector<u_short> GetMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads);
 	
 	//Validation functions
-	short _ValidateServerResponse(std::vector<cv::String>& serverResponseSplit, short& serverResponseCode);
-	short _ValidateImageMetadataFromServer(std::vector<cv::String>& serverMsgSplit, cv::Size& imageDimensions, uint& imageFileSize);
-	short _ValidateImageDataPayload(const std::vector<cv::String>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
-
-	//short fragmentAndSendImageData(cv::Mat& imageToSend, const long& imageSize);
+	short ValidateServerResponse(std::vector<cv::String>& serverResponseSplit, short& serverResponseCode);
+	short ValidateImageMetadataFromServer(std::vector<cv::String>& serverMsgSplit, cv::Size& imageDimensions, uint& imageFileSize);
+	short ValidateImageDataPayload(const std::vector<cv::String>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
 
 	//Functions to send data to server
-	short _SendImageDataPayloadsBySequenceNumbers(map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap,
+	short SendImageDataPayloadsBySequenceNumbers(map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap,
 		const vector<u_short>& payloadSeqNumbersToSend);
-	short _SendMissingSeqNumbersToServer(map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads
+	short SendMissingSeqNumbersToServer(map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads
 		, vector<u_short>& missingSeqNumbersInLastTimeout);
 
 	//Functions to receive data from server
-	short _ReceiveServerMsgs();
-	short _ConsumeServerMsgFromQueue(std::string& serverResponse);
+	short ReceiveServerMsgs();
+	short ConsumeServerMsgFromQueue(std::string& serverResponse);
 
 public:
 	UDPClient();
@@ -83,7 +81,5 @@ public:
 	short ConsumeImageDataFromQueue(const cv::Size& imageDimensions, const uint& imageFileSize, ImageProcessor& imageProcessor);
 	short ReceiveAndValidateServerResponse(short& serverResponseCode);
 	short ReceiveAndValidateImageMetadata(cv::Size& imageDimensions, uint& imageFileSize);
-
-	//short sendImageSize(cv::String imageAddress);
 };
 

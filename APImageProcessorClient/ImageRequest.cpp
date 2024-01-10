@@ -7,17 +7,17 @@ using std::to_string;
 This function converts _filterParams from a float vector to string to be used suitably
 as a payload before sending to the server.
 */
-std::string ImageRequest::_ConvertFilterParamsToString()
+std::string ImageRequest::ConvertFilterParamsToString()
 {
-	if (_filterParams.size() == 0) {
-		_msgLogger->LogDebug("Filter params is empty.");
+	if (filter_params_.size() == 0) {
+		msg_logger_->LogDebug("Filter params is empty.");
 		return EMPTY_STRING;
 	}
 
 	std::string filterParamsString = CLIENT_MSG_DELIMITER;
-	auto iter = _filterParams.begin();
+	auto iter = filter_params_.begin();
 	
-	while (iter != _filterParams.end()) {
+	while (iter != filter_params_.end()) {
 		float roundedToTwoDecimals = std::roundf((*iter) * 100) / 100;
 		filterParamsString.append(std::format("{:.2f}", roundedToTwoDecimals)).append(CLIENT_MSG_DELIMITER);
 		iter++;
@@ -43,19 +43,19 @@ ImageRequest::ImageRequest(std::string serverIp, ushort serverPort, cv::String i
 		iter++;
 	}
 
-	_msgLogger->LogDebug(imageRequestParamsLogMsg);
+	msg_logger_->LogDebug(imageRequestParamsLogMsg);
 
-	_serverIp = serverIp;
-	_serverPort = serverPort;
-	_imageAbsolutePath = imageAbsolutePath;
-	_filterTypeEnum = filterTypeEnum;
-	_filterParams = filterParams;
-	_image = cv::imread(imageAbsolutePath, cv::IMREAD_COLOR);
+	server_ip_ = serverIp;
+	server_port_ = serverPort;
+	image_absolute_path_ = imageAbsolutePath;
+	filter_type_enum_ = filterTypeEnum;
+	filter_params_ = filterParams;
+	image_ = cv::imread(imageAbsolutePath, cv::IMREAD_COLOR);
 }
 
 ImageRequest::~ImageRequest()
 {
-	_msgLogger->LogDebug("ImageRequest destroyed.");
+	msg_logger_->LogDebug("ImageRequest destroyed.");
 }
 
 /*
@@ -65,30 +65,30 @@ std::string ImageRequest::GetImageMetadataPayload()
 {
 	std::string payload = SIZE_PAYLOAD_KEY;
 	payload.append(CLIENT_MSG_DELIMITER)
-		.append(to_string(_image.cols)).append(CLIENT_MSG_DELIMITER)
-		.append(to_string(_image.rows)).append(CLIENT_MSG_DELIMITER)
-		.append(to_string(_image.total() * _image.elemSize())).append(CLIENT_MSG_DELIMITER)
-		.append(to_string(_filterTypeEnum)).append(_ConvertFilterParamsToString()).append(EMPTY_STRING + STRING_TERMINATING_CHAR);
+		.append(to_string(image_.cols)).append(CLIENT_MSG_DELIMITER)
+		.append(to_string(image_.rows)).append(CLIENT_MSG_DELIMITER)
+		.append(to_string(image_.total() * image_.elemSize())).append(CLIENT_MSG_DELIMITER)
+		.append(to_string(filter_type_enum_)).append(ConvertFilterParamsToString()).append(EMPTY_STRING + STRING_TERMINATING_CHAR);
 
 	return payload;
 }
 
 Mat ImageRequest::GetImage()
 {
-	return _image;
+	return image_;
 }
 
 const std::string& ImageRequest::GetServerIp()
 {
-	return _serverIp;
+	return server_ip_;
 }
 
 const ushort& ImageRequest::GetServerPort()
 {
-	return _serverPort;
+	return server_port_;
 }
 
 const cv::String ImageRequest::GetImagePath()
 {
-	return _imageAbsolutePath;;
+	return image_absolute_path_;;
 }

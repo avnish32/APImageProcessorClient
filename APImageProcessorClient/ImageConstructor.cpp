@@ -2,11 +2,11 @@
 
 ImageConstructor::ImageConstructor(const map<unsigned short, string>& imageDataMap, const Size& imageDimensions)
 {
-	_imageDataMap = imageDataMap;
-	_imageDimensions = imageDimensions;
+	image_data_map_ = imageDataMap;
+	image_dimensions_ = imageDimensions;
 }
 
 ImageConstructor::~ImageConstructor()
 {
-	_msgLogger->LogDebug("Destroyed imageConstructor object.");
+	msg_logger_->LogDebug("Destroyed imageConstructor object.");
 }

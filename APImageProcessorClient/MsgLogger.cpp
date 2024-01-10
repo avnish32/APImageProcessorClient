@@ -11,16 +11,16 @@ using std::this_thread::get_id;
 
 MsgLogger::MsgLogger()
 {
-	_mtx.lock();
-	_logFile.open("logFile.txt", std::ios_base::app);
-	_mtx.unlock();
+	mtx_.lock();
+	log_file_.open("logFile.txt", std::ios_base::app);
+	mtx_.unlock();
 }
 
 MsgLogger::~MsgLogger()
 {
-	_mtx.lock();
-	_logFile.close();
-	_mtx.unlock();
+	mtx_.lock();
+	log_file_.close();
+	mtx_.unlock();
 }
 
 /*
@@ -28,10 +28,10 @@ Static method to enforce the singleton pattern.
 */
 MsgLogger* MsgLogger::GetInstance()
 {
-	if (_loggerInstance == nullptr) {
-		_loggerInstance = new MsgLogger();
+	if (logger_instance_ == nullptr) {
+		logger_instance_ = new MsgLogger();
 	}
-	return _loggerInstance;
+	return logger_instance_;
 }
 
 /*
@@ -42,9 +42,9 @@ void MsgLogger::LogDebug(const string& msg)
 {
 	//Below snippet to convert clock time to string taken from https://stackoverflow.com/a/52729233
 	std::string timestamp = format("{:%Y-%m-%d %H:%M:%S}", system_clock::now());
-	_mtx.lock();
-	_logFile << timestamp << " | Thread ID: " << get_id() << " | " << msg << endl;
-	_mtx.unlock();
+	mtx_.lock();
+	log_file_ << timestamp << " | Thread ID: " << get_id() << " | " << msg << endl;
+	mtx_.unlock();
 }
 
 /*
@@ -55,16 +55,16 @@ void MsgLogger::LogError(const string& msg)
 {
 	//Below snippet to convert clock time to string taken from https://stackoverflow.com/a/52729233
 	std::string timestamp = format("{:%Y-%m-%d %H:%M:%S}", system_clock::now());
-	_mtx.lock();
-	_logFile << timestamp << " | Thread ID: " << get_id() << " | " << msg << endl;
+	mtx_.lock();
+	log_file_ << timestamp << " | Thread ID: " << get_id() << " | " << msg << endl;
 	std::cout << "\n" << msg;
-	_mtx.unlock();
+	mtx_.unlock();
 }
 
 void MsgLogger::ReleaseInstance()
 {
-	if (_loggerInstance != nullptr) {
-		delete _loggerInstance;
-		_loggerInstance = nullptr;
+	if (logger_instance_ != nullptr) {
+		delete logger_instance_;
+		logger_instance_ = nullptr;
 	}
 }

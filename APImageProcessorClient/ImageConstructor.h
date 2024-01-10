@@ -19,9 +19,9 @@ Its implementation depends on the number of channel the image is supposed to hav
 class ImageConstructor
 {
 protected:
-	map<unsigned short, string> _imageDataMap;
-	Size _imageDimensions;
-	MsgLogger* _msgLogger = MsgLogger::GetInstance();
+	map<unsigned short, string> image_data_map_;
+	Size image_dimensions_;
+	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 public:
 	ImageConstructor(const map<unsigned short, string>& imageDataMap, const Size& imageDimensions);
 	~ImageConstructor();
