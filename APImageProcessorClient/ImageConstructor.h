@@ -23,7 +23,7 @@ protected:
 	Size image_dimensions_;
 	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 public:
-	ImageConstructor(const map<unsigned short, string>& imageDataMap, const Size& imageDimensions);
+	ImageConstructor(const map<unsigned short, string>&, const Size&);
 	~ImageConstructor();
 	virtual Mat ConstructImage() = 0;
 };

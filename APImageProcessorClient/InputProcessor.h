@@ -18,12 +18,12 @@ private:
 	char** arg_values_;
 	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 
-	vector<char*> GetFilterParamsRaw(const ushort& currentIndex, const ushort& numberOfParams);
-	vector<float> GetFilterParams(const ushort& currentIndex, const ushort& numberOfParams);
-	const vector<std::string> SplitString(char* inputString, char delimiter);
+	vector<char*> GetFilterParamsRaw(const ushort&, const ushort&);
+	vector<float> GetFilterParams(const ushort&, const ushort&);
+	const vector<std::string> SplitString(char*, char);
 
 public:
-	InputProcessor(int argCount, char** argValues);
+	InputProcessor(int, char**);
 	bool ValidateInput();
 	vector<ImageRequest> InitializeImageRequests();
 };

@@ -14,43 +14,43 @@ std::string ImageRequest::ConvertFilterParamsToString()
 		return EMPTY_STRING;
 	}
 
-	std::string filterParamsString = CLIENT_MSG_DELIMITER;
+	std::string filter_params_string = CLIENT_MSG_DELIMITER;
 	auto iter = filter_params_.begin();
 	
 	while (iter != filter_params_.end()) {
-		float roundedToTwoDecimals = std::roundf((*iter) * 100) / 100;
-		filterParamsString.append(std::format("{:.2f}", roundedToTwoDecimals)).append(CLIENT_MSG_DELIMITER);
+		float rounded_to_two_decimals = std::roundf((*iter) * 100) / 100;
+		filter_params_string.append(std::format("{:.2f}", rounded_to_two_decimals)).append(CLIENT_MSG_DELIMITER);
 		iter++;
 	}
-	return filterParamsString;
+	return filter_params_string;
 }
 
 /*
 Parameterized constructor; it initializes all the members which are needed to make a request to the server.
 */
-ImageRequest::ImageRequest(std::string serverIp, ushort serverPort, cv::String imageAbsolutePath,
-	ImageFilterTypesEnum filterTypeEnum, vector<float> filterParams)
+ImageRequest::ImageRequest(std::string server_ip, ushort server_port, cv::String image_absolute_path,
+	ImageFilterTypesEnum filter_type_enum, vector<float> filter_params)
 {
-	string imageRequestParamsLogMsg = string("Inside ImageRequest constructor. Server IP: ").append(serverIp)
-		.append(" | server port: ").append(to_string(serverPort))
-		.append(" | Image path: ").append(imageAbsolutePath)
-		.append(" | Filter type: ").append(to_string(filterTypeEnum))
+	string log_image_req_params = string("Inside ImageRequest constructor. Server IP: ").append(server_ip)
+		.append(" | server port: ").append(to_string(server_port))
+		.append(" | Image path: ").append(image_absolute_path)
+		.append(" | Filter type: ").append(to_string(filter_type_enum))
 		.append(" | Filter params: ");
 
-	auto iter = filterParams.begin();
-	while (iter != filterParams.end()) {
-		imageRequestParamsLogMsg.append(to_string(*iter)).append(" ");
+	auto iter = filter_params.begin();
+	while (iter != filter_params.end()) {
+		log_image_req_params.append(to_string(*iter)).append(" ");
 		iter++;
 	}
 
-	msg_logger_->LogDebug(imageRequestParamsLogMsg);
+	msg_logger_->LogDebug(log_image_req_params);
 
-	server_ip_ = serverIp;
-	server_port_ = serverPort;
-	image_absolute_path_ = imageAbsolutePath;
-	filter_type_enum_ = filterTypeEnum;
-	filter_params_ = filterParams;
-	image_ = cv::imread(imageAbsolutePath, cv::IMREAD_COLOR);
+	server_ip_ = server_ip;
+	server_port_ = server_port;
+	image_absolute_path_ = image_absolute_path;
+	filter_type_enum_ = filter_type_enum;
+	filter_params_ = filter_params;
+	image_ = cv::imread(image_absolute_path, cv::IMREAD_COLOR);
 }
 
 ImageRequest::~ImageRequest()
@@ -90,5 +90,5 @@ const ushort& ImageRequest::GetServerPort()
 
 const cv::String ImageRequest::GetImagePath()
 {
-	return image_absolute_path_;;
+	return image_absolute_path_;
 }

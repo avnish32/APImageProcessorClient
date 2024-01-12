@@ -8,7 +8,7 @@ It constructs a double channel image.
 class TwoChannelImageConstructor : public ImageConstructor
 {
 public:
-	TwoChannelImageConstructor(const map<unsigned short, string>& imageDataMap, const Size& imageDimensions);
+	TwoChannelImageConstructor(const map<unsigned short, string>&, const Size&);
 	~TwoChannelImageConstructor();
 	Mat ConstructImage() override;
 };

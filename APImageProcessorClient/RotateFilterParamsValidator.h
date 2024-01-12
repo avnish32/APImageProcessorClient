@@ -3,7 +3,7 @@
 class RotateFilterParamsValidator : public FilterParamsValidator
 {
 public:
-	RotateFilterParamsValidator(const vector<char*>& filterParams);
+	RotateFilterParamsValidator(const vector<char*>&);
 	bool ValidateFilterParams();
 };
 

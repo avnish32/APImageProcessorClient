@@ -4,18 +4,18 @@
 #include "ThreeChannelImageConstructor.h"
 #include "FourChannelImageConstructor.h"
 
-ImageConstructor* ImageConstructorFactory::GetImageConstructor(const short& numOfChannels,
-	const map<unsigned short, string>& imageDataMap, const Size& imageDimensions)
+ImageConstructor* ImageConstructorFactory::GetImageConstructor(const short& no_of_channels,
+	const map<unsigned short, string>& image_data_map, const Size& image_dimensions)
 {
-	switch (numOfChannels) {
+	switch (no_of_channels) {
 	case 1:
-		return new OneChannelImageConstructor(imageDataMap, imageDimensions);
+		return new OneChannelImageConstructor(image_data_map, image_dimensions);
 	case 2:
-		return new TwoChannelImageConstructor(imageDataMap, imageDimensions);
+		return new TwoChannelImageConstructor(image_data_map, image_dimensions);
 	case 3:
-		return new ThreeChannelImageConstructor(imageDataMap, imageDimensions);
+		return new ThreeChannelImageConstructor(image_data_map, image_dimensions);
 	case 4:
-		return new FourChannelImageConstructor(imageDataMap, imageDimensions);
+		return new FourChannelImageConstructor(image_data_map, image_dimensions);
 	default:
 		return nullptr;
 	}

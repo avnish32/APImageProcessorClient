@@ -7,19 +7,19 @@
 using std::stoi;
 using std::stringstream;
 
-FlipFilterParamsValidator::FlipFilterParamsValidator(const vector<char*>& filterParams):FilterParamsValidator(filterParams)
+FlipFilterParamsValidator::FlipFilterParamsValidator(const vector<char*>& filter_params):FilterParamsValidator(filter_params)
 {
 }
 
 bool FlipFilterParamsValidator::ValidateFilterParams()
 {
-	FlipDirection flipDirection = ImageFilterEnums::GetFlipDirectionEnumFromString(filter_params_.at(0));
+	FlipDirection flip_direction = ImageFilterEnums::GetFlipDirectionEnumFromString(filter_params_.at(0));
 
-	switch (flipDirection) {
+	switch (flip_direction) {
 	case INVALID_FLIP_DIRECTION:
-		stringstream sStream;
-		sStream << filter_params_.at(0);
-		msg_logger_->LogError("ERROR: Invalid direction given for flipping: "+ sStream.str());
+		stringstream s_stream;
+		s_stream << filter_params_.at(0);
+		msg_logger_->LogError("ERROR: Invalid direction given for flipping: "+ s_stream.str());
 		return false;
 	}
 	return true;

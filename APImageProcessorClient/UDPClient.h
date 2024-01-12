@@ -38,33 +38,33 @@ private:
 	void InitializeSocket();
 	bool ShouldListenThreadSafe();
 	bool IsQueueEmptyThreadSafe();
-	ushort DrainQueue(std::string& msgInQueue);
-	void MakeServerAddress(const std::string& serverIp, const USHORT& serverPort);
-	const vector<std::string> SplitString(char* inputString, char delimiter);
-	const vector<string> SplitString(char* inputString, const char& delimiter, const int& numberOfSplits, const int& inputStringLength);
-	void BuildImageDataPayloadMap(Mat image, map<u_short, string>& imageDataPayloadMap,
-		map<u_short, u_short>& sequenceNumToPayloadSizeMap, vector<u_short>& sequenceNumbers);
-	bool HasRequestTimedOut(const high_resolution_clock::time_point& lastMsgRecdTime, const ushort& timeoutDuration);
-	vector<u_short> GetMissingPayloadSeqNumbers(const map<u_short, string>& receivedPayloadsMap, u_short expectedNumberOfPayloads);
+	ushort DrainQueue(std::string&);
+	void MakeServerAddress(const std::string&, const USHORT&);
+	const vector<std::string> SplitString(char*, char);
+	const vector<string> SplitString(char*, const char&, const int&, const int&);
+	void BuildImageDataPayloadMap(Mat, map<u_short, string>&,
+		map<u_short, u_short>&, vector<u_short>&);
+	bool HasRequestTimedOut(const high_resolution_clock::time_point&, const ushort&);
+	vector<u_short> GetMissingPayloadSeqNumbers(const map<u_short, string>&, u_short);
 	
 	//Validation functions
-	short ValidateServerResponse(std::vector<cv::String>& serverResponseSplit, short& serverResponseCode);
-	short ValidateImageMetadataFromServer(std::vector<cv::String>& serverMsgSplit, cv::Size& imageDimensions, uint& imageFileSize);
-	short ValidateImageDataPayload(const std::vector<cv::String>& splitImageDataPayload, u_int& payloadSeqNum, u_int& payloadSize);
+	short ValidateServerResponse(std::vector<cv::String>&, short&);
+	short ValidateImageMetadataFromServer(std::vector<cv::String>&, cv::Size&, uint&);
+	short ValidateImageDataPayload(const std::vector<cv::String>&, u_int&, u_int&);
 
 	//Functions to send data to server
-	short SendImageDataPayloadsBySequenceNumbers(map<u_short, string>& imageDataPayloadMap, map<u_short, u_short>& sequenceNumToPayloadSizeMap,
-		const vector<u_short>& payloadSeqNumbersToSend);
-	short SendMissingSeqNumbersToServer(map<u_short, std::string>& imagePayloadSeqMap, const u_short& expectedNumberOfPayloads
-		, vector<u_short>& missingSeqNumbersInLastTimeout);
+	short SendImageDataPayloadsBySequenceNumbers(map<u_short, string>&, map<u_short, u_short>&,
+		const vector<u_short>&);
+	short SendMissingSeqNumbersToServer(map<u_short, std::string>&, const u_short&
+		, vector<u_short>&);
 
 	//Functions to receive data from server
 	short ReceiveServerMsgs();
-	short ConsumeServerMsgFromQueue(std::string& serverResponse);
+	short ConsumeServerMsgFromQueue(std::string&);
 
 public:
 	UDPClient();
-	UDPClient(const string& serverIp, const USHORT& serverPort);
+	UDPClient(const string&, const USHORT&);
 	~UDPClient();
 	
 	//Utility functions
@@ -73,13 +73,13 @@ public:
 	void StopListeningForServerMsgs();
 
 	//Functions to send data to server
-	short SendClientResponseToServer(const short& clientResponseCode, const vector<u_short>* missingSeqNumbers);
-	short SendImageMetadataToServer(std::string imageMetadataPayload);
-	short SendImage(const Mat imageToSend);
+	short SendClientResponseToServer(const short&, const vector<u_short>*);
+	short SendImageMetadataToServer(std::string);
+	short SendImage(const Mat);
 
 	//Functions to receive data from server
-	short ConsumeImageDataFromQueue(const cv::Size& imageDimensions, const uint& imageFileSize, ImageProcessor& imageProcessor);
-	short ReceiveAndValidateServerResponse(short& serverResponseCode);
-	short ReceiveAndValidateImageMetadata(cv::Size& imageDimensions, uint& imageFileSize);
+	short ConsumeImageDataFromQueue(const cv::Size&, const uint&, ImageProcessor&);
+	short ReceiveAndValidateServerResponse(short&);
+	short ReceiveAndValidateImageMetadata(cv::Size&, uint&);
 };
 

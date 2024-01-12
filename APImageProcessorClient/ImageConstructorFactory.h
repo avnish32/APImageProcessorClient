@@ -4,7 +4,7 @@
 class ImageConstructorFactory
 {
 public:
-	static ImageConstructor* GetImageConstructor(const short& numOfChannels,
-		const map<unsigned short, string>& imageDataMap, const Size& imageDimensions);
+	static ImageConstructor* GetImageConstructor(const short&,
+		const map<unsigned short, string>&, const Size&);
 };
 

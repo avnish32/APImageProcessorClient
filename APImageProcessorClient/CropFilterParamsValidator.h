@@ -4,9 +4,9 @@
 class CropFilterParamsValidator : public FilterParamsValidator
 {
 private:
-	bool IsCoordinateOutsideImage(short cropTopLeftCornerX, short cropTopLeftCornerY);
+	bool IsCoordinateOutsideImage(short, short);
 public:
-	CropFilterParamsValidator(const vector<char*>& filterParams, Mat image);
+	CropFilterParamsValidator(const vector<char*>&, Mat);
 	bool ValidateFilterParams();
 };
 

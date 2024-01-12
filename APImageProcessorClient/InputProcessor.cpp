@@ -23,74 +23,74 @@ using cv::Mat;
 This function extract the filter parameters as a vector of character pointers from the command line arguments 
 by iterating over the arguments starting from currentIndex until numberOfParams are obtained.
 */
-vector<char*> InputProcessor::GetFilterParamsRaw(const ushort& currentIndex, const ushort& numberOfParams)
+vector<char*> InputProcessor::GetFilterParamsRaw(const ushort& current_index, const ushort& no_of_params)
 {
-	vector<char*> filterParams;
+	vector<char*> filter_params;
 
-	for (int i = 1; i <= numberOfParams; i++) {
-		filterParams.push_back(*(arg_values_ + currentIndex + i));
+	for (int i = 1; i <= no_of_params; i++) {
+		filter_params.push_back(*(arg_values_ + current_index + i));
 	}
 	msg_logger_->LogDebug("Raw filter params obtained.");
-	return filterParams;
+	return filter_params;
 }
 
 /*
 This function extract the filter parameters as a vector of floating-point numbers from the command line arguments 
 by iterating over the arguments starting from currentIndex until numberOfParams are obtained.
 */
-vector<float> InputProcessor::GetFilterParams(const ushort& currentIndex, const ushort& numberOfParams)
+vector<float> InputProcessor::GetFilterParams(const ushort& current_index, const ushort& no_of_params)
 {
-	vector<float> filterParams;
+	vector<float> filter_params;
 
-	for (int i = 1; i <= numberOfParams; i++) {
-		filterParams.push_back(stof(*(arg_values_ + currentIndex + i)));
+	for (int i = 1; i <= no_of_params; i++) {
+		filter_params.push_back(stof(*(arg_values_ + current_index + i)));
 	}
-	return filterParams;
+	return filter_params;
 }
 
 /*
 * Splits inputString based on delimiter character until the character '\0' is encountered.
 */
-const vector<std::string> InputProcessor::SplitString(char* inputString, char delimiter) {
-	std::string currentWord = EMPTY_STRING;
-	vector<std::string> outputVector;
+const vector<std::string> InputProcessor::SplitString(char* input_string, char delimiter) {
+	std::string current_word = EMPTY_STRING;
+	vector<std::string> output_vector;
 	int i = 0;
 
 	msg_logger_->LogDebug("Starting to split string.");
 
-	while (*(inputString + i) != STRING_TERMINATING_CHAR) {
-		char currentChar = *(inputString + i);
-		if (currentChar == delimiter) {
-			outputVector.push_back(currentWord);
-			currentWord = EMPTY_STRING;
+	while (*(input_string + i) != STRING_TERMINATING_CHAR) {
+		char current_char = *(input_string + i);
+		if (current_char == delimiter) {
+			output_vector.push_back(current_word);
+			current_word = EMPTY_STRING;
 		}
 		else {
-			currentWord += currentChar;
+			current_word += current_char;
 		}
 		++i;
 	}
-	if (currentWord.length() > 0) {
-		outputVector.push_back(currentWord);
+	if (current_word.length() > 0) {
+		output_vector.push_back(current_word);
 	}
 
-	std::string stringAfterSplittingLogMsg = "String after splitting: ";
+	std::string log_string_after_splitting = "String after splitting: ";
 
-	auto iter = outputVector.begin();
-	while (iter != outputVector.end()) {
-		stringAfterSplittingLogMsg.append(*iter).append(" | ");
+	auto iter = output_vector.begin();
+	while (iter != output_vector.end()) {
+		log_string_after_splitting.append(*iter).append(" | ");
 		iter++;
 	}
 
-	msg_logger_->LogDebug(stringAfterSplittingLogMsg);
+	msg_logger_->LogDebug(log_string_after_splitting);
 	msg_logger_->LogDebug("Returning output vector.");
 
-	return outputVector;
+	return output_vector;
 }
 
-InputProcessor::InputProcessor(int argCount, char** argValues)
+InputProcessor::InputProcessor(int arg_count, char** arg_values)
 {
-	arg_count_ = argCount;
-	arg_values_ = argValues;
+	arg_count_ = arg_count;
+	arg_values_ = arg_values;
 }
 
 /*
@@ -106,13 +106,13 @@ bool InputProcessor::ValidateInput()
 		return false;
 	}
 
-	regex serverURLRegex = basic_regex(SERVER_URL_VALIDATION_REGEX);
-	if (!regex_search(*(arg_values_ + 1), serverURLRegex)) {
+	regex server_url_regex = basic_regex(SERVER_URL_VALIDATION_REGEX);
+	if (!regex_search(*(arg_values_ + 1), server_url_regex)) {
 		msg_logger_->LogError("Invalid server URL.");
 		return false;
 	}
 
-	FilterParamsValidator* filterParamsValidator = new FilterParamsValidator();
+	FilterParamsValidator* filter_params_validator = new FilterParamsValidator();
 	ushort i = 2;
 	while (*(arg_values_ + i) != nullptr) {
 
@@ -125,24 +125,24 @@ bool InputProcessor::ValidateInput()
 		msg_logger_->LogDebug("Image read successfully.");
 		i++;
 
-		ImageFilterTypesEnum filterType = ImageFilterEnums::GetImageFilterTypeEnumFromString(*(arg_values_ + i));
-		if (filterType == INVALID_FILTER_TYPE) {
-			stringstream sStream;
-			sStream << *(arg_values_ + i);
-			msg_logger_->LogError("ERROR: Invalid filter name: " + sStream.str() + " in input.");
+		ImageFilterTypesEnum filter_type = ImageFilterEnums::GetImageFilterTypeEnumFromString(*(arg_values_ + i));
+		if (filter_type == INVALID_FILTER_TYPE) {
+			stringstream s_stream;
+			s_stream << *(arg_values_ + i);
+			msg_logger_->LogError("ERROR: Invalid filter name: " + s_stream.str() + " in input.");
 			return false;
 		}
 			
-		filterParamsValidator = FilterParamsValidatorFactory::GetFilterParamsValidator(filterType, arg_values_, i, image);
+		filter_params_validator = FilterParamsValidatorFactory::GetFilterParamsValidator(filter_type, arg_values_, i, image);
 
-		if (filterParamsValidator == nullptr || !filterParamsValidator->ValidateFilterParams()) {
+		if (filter_params_validator == nullptr || !filter_params_validator->ValidateFilterParams()) {
 			msg_logger_->LogError("Filter parameter validation failed.");
-			delete filterParamsValidator;
+			delete filter_params_validator;
 			return false;
 		}
 	}
 
-	delete filterParamsValidator;
+	delete filter_params_validator;
 	return true;
 }
 
@@ -151,45 +151,45 @@ This function initializes objects of ImageRequest class based on the given comma
 */
 vector<ImageRequest> InputProcessor::InitializeImageRequests()
 {
-	vector<ImageRequest> imageRequests;
+	vector<ImageRequest> image_requests;
 
-	char* serverDetails = *(arg_values_ + 1);
-	vector<string> serverIpAndPort = SplitString(serverDetails, ':');
-	ushort serverPort = stoi(serverIpAndPort.at(1));
+	char* server_details = *(arg_values_ + 1);
+	vector<string> server_ip_and_port = SplitString(server_details, ':');
+	ushort server_port = stoi(server_ip_and_port.at(1));
 
 	int i = 2;
 	while (*(arg_values_ + i) != nullptr) {
-		cv::String imagePath = *(arg_values_ + i++);
+		cv::String image_path = *(arg_values_ + i++);
 
-		ImageFilterTypesEnum filterTypeEnum = ImageFilterEnums::GetImageFilterTypeEnumFromString(*(arg_values_ + i));
-		vector<float> filterParams;
-		stringstream sStream;
+		ImageFilterTypesEnum filter_type_enum = ImageFilterEnums::GetImageFilterTypeEnumFromString(*(arg_values_ + i));
+		vector<float> filter_params;
+		stringstream s_stream;
 
-		switch (filterTypeEnum)
+		switch (filter_type_enum)
 		{
 		case ImageFilterTypesEnum::INVALID_FILTER_TYPE:
-			sStream << *(arg_values_ + i);
-			msg_logger_->LogError("ERROR: Invalid filter name: " + sStream.str() + " in input.");
+			s_stream << *(arg_values_ + i);
+			msg_logger_->LogError("ERROR: Invalid filter name: " + s_stream.str() + " in input.");
 			break;
 		case RESIZE:
-			filterParams = GetFilterParams(i, 2);
+			filter_params = GetFilterParams(i, 2);
 			i += 3;
 			break;
 		case ROTATE:
-			filterParams.push_back(ImageFilterEnums::GetRotationDirectionEnumFromString(*(arg_values_ + i + 1)));
-			filterParams.push_back(stof(*(arg_values_ + i + 2)));
+			filter_params.push_back(ImageFilterEnums::GetRotationDirectionEnumFromString(*(arg_values_ + i + 1)));
+			filter_params.push_back(stof(*(arg_values_ + i + 2)));
 			i += 3;
 			break;
 		case BRIGHTNESS_ADJ:
-			filterParams = GetFilterParams(i, 1);
+			filter_params = GetFilterParams(i, 1);
 			i += 2;
 			break;
 		case FLIP:
-			filterParams.push_back(ImageFilterEnums::GetFlipDirectionEnumFromString(*(arg_values_ + i + 1)));
+			filter_params.push_back(ImageFilterEnums::GetFlipDirectionEnumFromString(*(arg_values_ + i + 1)));
 			i += 2;
 			break;
 		case CROP:
-			filterParams = GetFilterParams(i, 4);
+			filter_params = GetFilterParams(i, 4);
 			i += 5;
 			break;
 		case RGB_TO_GRAYSCALE:
@@ -199,9 +199,9 @@ vector<ImageRequest> InputProcessor::InitializeImageRequests()
 			msg_logger_->LogError("ERROR: Invalid filter type.");
 		}
 
-		ImageRequest imageRequest(serverIpAndPort.at(0), serverPort, imagePath, filterTypeEnum, filterParams);
-		imageRequests.push_back(imageRequest);
+		ImageRequest image_request(server_ip_and_port.at(0), server_port, image_path, filter_type_enum, filter_params);
+		image_requests.push_back(image_request);
 	}
 
-	return imageRequests;
+	return image_requests;
 }

@@ -7,19 +7,19 @@
 using std::stoi;
 using std::stringstream;
 
-RotateFilterParamsValidator::RotateFilterParamsValidator(const vector<char*>& filterParams):FilterParamsValidator(filterParams)
+RotateFilterParamsValidator::RotateFilterParamsValidator(const vector<char*>& filter_params):FilterParamsValidator(filter_params)
 {
 }
 
 bool RotateFilterParamsValidator::ValidateFilterParams()
 {
-	RotationDirection rotationDirection = ImageFilterEnums::GetRotationDirectionEnumFromString(filter_params_.at(0));
+	RotationDirection rotation_direction = ImageFilterEnums::GetRotationDirectionEnumFromString(filter_params_.at(0));
 
-	switch (rotationDirection) {
+	switch (rotation_direction) {
 	case INVALID_ROTATION_DIRECTION:
-		stringstream sStream;
-		sStream << filter_params_.at(0);
-		msg_logger_->LogError("ERROR: Invalid direction given for rotation: " + sStream.str());
+		stringstream s_stream;
+		s_stream << filter_params_.at(0);
+		msg_logger_->LogError("ERROR: Invalid direction given for rotation: " + s_stream.str());
 		return false;
 	}
 
@@ -28,9 +28,9 @@ bool RotateFilterParamsValidator::ValidateFilterParams()
 		return false;
 	}
 
-	short numOfTurns = stoi(filter_params_.at(1));
+	short num_of_turns = stoi(filter_params_.at(1));
 
-	if (numOfTurns < 0) {
+	if (num_of_turns < 0) {
 		msg_logger_->LogError("ERROR: Invalid number of turns given for rotation.");
 		return false;
 	}

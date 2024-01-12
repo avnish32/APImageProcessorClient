@@ -7,22 +7,22 @@
 This function checks whether the parameters starting from startIndex upto numberOfParams in the _filterParams
 vector are proper integers.
 */
-bool FilterParamsValidator::ValidateIntegerParams(int startIndex, int numberOfParams)
+bool FilterParamsValidator::ValidateIntegerParams(int start_index, int no_of_params)
 {
-	int currentIndex = startIndex;
-	for (int i = 0; i < numberOfParams; i++) {
-		char* currentArgValue = filter_params_.at(currentIndex);
-		if (currentArgValue == nullptr) {
+	int current_index = start_index;
+	for (int i = 0; i < no_of_params; i++) {
+		char* current_arg_value = filter_params_.at(current_index);
+		if (current_arg_value == nullptr) {
 			return false;
 		}
 
 		try {
-			std::stoi(currentArgValue);
+			std::stoi(current_arg_value);
 		}
 		catch (std::invalid_argument) {
 			return false;
 		}
-		currentIndex++;
+		current_index++;
 	}
 	return true;
 }
@@ -31,22 +31,22 @@ bool FilterParamsValidator::ValidateIntegerParams(int startIndex, int numberOfPa
 This function checks whether the parameters starting from startIndex upto numberOfParams in the _filterParams
 vector are proper floating-point numbers.
 */
-bool FilterParamsValidator::ValidateFloatParams(int startIndex, int numberOfParams)
+bool FilterParamsValidator::ValidateFloatParams(int start_index, int no_of_params)
 {
-	int currentIndex = startIndex;
-	for (int i = 0; i < numberOfParams; i++) {
-		char* currentArgValue = filter_params_.at(i);
-		if (currentArgValue == nullptr) {
+	int current_index = start_index;
+	for (int i = 0; i < no_of_params; i++) {
+		char* current_arg_value = filter_params_.at(i);
+		if (current_arg_value == nullptr) {
 			return false;
 		}
 
 		try {
-			std::stof(currentArgValue);
+			std::stof(current_arg_value);
 		}
 		catch (std::invalid_argument) {
 			return false;
 		}
-		currentIndex++;
+		current_index++;
 	}
 	return true;
 }
@@ -55,14 +55,14 @@ FilterParamsValidator::FilterParamsValidator()
 {
 }
 
-FilterParamsValidator::FilterParamsValidator(const vector<char*>& filterParams)
+FilterParamsValidator::FilterParamsValidator(const vector<char*>& filter_params)
 {
-	filter_params_ = filterParams;
+	filter_params_ = filter_params;
 }
 
-FilterParamsValidator::FilterParamsValidator(const vector<char*>& filterParams, const Mat& image)
+FilterParamsValidator::FilterParamsValidator(const vector<char*>& filter_params, const Mat& image)
 {
-	filter_params_ = filterParams;
+	filter_params_ = filter_params;
 	image_ = image;
 }
 

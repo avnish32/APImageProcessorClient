@@ -8,7 +8,7 @@ It constructs a single channel image.
 class OneChannelImageConstructor : public ImageConstructor
 {
 public:
-	OneChannelImageConstructor(const map<unsigned short, string>& imageDataMap, const Size& imageDimensions);
+	OneChannelImageConstructor(const map<unsigned short, string>&, const Size&);
 	~OneChannelImageConstructor();
 	Mat ConstructImage() override;
 };

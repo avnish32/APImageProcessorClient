@@ -20,16 +20,16 @@ private:
 	Mat image_;
 	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 
-	std::string GetAddressToSaveModifiedImage(std::string originalImageAddress);
+	std::string GetAddressToSaveModifiedImage(std::string);
 
 public:
 	ImageProcessor();
-	ImageProcessor(Mat image);
-	ImageProcessor(map<unsigned short, std::string> imageDataMap, const Size& imageDimensions, const uint& imageFileSize);
+	ImageProcessor(Mat);
+	ImageProcessor(map<unsigned short, std::string>, const Size&, const uint&);
 	~ImageProcessor();
-	void DisplayImage(cv::String windowName);
-	void DisplayOriginalAndFilteredImage(const Mat& originalImage, const Mat& filteredImage);
-	void SaveImage(std::string originalImageAddress);
+	void DisplayImage(cv::String);
+	void DisplayOriginalAndFilteredImage(const Mat&, const Mat&);
+	void SaveImage(std::string);
 	Mat GetImage();
 };
 

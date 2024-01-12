@@ -28,8 +28,8 @@ private:
 	std::string ConvertFilterParamsToString();
 	
 public:
-	ImageRequest(std::string serverIp, ushort serverPort, cv::String imageAbsolutePath, 
-		ImageFilterTypesEnum filterTypeEnum, vector<float> filterParams);
+	ImageRequest(std::string, ushort, cv::String, 
+		ImageFilterTypesEnum, vector<float>);
 	~ImageRequest();
 	std::string GetImageMetadataPayload();
 	Mat GetImage();

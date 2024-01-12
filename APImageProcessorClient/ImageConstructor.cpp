@@ -1,9 +1,9 @@
 #include "ImageConstructor.h"
 
-ImageConstructor::ImageConstructor(const map<unsigned short, string>& imageDataMap, const Size& imageDimensions)
+ImageConstructor::ImageConstructor(const map<unsigned short, string>& image_data_map, const Size& image_dimensions)
 {
-	image_data_map_ = imageDataMap;
-	image_dimensions_ = imageDimensions;
+	image_data_map_ = image_data_map;
+	image_dimensions_ = image_dimensions;
 }
 
 ImageConstructor::~ImageConstructor()

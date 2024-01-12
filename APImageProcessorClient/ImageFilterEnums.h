@@ -29,8 +29,8 @@ enum FlipDirection {
 class ImageFilterEnums
 {
 public:
-	static ImageFilterTypesEnum GetImageFilterTypeEnumFromString(string filterTypeString);
-	static RotationDirection GetRotationDirectionEnumFromString(string rotationDirectionString);
-	static FlipDirection GetFlipDirectionEnumFromString(string flipDirectionString);
+	static ImageFilterTypesEnum GetImageFilterTypeEnumFromString(string);
+	static RotationDirection GetRotationDirectionEnumFromString(string);
+	static FlipDirection GetFlipDirectionEnumFromString(string);
 };
 

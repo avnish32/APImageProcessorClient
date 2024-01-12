@@ -8,7 +8,7 @@ It constructs a triple channel image.
 class ThreeChannelImageConstructor :public ImageConstructor
 {
 public:
-	ThreeChannelImageConstructor(const map<unsigned short, string>& imageDataMap, const Size& imageDimensions);
+	ThreeChannelImageConstructor(const map<unsigned short, string>&, const Size&);
 	~ThreeChannelImageConstructor();
 	Mat ConstructImage() override;
 };

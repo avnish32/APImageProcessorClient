@@ -21,13 +21,13 @@ protected:
 	Mat image_;
 	MsgLogger* msg_logger_ = MsgLogger::GetInstance();
 
-	bool ValidateIntegerParams(int startIndex, int numberOfParams);
-	bool ValidateFloatParams(int startIndex, int numberOfParams);
+	bool ValidateIntegerParams(int, int);
+	bool ValidateFloatParams(int, int);
 
 public:
 	FilterParamsValidator();
-	FilterParamsValidator(const vector<char*>& filterParams);
-	FilterParamsValidator(const vector<char*>& filterParams, const Mat& image);
+	FilterParamsValidator(const vector<char*>&);
+	FilterParamsValidator(const vector<char*>&, const Mat&);
 	virtual bool ValidateFilterParams();
 };
 

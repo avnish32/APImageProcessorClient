@@ -26,8 +26,8 @@ private:
 public:
 	~MsgLogger();
 	static MsgLogger* GetInstance();
-	void LogDebug(const string& msg);
-	void LogError(const string& msg);
+	void LogDebug(const string&);
+	void LogError(const string&);
 	static void ReleaseInstance();
 };
 

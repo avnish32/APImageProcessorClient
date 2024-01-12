@@ -9,8 +9,8 @@
 class FilterParamsValidatorFactory
 {
 private:
-	static vector<char*> GetFilterParamsRaw(char** argValues, ushort& currentIndex, const ushort& numberOfParams);
+	static vector<char*> GetFilterParamsRaw(char**, ushort&, const ushort&);
 public:
-	static FilterParamsValidator* GetFilterParamsValidator(const ImageFilterTypesEnum& filterType,
-		char** argValues, ushort& currentIndex, const cv::Mat& image);
+	static FilterParamsValidator* GetFilterParamsValidator(const ImageFilterTypesEnum&,
+		char**, ushort&, const cv::Mat&);
 };
