@@ -121,7 +121,7 @@ Below is a list of the filters currently supported by the application and the pa
 
    Example:
    ```
-   127.0.0.1:8080 F:/MyImages/Hollywood/AmericanCrazyPerson.jpg Crop 350 100 200 500
+   127.0.0.1:8080 F:/MyImages/Gaming/Catalyst.png Crop 350 100 200 500
    ```
    The above arguments will crop the image to an area 200 pixels wide and 500 pixels high, whose top left corner is at the point (350,100) with the origin (0,0) being on the top left corner of the original image.
 
