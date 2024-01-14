@@ -31,7 +31,7 @@ This is the Client module of the Image Processing Application. This application 
 
     <img src = "https://github.com/avnish32/APImageProcessorServer/assets/145987378/be91ec41-fd1a-483a-853d-bc7b0bd88261" width = "300">
 
-  - The 'Variable value' field in the 'New System Value' dialog box should now contain the address of the OpenCV build folder, as shown below. CLick OK:
+  - The 'Variable value' field in the 'New System Value' dialog box should now contain the address of the OpenCV build folder, as shown below. Click OK:
 
     <img src = "https://github.com/avnish32/APImageProcessorServer/assets/145987378/83e1754e-09b3-44f4-980b-52027040e978" width = "500">
 
