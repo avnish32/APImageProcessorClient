@@ -2,9 +2,10 @@
 This is the Client module of the Image Processing Application. This application communicates with the Server module to send an image or multiple images and filter/s to apply on it, and receive the image/s with the filter/s applied.
 
 ## Requirements
- - 64-bit operating system
+ - 64-bit Windows
  - OpenCV 4.8.0
  - Server companion module
+ - Visual Studio (2022 preferred)
 
 ## Configuring OpenCV 4.8.0
 1. Download 4.8.0 from [OpenCV Releases page](https://opencv.org/releases/).
