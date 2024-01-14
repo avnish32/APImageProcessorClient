@@ -56,7 +56,7 @@ private:
 	short SendImageDataPayloadsBySequenceNumbers(map<u_short, string>&, map<u_short, u_short>&,
 		const vector<u_short>&);
 	short SendMissingSeqNumbersToServer(map<u_short, std::string>&, const u_short&
-		, vector<u_short>&);
+		, vector<u_short>&, short&);
 
 	//Functions to receive data from server
 	short ReceiveServerMsgs();

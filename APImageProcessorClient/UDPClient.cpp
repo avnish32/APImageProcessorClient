@@ -293,7 +293,7 @@ void UDPClient::BuildImageDataPayloadMap(Mat image, map<u_short, string>& image_
 		image_bytes_left -= image_bytes_processed_this_iteration;
 
 		payload_seq_no++;	
-		msg_logger_->LogDebug("Bytes processd: " + to_string(image_bytes_processed));
+		msg_logger_->LogDebug("Bytes processed: " + to_string(image_bytes_processed));
 	}
 }
 
@@ -492,7 +492,7 @@ from the sesrver before the last timeout occurred. It then sends these sequence 
 a negative response code to the server so server can re-send the missing payloads.
 */
 short UDPClient::SendMissingSeqNumbersToServer(map<u_short, std::string>& image_payload_seq_map, const u_short& expected_no_of_payloads
-	, vector<u_short>& missing_seq_nums_in_last_timeout)
+	, vector<u_short>& missing_seq_nums_in_last_timeout, short& server_inactive_count)
 {
 	short response_code;
 
@@ -500,9 +500,14 @@ short UDPClient::SendMissingSeqNumbersToServer(map<u_short, std::string>& image_
 	if (missing_seq_nums_in_this_timeout.size() > 0) {
 		if (missing_seq_nums_in_last_timeout == missing_seq_nums_in_this_timeout) {
 
-			//Server did not send any more payloads since last timeout. Assuming that it is inactive now.
-			msg_logger_->LogError("Server is inactive.");
-			return FAILURE_RESPONSE;
+			//Server did not send any more payloads since last timeout or all paylads were lost. Incrementing inactive count.
+			msg_logger_->LogError("Server is inactive or all packets were lost.");
+			server_inactive_count++;
+
+			if (server_inactive_count == SERVER_INACTIVE_LIMIT) {
+				msg_logger_->LogError("Terminating connection with server as it seems to be inactive.");
+				return FAILURE_RESPONSE;
+			}
 		}
 		missing_seq_nums_in_last_timeout = missing_seq_nums_in_this_timeout;
 
@@ -759,6 +764,7 @@ short UDPClient::ConsumeImageDataFromQueue(const cv::Size& image_dimensions, con
 	string image_data_from_server;
 	map<u_short, string> image_payload_seq_map;
 	vector<u_short> missing_payload_seq_nums;
+	short server_inactive_count = 0;
 
 	int server_address_size = (sizeof(server_address_));
 
@@ -768,7 +774,8 @@ short UDPClient::ConsumeImageDataFromQueue(const cv::Size& image_dimensions, con
 
 		if (received_server_msgs_queue_.empty()) {
 			if (HasRequestTimedOut(last_image_payload_recd_time, IMG_PAYLOAD_RECV_TIMEOUT_MILLIS)) {
-				response_code = SendMissingSeqNumbersToServer(image_payload_seq_map, expected_no_of_payloads, missing_payload_seq_nums);
+				response_code = SendMissingSeqNumbersToServer(image_payload_seq_map, expected_no_of_payloads, 
+					missing_payload_seq_nums, server_inactive_count);
 				last_image_payload_recd_time = high_resolution_clock::now();
 				if (response_code == FAILURE_RESPONSE) {
 					msg_logger_->LogError("Error while sending response to server on timeout.");
