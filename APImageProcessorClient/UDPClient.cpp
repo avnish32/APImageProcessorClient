@@ -79,24 +79,31 @@ void UDPClient::InitializeSocket() {
 	else {
 		msg_logger_->LogError("Client socket created successfully.");
 
-		//Below block to print ip and port of the client
+		// Below block to print ip and port of the client and to bind socket.
+		// Since multiple sockets are created in parellel threads, 
+		// it attempts to bind multiple sockets to same port which is not allowed.
+		// Hence, this is commented to allow multiple client threads to run in parallel,
+		// to demonstrate multi-client handling capability of the server.
+		
 
-		/*sockaddr_in thisSocket;
-		int thisSocketSize = sizeof(thisSocket);
-		getsockname(_socket, (sockaddr*)&thisSocket, &thisSocketSize);
+		//sockaddr_in this_socket;
+		//int thisSocketSize = sizeof(this_socket);
+		//getsockname(socket_, (sockaddr*)&this_socket, &thisSocketSize);
 
-		cout << "\nSocket IP: " << thisSocket.sin_addr.s_addr << " | Socket port: " << thisSocket.sin_port
-			<< " | Family: " << thisSocket.sin_family;*/
+		//msg_logger_->LogDebug("Socket IP: " + to_string(this_socket.sin_addr.s_addr) + " | Socket port: " + to_string(this_socket.sin_port)
+		//	+ " | Family: " + to_string(this_socket.sin_family));
+		///*cout << "\nSocket IP: " << this_socket.sin_addr.s_addr << " | Socket port: " << this_socket.sin_port
+		//	<< " | Family: " << this_socket.sin_family;*/
 
-		/*thisSocket.sin_addr.s_addr = INADDR_ANY;
-		thisSocket.sin_family = AF_INET;
-		if (bind(_socket, (sockaddr*)&thisSocket, thisSocketSize) == SOCKET_ERROR) {
-			cout << "\nError while binding client socket. Error code: " << WSAGetLastError();
-			_socket = INVALID_SOCKET;
-		}
-		else {
-			cout << "\nSocket bound successfully.";
-		}*/
+		//this_socket.sin_addr.s_addr = INADDR_ANY;
+		//this_socket.sin_family = AF_INET;
+		//if (bind(socket_, (sockaddr*)&this_socket, thisSocketSize) == SOCKET_ERROR) {
+		//	msg_logger_->LogError("Error while binding client socket.Error code : " + to_string(WSAGetLastError()));
+		//	socket_ = INVALID_SOCKET;
+		//}
+		//else {
+		//	msg_logger_->LogError("Socket bound successfully.");
+		//}
 
 		u_long NON_BLOCKING_MODE_TRUE = 1;
 		if (ioctlsocket(socket_, FIONBIO, &NON_BLOCKING_MODE_TRUE) == SOCKET_ERROR) {
@@ -508,6 +515,9 @@ short UDPClient::SendMissingSeqNumbersToServer(map<u_short, std::string>& image_
 				msg_logger_->LogError("Terminating connection with server as it seems to be inactive.");
 				return FAILURE_RESPONSE;
 			}
+		}
+		else {
+			server_inactive_count = 0;
 		}
 		missing_seq_nums_in_last_timeout = missing_seq_nums_in_this_timeout;
 

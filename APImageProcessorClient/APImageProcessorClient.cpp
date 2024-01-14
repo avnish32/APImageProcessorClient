@@ -157,7 +157,7 @@ void SendImageRequestToServer(ImageRequest& image_request)
 		return;
 	}
 
-	//Receive filtered image data/
+	//Receive filtered image data
 	ImageProcessor modified_image_processor;
 	response_code = udp_client.ConsumeImageDataFromQueue(processed_image_dimensions, processed_image_file_size, modified_image_processor);
 	if (response_code == FAILURE_RESPONSE) {
