@@ -44,9 +44,6 @@ This is the Client module of the Image Processing Application. This application 
     <img src = "https://github.com/avnish32/APImageProcessorServer/assets/145987378/32eca162-82bc-4a26-b2a2-fdc57379cf5d" width = "300">
 
   - More information on how to set up environment variable for OpenCV can be found [here](https://www.opencv-srf.com/2017/11/install-opencv-with-visual-studio.html).
-
-4. Build the application. Press Ctrl + B in Visual Studio for this.
-5. Once the application is successfully built, the program is ready to execute.
    
 
 ## Preparing command-line arguments
@@ -156,35 +153,35 @@ Below is a list of the filters currently supported by the application and the pa
 
 5.  **Grayscale** - Converts the image to a grayscale image.
 
-   Syntax:
-   ```
-   Grayscale
-   ```
-
-   Example:
-   ```
-   127.0.0.1:8080 F:/MyImages/Gaming/Catalyst.png Grayscale
-   ```
-
-  <img src="https://github.com/avnish32/APImageProcessorClient/assets/145987378/84d8ef12-46e6-49ad-b87c-1da4ecab9015" width="800">
+    Syntax:
+    ```
+    Grayscale
+    ```
+ 
+    Example:
+    ```
+    127.0.0.1:8080 F:/MyImages/Gaming/Catalyst.png Grayscale
+    ```
+ 
+    <img src="https://github.com/avnish32/APImageProcessorClient/assets/145987378/84d8ef12-46e6-49ad-b87c-1da4ecab9015" width="800">
 
 
 
 6. **Brightness** - Changes the brightness of the original image.
 
-   Syntax:
-   ```
-   Brightness <Brightness adjustment factor>
-   ```
-   'Brightness adjustment factor' can be any positive decimal value.
-   A brightness adjustment factor of '0' gives a completely dark image, while '1' returns the same image. '2' gives an image having twice the brightness of the original.
-
-   Example
-   ```
-   127.0.0.1:8080 F:/MyImages/Gaming/Catalyst.png Brightness 1.8
-   ```
-
-   <img src="https://github.com/avnish32/APImageProcessorClient/assets/145987378/85d873f0-1155-49a3-a2f7-8a363a87efbc" width="800">
+    Syntax:
+    ```
+    Brightness <Brightness adjustment factor>
+    ```
+    'Brightness adjustment factor' can be any positive decimal value.
+    A brightness adjustment factor of '0' gives a completely dark image, while '1' returns the same image. '2' gives an image having twice the brightness of the original.
+ 
+    Example
+    ```
+    127.0.0.1:8080 F:/MyImages/Gaming/Catalyst.png Brightness 1.8
+    ```
+ 
+    <img src="https://github.com/avnish32/APImageProcessorClient/assets/145987378/85d873f0-1155-49a3-a2f7-8a363a87efbc" width="800">
 
 
 
@@ -197,9 +194,21 @@ Below is a list of the filters currently supported by the application and the pa
 
 ## Running the application
 1. Start the companion server module of the application. Please refer to the README file of the server for steps to start it up.
-2. Start the client module of the application i.e. this module. Execution starts in APImageProcessorClient.cpp. Press Ctrl + F5 in Visual Studio to run the program. Take care to provide the appropriate command line arguments. 
-3. On successful image processing, a console and two windows - the original and the modified images - should appear, as shown:
+2. Start the client module of the application i.e. this module. To do this, open Visual Studio. Visual Studio 2022 is recommended.
+3. Click on ‘Open a project or solution’.
 
+   <img src = "https://github.com/avnish32/APImageProcessorServer/assets/145987378/25e90b0b-6963-4c09-81b5-c0a156fb7a0f" width = "500">
+
+4. Browse to the 'APImageProcessorClient.sln' file and click ‘Open’.
+
+   <img src="https://github.com/avnish32/APImageProcessorClient/assets/145987378/3569e801-04ad-4282-bf56-11b13c636c14" width = "500">
+
+6. Build the project in Visual Studio using Ctrl + B. Below message will be displayed on a successful build:
+
+   <img src="https://github.com/avnish32/APImageProcessorClient/assets/145987378/13b46f87-1f8f-46bc-bd19-12d490189afd" width = "500">
+
+7. Execution starts in APImageProcessorClient.cpp. Press Ctrl + F5 in Visual Studio to run the program. Take care to provide the appropriate command line arguments. 
+8. On successful image processing, a console and two windows - the original and the modified images - should appear, as shown:
 
   <img src="https://github.com/avnish32/APImageProcessorClient/assets/145987378/9e63074c-b2bf-40ab-89fa-2aefe8186206" width="800">
 
